@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
-import { SybilNode, SybilEdge } from '@/types/api';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import ForceGraph2D from "react-force-graph-2d";
+import { SybilNode, SybilEdge } from "@/types/api";
 
 interface EgoGraph2DProps {
   graphData: {
@@ -10,7 +10,7 @@ interface EgoGraph2DProps {
     links: SybilEdge[];
   };
   targetId: string;
-  classification?: 'BENIGN' | 'WARNING' | 'SYBIL';
+  classification?: "BENIGN" | "WARNING" | "SYBIL";
 }
 
 const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
@@ -39,16 +39,16 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
   }, []);
 
   const getTargetColor = useCallback(() => {
-    if (classification === 'SYBIL' || classification === 'WARNING') {
-      return '#ff1744'; // Neon Red
+    if (classification === "SYBIL" || classification === "WARNING") {
+      return "#ff1744"; // Neon Red
     }
-    return '#00f2ff'; // Cyan
+    return "#00f2ff"; // Cyan
   }, [classification]);
 
   const getNodeColor = useCallback(
     (node: SybilNode) => {
       if (node.id === targetId) return getTargetColor();
-      return node.is_sybil ? '#f44336' : '#64748b'; // Red for other sybils, slate-500 for normal
+      return node.is_sybil ? "#f44336" : "#64748b"; // Red for other sybils, slate-500 for normal
     },
     [targetId, getTargetColor]
   );
@@ -61,7 +61,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
   );
 
   return (
-    <div ref={containerRef} className="w-full h-full min-h-[400px]">
+    <div ref={containerRef} className="h-full min-h-[400px] w-full">
       <ForceGraph2D
         ref={fgRef}
         width={dimensions.width}
@@ -76,19 +76,19 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
             <div class="text-accent-cyan font-bold mb-1">${(node as SybilNode).label || (node as SybilNode).id}</div>
             <div class="flex justify-between gap-4">
               <span class="text-slate-500">TRUST_SCORE</span>
-              <span class="${(node as SybilNode).trust_score < 3 ? 'text-accent-red' : 'text-accent-green'}">${(node as SybilNode).trust_score.toFixed(2)}</span>
+              <span class="${(node as SybilNode).trust_score < 3 ? "text-accent-red" : "text-accent-green"}">${(node as SybilNode).trust_score.toFixed(2)}</span>
             </div>
-            ${(node as SybilNode).is_sybil ? '<div class="text-accent-red font-bold mt-1">[SYBIL_DETECTED]</div>' : ''}
+            ${(node as SybilNode).is_sybil ? '<div class="text-accent-red font-bold mt-1">[SYBIL_DETECTED]</div>' : ""}
           </div>
         `}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         nodeVal={getNodeVal as any}
-        linkColor={() => '#1e293b'}
+        linkColor={() => "#1e293b"}
         linkWidth={1}
         linkDirectionalParticles={2}
         linkDirectionalParticleWidth={2}
         linkDirectionalParticleSpeed={0.005}
-        linkDirectionalParticleColor={() => '#00f2ff'}
+        linkDirectionalParticleColor={() => "#00f2ff"}
         enableNodeDrag={true}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onNodeClick={(node: any) => {
@@ -99,17 +99,30 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
           }
         }}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        nodeCanvasObject={(node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
+        nodeCanvasObject={(
+          node: any,
+          ctx: CanvasRenderingContext2D,
+          globalScale: number
+        ) => {
           const label = (node as SybilNode).label || (node as SybilNode).id;
           const fontSize = 12 / globalScale;
           ctx.font = `${fontSize}px JetBrains Mono`;
           const textWidth = ctx.measureText(label).width;
-          const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
+          const bckgDimensions = [textWidth, fontSize].map(
+            (n) => n + fontSize * 0.2
+          ); // some padding
 
           // Draw node
           const color = getNodeColor(node as SybilNode);
           ctx.beginPath();
-          ctx.arc(node.x, node.y, getNodeVal(node as SybilNode), 0, 2 * Math.PI, false);
+          ctx.arc(
+            node.x,
+            node.y,
+            getNodeVal(node as SybilNode),
+            0,
+            2 * Math.PI,
+            false
+          );
           ctx.fillStyle = color;
           ctx.fill();
 
@@ -123,13 +136,18 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
 
           // Draw label if zoomed in
           if (globalScale > 3) {
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2 - 8, bckgDimensions[0] as any, bckgDimensions[1] as any);
+            ctx.fillRect(
+              node.x - bckgDimensions[0] / 2,
+              node.y - bckgDimensions[1] / 2 - 8,
+              bckgDimensions[0] as any,
+              bckgDimensions[1] as any
+            );
 
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = '#000';
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = "#000";
             ctx.fillText(label, node.x, node.y - 8);
           }
         }}

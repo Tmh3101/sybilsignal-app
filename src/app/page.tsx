@@ -15,24 +15,24 @@ export default function HomePage() {
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
-        <h2 className="text-5xl font-black tracking-tighter text-foreground italic uppercase">
+        <h2 className="text-foreground text-5xl font-black tracking-tighter uppercase italic">
           SYSTEM <span className="text-accent-cyan">OVERVIEW</span>
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 font-mono text-sm max-w-2xl leading-relaxed uppercase tracking-wider font-bold">
+        <p className="max-w-2xl font-mono text-sm leading-relaxed font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400">
           Sybil Engine is a high-performance detection and network discovery
           platform designed for large-scale sybil cluster identification and
           individual profile risk assessment.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <IndustrialCard
           title="THREAT_LEVEL"
-          className="border-l-4 border-l-accent-red"
+          className="border-l-accent-red border-l-4"
         >
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-4xl font-black text-accent-red italic tracking-tighter">
+              <span className="text-accent-red text-4xl font-black tracking-tighter italic">
                 CRITICAL
               </span>
               <span className="text-subtle mt-1 font-bold">
@@ -45,11 +45,11 @@ export default function HomePage() {
 
         <IndustrialCard
           title="CORE_UTILIZATION"
-          className="border-l-4 border-l-accent-cyan"
+          className="border-l-accent-cyan border-l-4"
         >
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-4xl font-black text-foreground italic tracking-tighter">
+              <span className="text-foreground text-4xl font-black tracking-tighter italic">
                 42.8%
               </span>
               <span className="text-subtle mt-1 font-bold">
@@ -62,11 +62,11 @@ export default function HomePage() {
 
         <IndustrialCard
           title="NODE_CAPACITY"
-          className="border-l-4 border-l-accent-green"
+          className="border-l-accent-green border-l-4"
         >
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-4xl font-black text-foreground italic tracking-tighter">
+              <span className="text-foreground text-4xl font-black tracking-tighter italic">
                 1.4M
               </span>
               <span className="text-subtle mt-1 font-bold">
@@ -78,35 +78,35 @@ export default function HomePage() {
         </IndustrialCard>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+      <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-4">
-          <h3 className="text-subtle border-b border-border pb-2 font-bold">
+          <h3 className="text-subtle border-border border-b pb-2 font-bold">
             Available Modules
           </h3>
           <div className="grid grid-cols-1 gap-4">
             <Link href="/inspector">
-              <div className="group p-6 bg-surface border border-border rounded-sm hover:border-accent-cyan transition-all cursor-pointer relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-100 group-hover:text-accent-cyan transition-all">
+              <div className="group bg-surface border-border hover:border-accent-cyan relative cursor-pointer overflow-hidden rounded-sm border p-6 transition-all">
+                <div className="group-hover:text-accent-cyan absolute top-0 right-0 p-2 opacity-10 transition-all group-hover:opacity-100">
                   <Radar size={40} />
                 </div>
-                <h4 className="text-xl font-bold text-foreground group-hover:text-accent-cyan transition-colors italic uppercase tracking-widest">
+                <h4 className="text-foreground group-hover:text-accent-cyan text-xl font-bold tracking-widest uppercase italic transition-colors">
                   Profile Inspector
                 </h4>
-                <p className="text-[10px] font-mono text-slate-500 uppercase mt-2 font-bold">
+                <p className="mt-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
                   Analyze individual wallets for sybil behavior and risk
                   scoring.
                 </p>
               </div>
             </Link>
             <Link href="/discovery">
-              <div className="group p-6 bg-surface border border-border rounded-sm hover:border-accent-cyan transition-all cursor-pointer relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-100 group-hover:text-accent-cyan transition-all">
+              <div className="group bg-surface border-border hover:border-accent-cyan relative cursor-pointer overflow-hidden rounded-sm border p-6 transition-all">
+                <div className="group-hover:text-accent-cyan absolute top-0 right-0 p-2 opacity-10 transition-all group-hover:opacity-100">
                   <FlaskConical size={40} />
                 </div>
-                <h4 className="text-xl font-bold text-foreground group-hover:text-accent-cyan transition-colors italic uppercase tracking-widest">
+                <h4 className="text-foreground group-hover:text-accent-cyan text-xl font-bold tracking-widest uppercase italic transition-colors">
                   Discovery Lab
                 </h4>
-                <p className="text-[10px] font-mono text-slate-500 uppercase mt-2 font-bold">
+                <p className="mt-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
                   Identify large scale community clusters and fraudulent
                   networks.
                 </p>
@@ -116,39 +116,39 @@ export default function HomePage() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <h3 className="text-subtle border-b border-border pb-2 font-bold">
+          <h3 className="text-subtle border-border border-b pb-2 font-bold">
             System Diagnostics
           </h3>
-          <div className="bg-surface border border-border rounded-sm p-6 flex-1 flex flex-col gap-6">
+          <div className="bg-surface border-border flex flex-1 flex-col gap-6 rounded-sm border p-6">
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between text-[10px] font-mono uppercase font-bold">
+              <div className="flex justify-between font-mono text-[10px] font-bold uppercase">
                 <span className="text-slate-500">Memory Integrity</span>
                 <span className="text-accent-cyan">98.2%</span>
               </div>
-              <div className="w-full h-2 bg-background border border-border rounded-full overflow-hidden shadow-inner">
-                <div className="w-[98.2%] h-full bg-accent-cyan shadow-[0_0_8px_rgba(var(--accent-cyan),0.6)]" />
+              <div className="bg-background border-border h-2 w-full overflow-hidden rounded-full border shadow-inner">
+                <div className="bg-accent-cyan h-full w-[98.2%] shadow-[0_0_8px_rgba(var(--accent-cyan),0.6)]" />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between text-[10px] font-mono uppercase font-bold">
+              <div className="flex justify-between font-mono text-[10px] font-bold uppercase">
                 <span className="text-slate-500">Heuristic Accuracy</span>
                 <span className="text-accent-green">94.5%</span>
               </div>
-              <div className="w-full h-2 bg-background border border-border rounded-full overflow-hidden shadow-inner">
-                <div className="w-[94.5%] h-full bg-accent-green shadow-[0_0_8px_rgba(var(--accent-green),0.6)]" />
+              <div className="bg-background border-border h-2 w-full overflow-hidden rounded-full border shadow-inner">
+                <div className="bg-accent-green h-full w-[94.5%] shadow-[0_0_8px_rgba(var(--accent-green),0.6)]" />
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="flex justify-between text-[10px] font-mono uppercase font-bold">
+              <div className="flex justify-between font-mono text-[10px] font-bold uppercase">
                 <span className="text-slate-500">Database Latency</span>
                 <span className="text-accent-cyan">12ms</span>
               </div>
-              <div className="w-full h-2 bg-background border border-border rounded-full overflow-hidden shadow-inner">
-                <div className="w-[12%] h-full bg-accent-cyan shadow-[0_0_8px_rgba(var(--accent-cyan),0.6)]" />
+              <div className="bg-background border-border h-2 w-full overflow-hidden rounded-full border shadow-inner">
+                <div className="bg-accent-cyan h-full w-[12%] shadow-[0_0_8px_rgba(var(--accent-cyan),0.6)]" />
               </div>
             </div>
 
-            <div className="mt-auto flex items-center gap-2 text-[10px] font-mono text-slate-500 uppercase border-t border-border pt-4 font-bold">
+            <div className="border-border mt-auto flex items-center gap-2 border-t pt-4 font-mono text-[10px] font-bold text-slate-500 uppercase">
               <Activity size={14} className="text-accent-green animate-pulse" />
               <span>Diagnostic Sync: Nominal [Last check: 0.02s ago]</span>
             </div>

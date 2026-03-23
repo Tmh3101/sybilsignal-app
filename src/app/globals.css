@@ -5,7 +5,7 @@
   /* Default Light Mode - Industrial Clay / Clean Lab */
   --background: #f8fafc; /* slate-50 - even cleaner */
   --foreground: #0f172a; /* slate-900 */
-  --surface: #ffffff;    /* pure white surface */
+  --surface: #ffffff; /* pure white surface */
   --surface-secondary: #f1f5f9; /* slate-100 */
   --accent-cyan: #0891b2; /* Cyan-600 */
   --accent-red: #dc2626; /* Red-600 */
@@ -17,12 +17,11 @@
      Ultra-Subtle "Flat-Industrial" Shadows 
      Designed for high clarity and minimal visual noise.
   */
-  --shadow-neo-convex: 
-    1px 1px 3px rgba(0, 0, 0, 0.05), 
-    -1px -1px 3px rgba(255, 255, 255, 0.8);
-  
-  --shadow-neo-concave: 
-    inset 1px 1px 2px rgba(0, 0, 0, 0.05), 
+  --shadow-neo-convex:
+    1px 1px 3px rgba(0, 0, 0, 0.05), -1px -1px 3px rgba(255, 255, 255, 0.8);
+
+  --shadow-neo-concave:
+    inset 1px 1px 2px rgba(0, 0, 0, 0.05),
     inset -1px -1px 2px rgba(255, 255, 255, 0.5);
 }
 
@@ -37,12 +36,11 @@
   --accent-green: #00e676;
   --border: #1e293b;
 
-  --shadow-neo-convex: 
-    4px 4px 10px rgba(0, 0, 0, 0.5), 
-    -1px -1px 5px rgba(255, 255, 255, 0.02);
-    
-  --shadow-neo-concave: 
-    inset 2px 2px 6px rgba(0, 0, 0, 0.4), 
+  --shadow-neo-convex:
+    4px 4px 10px rgba(0, 0, 0, 0.5), -1px -1px 5px rgba(255, 255, 255, 0.02);
+
+  --shadow-neo-concave:
+    inset 2px 2px 6px rgba(0, 0, 0, 0.4),
     inset -1px -1px 4px rgba(255, 255, 255, 0.01);
 }
 
@@ -62,7 +60,9 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-mono);
-  transition: background 0.3s ease, color 0.3s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -74,9 +74,9 @@ body {
   .shadow-neo-concave {
     box-shadow: var(--shadow-neo-concave);
   }
-  
+
   .glass-industrial {
-    @apply bg-surface/80 backdrop-blur-md border border-border;
+    @apply bg-surface/80 border-border border backdrop-blur-md;
   }
 }
 
@@ -95,10 +95,15 @@ body {
   background: var(--accent-cyan);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  @apply tracking-tight font-bold;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-bold tracking-tight;
 }
 
 .text-subtle {
-  @apply text-slate-500 dark:text-slate-400 font-mono text-[10px] uppercase tracking-widest;
+  @apply font-mono text-[10px] tracking-widest text-slate-500 uppercase dark:text-slate-400;
 }

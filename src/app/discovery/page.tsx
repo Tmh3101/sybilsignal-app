@@ -46,20 +46,20 @@ export default function DiscoveryPage() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-6 h-full">
-      <div className="flex items-center justify-between mb-2">
+    <div className="flex h-full flex-col gap-6">
+      <div className="mb-2 flex items-center justify-between">
         <div className="flex flex-col">
-          <h2 className="text-3xl font-black tracking-tighter text-foreground italic uppercase">
+          <h2 className="text-foreground text-3xl font-black tracking-tighter uppercase italic">
             Discovery <span className="text-accent-cyan">Lab</span>
           </h2>
           <span className="text-subtle">
             Large Scale Cluster Detection & Network Analysis
           </span>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-surface border border-border rounded-sm">
+        <div className="bg-surface border-border flex items-center gap-2 rounded-sm border px-4 py-2">
           <Database size={14} className="text-accent-cyan" />
-          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest italic font-bold">
-            Dataset: BigQuery_Mainnet_Current
+          <span className="font-mono text-[10px] font-bold tracking-widest text-slate-500 uppercase italic">
+            Dataset: lens-protocol-mainnet
           </span>
         </div>
       </div>
@@ -68,39 +68,39 @@ export default function DiscoveryPage() {
       <IndustrialCard title="DISCOVERY_PARAMETERS">
         <div className="flex items-end gap-8">
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-mono text-slate-500 uppercase flex items-center gap-2 font-bold">
+            <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
               <Calendar size={12} /> Start Date
             </label>
             <input
               type="date"
-              className="bg-surface-secondary/50 border border-border text-foreground text-xs p-2 rounded-sm focus:border-accent-cyan outline-none font-mono shadow-inner"
+              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner outline-none"
               defaultValue="2026-03-01"
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-mono text-slate-500 uppercase flex items-center gap-2 font-bold">
+            <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
               <Calendar size={12} /> End Date
             </label>
             <input
               type="date"
-              className="bg-surface-secondary/50 border border-border text-foreground text-xs p-2 rounded-sm focus:border-accent-cyan outline-none font-mono shadow-inner"
+              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner outline-none"
               defaultValue="2026-03-23"
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-mono text-slate-500 uppercase flex items-center gap-2 font-bold">
+            <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
               <Filter size={12} /> Sensitivity
             </label>
-            <select className="bg-surface-secondary/50 border border-border text-foreground text-xs p-2 rounded-sm focus:border-accent-cyan outline-none font-mono w-40 shadow-inner">
+            <select className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-40 rounded-sm border p-2 font-mono text-xs shadow-inner outline-none">
               <option>AGGRESSIVE</option>
               <option>BALANCED</option>
               <option>CONSERVATIVE</option>
             </select>
           </div>
-          <button className="flex-1 bg-accent-red hover:brightness-110 text-white dark:text-black font-black py-2.5 rounded-sm flex items-center justify-center gap-3 transition-all group overflow-hidden relative shadow-lg">
-            <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 italic" />
+          <button className="bg-accent-red group relative flex flex-1 items-center justify-center gap-3 overflow-hidden rounded-sm py-2.5 font-black text-white shadow-lg transition-all hover:brightness-110 dark:text-black">
+            <div className="absolute inset-0 translate-x-[-100%] bg-white/20 italic transition-transform duration-500 group-hover:translate-x-[100%]" />
             <Play size={18} fill="currentColor" />
-            <span className="tracking-[0.2em] italic uppercase">
+            <span className="tracking-[0.2em] uppercase italic">
               START DISCOVERY PROTOCOL
             </span>
           </button>
@@ -108,11 +108,11 @@ export default function DiscoveryPage() {
       </IndustrialCard>
 
       {/* Cluster Map - Dark Screen for clarity */}
-      <div className="flex-1 bg-[#050608] border border-border rounded-sm relative overflow-hidden flex items-center justify-center min-h-0 shadow-2xl">
+      <div className="border-border relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm border bg-[#050608] shadow-2xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1e293b20_0%,_transparent_70%)]" />
 
         {/* Mock Cluster Map SVG */}
-        <svg className="w-full h-full max-h-[500px]" viewBox="0 0 1000 600">
+        <svg className="h-full max-h-[500px] w-full" viewBox="0 0 1000 600">
           {clusterData && (
             <>
               {/* Cluster Clouds */}
@@ -132,7 +132,7 @@ export default function DiscoveryPage() {
                 <text
                   x="250"
                   y="180"
-                  className="fill-purple-400 font-mono text-[10px] font-bold uppercase tracking-widest"
+                  className="fill-purple-400 font-mono text-[10px] font-bold tracking-widest uppercase"
                 >
                   Cluster_Alpha_T7
                 </text>
@@ -154,7 +154,7 @@ export default function DiscoveryPage() {
                 <text
                   x="700"
                   y="330"
-                  className="fill-orange-400 font-mono text-[10px] font-bold uppercase tracking-widest"
+                  className="fill-orange-400 font-mono text-[10px] font-bold tracking-widest uppercase"
                 >
                   Cluster_Sigma_X4
                 </text>
@@ -176,7 +176,7 @@ export default function DiscoveryPage() {
                 <text
                   x="500"
                   y="230"
-                  className="fill-accent-red font-mono text-[10px] font-bold uppercase tracking-widest"
+                  className="fill-accent-red font-mono text-[10px] font-bold tracking-widest uppercase"
                 >
                   SYBIL_THREAT_OMEGA
                 </text>
@@ -206,34 +206,34 @@ export default function DiscoveryPage() {
         </svg>
 
         {/* Legend */}
-        <div className="absolute top-6 right-6 flex flex-col gap-3 bg-black/80 p-4 border border-slate-700 backdrop-blur-sm shadow-2xl">
+        <div className="absolute top-6 right-6 flex flex-col gap-3 border border-slate-700 bg-black/80 p-4 shadow-2xl backdrop-blur-sm">
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-accent-red" />
-            <span className="text-[9px] font-mono text-slate-300 uppercase font-bold">
+            <div className="bg-accent-red h-2 w-2 rounded-full" />
+            <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
               Malicious Cluster
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-orange-500" />
-            <span className="text-[9px] font-mono text-slate-300 uppercase font-bold">
+            <div className="h-2 w-2 rounded-full bg-orange-500" />
+            <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
               Suspicious Group
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-purple-500" />
-            <span className="text-[9px] font-mono text-slate-300 uppercase font-bold">
+            <div className="h-2 w-2 rounded-full bg-purple-500" />
+            <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
               Heuristic Match
             </span>
           </div>
         </div>
 
         {/* Scan effect */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-accent-cyan/10 to-transparent h-20 w-full animate-[scan_4s_linear_infinite] pointer-events-none" />
+        <div className="via-accent-cyan/10 pointer-events-none absolute inset-0 h-20 w-full animate-[scan_4s_linear_infinite] bg-gradient-to-b from-transparent to-transparent" />
       </div>
 
       {/* Bottom Terminal */}
       <TerminalLog
-        className="h-40 border-border shadow-2xl"
+        className="border-border h-40 shadow-2xl"
         logs={[
           "[INIT] STARTING CLUSTER DISCOVERY...",
           "[QUERY] FETCHING 4.2M TRANSACTIONS FROM BigQuery...",

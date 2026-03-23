@@ -25,23 +25,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${jetbrainsMono.variable} antialiased font-mono bg-background text-foreground overflow-hidden h-screen w-screen selection:bg-accent-cyan selection:text-black transition-colors duration-300`}
+        className={`${jetbrainsMono.variable} bg-background text-foreground selection:bg-accent-cyan h-screen w-screen overflow-hidden font-mono antialiased transition-colors duration-300 selection:text-black`}
       >
         <QueryProvider>
           <ThemeProvider>
-            <div className="flex h-full w-full relative">
+            <div className="relative flex h-full w-full">
               {/* Global Background Scanline/Grid Effect */}
-              <div className="absolute inset-0 pointer-events-none opacity-[0.03] z-[9999] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
-              
+              <div className="pointer-events-none absolute inset-0 z-[9999] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] opacity-[0.03]" />
+
               <Sidebar />
-              
-              <div className="flex flex-col flex-1 overflow-hidden">
+
+              <div className="flex flex-1 flex-col overflow-hidden">
                 <TopHeader />
-                <main className="flex-1 overflow-y-auto p-10 relative scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                <main className="scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent relative flex-1 overflow-y-auto p-10">
                   {/* Subtle radial gradient to focus content */}
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_var(--background)_100%)] pointer-events-none opacity-40 transition-colors duration-300" />
-                  
-                  <div className="relative z-10 h-full max-w-[1600px] mx-auto">
+                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_var(--background)_100%)] opacity-40 transition-colors duration-300" />
+
+                  <div className="relative z-10 mx-auto h-full max-w-[1600px]">
                     {children}
                   </div>
                 </main>

@@ -15,31 +15,23 @@ export const IndustrialCard: React.FC<IndustrialCardProps> = ({
 }) => {
   return (
     <div
-      className={`
-      relative p-6 bg-surface 
-      border border-slate-200/60 dark:border-slate-800/60 
-      rounded-sm
-      hover:-translate-y-0.5
-      transition-all duration-300 ease-out
-      overflow-hidden 
-      ${className}
-    `}
+      className={`bg-surface relative overflow-hidden rounded-sm border border-slate-200/60 p-6 transition-all duration-300 ease-out hover:-translate-y-0.5 dark:border-slate-800/60 ${className} `}
     >
       {/* 
          Mechanical screw points at corners 
          Simplified for a cleaner "Flat-Industrial" look 
       */}
-      <div className="absolute top-2.5 left-2.5 w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-800 border border-slate-400/20 dark:border-slate-700/50" />
-      <div className="absolute top-2.5 right-2.5 w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-800 border border-slate-400/20 dark:border-slate-700/50" />
-      <div className="absolute bottom-2.5 left-2.5 w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-800 border border-slate-400/20 dark:border-slate-700/50" />
-      <div className="absolute bottom-2.5 right-2.5 w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-800 border border-slate-400/20 dark:border-slate-700/50" />
+      <div className="absolute top-2.5 left-2.5 h-1 w-1 rounded-full border border-slate-400/20 bg-slate-300 dark:border-slate-700/50 dark:bg-slate-800" />
+      <div className="absolute top-2.5 right-2.5 h-1 w-1 rounded-full border border-slate-400/20 bg-slate-300 dark:border-slate-700/50 dark:bg-slate-800" />
+      <div className="absolute bottom-2.5 left-2.5 h-1 w-1 rounded-full border border-slate-400/20 bg-slate-300 dark:border-slate-700/50 dark:bg-slate-800" />
+      <div className="absolute right-2.5 bottom-2.5 h-1 w-1 rounded-full border border-slate-400/20 bg-slate-300 dark:border-slate-700/50 dark:bg-slate-800" />
 
       {/* Very subtle technical grid overlay */}
-      <div className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05] pointer-events-none bg-[radial-gradient(var(--border)_1px,_transparent_0)] bg-[length:20px_20px]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(var(--border)_1px,_transparent_0)] bg-[length:20px_20px] opacity-[0.02] dark:opacity-[0.05]" />
 
       {title && (
-        <div className="mb-4 pb-2 border-b border-border/60">
-          <h3 className="text-[10px] font-mono font-bold tracking-[0.2em] text-accent-cyan uppercase italic">
+        <div className="border-border/60 mb-4 border-b pb-2">
+          <h3 className="text-accent-cyan font-mono text-[10px] font-bold tracking-[0.2em] uppercase italic">
             {title}
           </h3>
         </div>

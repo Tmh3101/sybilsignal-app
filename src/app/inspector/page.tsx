@@ -19,9 +19,9 @@ import {
 const EgoGraph2D = dynamic(() => import("@/components/graph/ego-graph-2d"), {
   ssr: false,
   loading: () => (
-    <div className="h-full w-full flex flex-col items-center justify-center gap-4 bg-black/20">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-black/20">
       <Loader2 className="text-accent-cyan animate-spin" size={32} />
-      <span className="text-[10px] font-mono text-accent-cyan animate-pulse uppercase tracking-[0.2em] font-bold">
+      <span className="text-accent-cyan animate-pulse font-mono text-[10px] font-bold tracking-[0.2em] uppercase">
         INITIALIZING 2D RENDER ENGINE...
       </span>
     </div>
@@ -48,16 +48,16 @@ function InspectorContent() {
 
   if (!walletId) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
-        <div className="p-8 border-2 border-dashed border-border rounded-lg bg-surface/50 max-w-lg text-center">
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <div className="border-border bg-surface/50 max-w-lg rounded-lg border-2 border-dashed p-8 text-center">
           <Activity
-            className="mx-auto mb-4 text-slate-500 animate-pulse"
+            className="mx-auto mb-4 animate-pulse text-slate-500"
             size={48}
           />
-          <h2 className="text-xl font-black italic tracking-tighter uppercase text-foreground mb-2">
+          <h2 className="text-foreground mb-2 text-xl font-black tracking-tighter uppercase italic">
             Awaiting Target Input...
           </h2>
-          <p className="text-sm font-mono text-slate-500 uppercase tracking-widest leading-relaxed">
+          <p className="font-mono text-sm leading-relaxed tracking-widest text-slate-500 uppercase">
             Please enter a wallet address or handle in the search bar above to
             begin risk assessment.
           </p>
@@ -68,14 +68,14 @@ function InspectorContent() {
 
   if (isLoading) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-6">
+      <div className="flex h-full flex-col items-center justify-center gap-6">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="text-accent-cyan animate-spin" size={48} />
           <div className="flex flex-col items-center">
-            <span className="text-sm font-mono text-accent-cyan animate-pulse uppercase tracking-[0.2em] font-bold">
+            <span className="text-accent-cyan animate-pulse font-mono text-sm font-bold tracking-[0.2em] uppercase">
               [SYS] Waking up AI Core...
             </span>
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-1">
+            <span className="mt-1 font-mono text-[10px] tracking-widest text-slate-500 uppercase">
               Warming up tensors & loading local graph
             </span>
           </div>
@@ -86,13 +86,13 @@ function InspectorContent() {
 
   if (isError) {
     return (
-      <div className="h-full flex flex-col items-center justify-center gap-4">
-        <div className="p-8 border-2 border-accent-red/20 rounded-lg bg-accent-red/5 max-w-lg text-center">
-          <AlertTriangle className="mx-auto mb-4 text-accent-red" size={48} />
-          <h2 className="text-xl font-black italic tracking-tighter uppercase text-accent-red mb-2">
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <div className="border-accent-red/20 bg-accent-red/5 max-w-lg rounded-lg border-2 p-8 text-center">
+          <AlertTriangle className="text-accent-red mx-auto mb-4" size={48} />
+          <h2 className="text-accent-red mb-2 text-xl font-black tracking-tighter uppercase italic">
             [ERR] Failed to Fetch Target Data
           </h2>
-          <p className="text-sm font-mono text-slate-500 uppercase tracking-widest leading-relaxed">
+          <p className="font-mono text-sm leading-relaxed tracking-widest text-slate-500 uppercase">
             The sybil engine encountered an error while analyzing the target.
             Please verify the ID and try again.
           </p>
@@ -107,10 +107,10 @@ function InspectorContent() {
   const colorClass = getClassificationColor(analysis?.classification || "");
 
   return (
-    <div className="flex flex-col gap-6 h-full">
-      <div className="flex items-center justify-between mb-2">
+    <div className="flex h-full flex-col gap-6">
+      <div className="mb-2 flex items-center justify-between">
         <div className="flex flex-col">
-          <h2 className="text-3xl font-black tracking-tighter text-foreground italic uppercase">
+          <h2 className="text-foreground text-3xl font-black tracking-tighter uppercase italic">
             Profile <span className="text-accent-cyan">Inspector</span>
           </h2>
           <span className="text-subtle">
@@ -118,28 +118,28 @@ function InspectorContent() {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <div className="px-4 py-2 bg-surface border border-border rounded-sm text-xs font-mono">
+          <div className="bg-surface border-border rounded-sm border px-4 py-2 font-mono text-xs">
             ID:{" "}
             <span className="text-accent-cyan font-bold uppercase">
               {walletId.slice(0, 6)}...{walletId.slice(-4)}
             </span>
           </div>
-          <button className="px-6 py-2 bg-accent-red text-white dark:text-black font-black text-xs uppercase tracking-widest hover:brightness-110 transition-all rounded-sm italic shadow-lg">
+          <button className="bg-accent-red rounded-sm px-6 py-2 text-xs font-black tracking-widest text-white uppercase italic shadow-lg transition-all hover:brightness-110 dark:text-black">
             QUARANTINE
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-6 flex-1 min-h-0">
+      <div className="grid min-h-0 flex-1 grid-cols-12 gap-6">
         {/* Left Column: Risk Score & Logs */}
         <div className="col-span-3 flex flex-col gap-6 overflow-hidden">
           <IndustrialCard
             title="RISK_SCORE_GAUGE"
             className="flex flex-col items-center"
           >
-            <div className="relative w-48 h-48 flex items-center justify-center">
+            <div className="relative flex h-48 w-48 items-center justify-center">
               {/* SVG Gauge */}
-              <svg className="w-full h-full transform -rotate-90">
+              <svg className="h-full w-full -rotate-90 transform">
                 <circle
                   cx="96"
                   cy="96"
@@ -164,29 +164,29 @@ function InspectorContent() {
               </svg>
               <div className="absolute flex flex-col items-center">
                 <span
-                  className={`text-5xl font-black italic tracking-tighter ${colorClass}`}
+                  className={`text-5xl font-black tracking-tighter italic ${colorClass}`}
                 >
                   {Math.round(prob)}%
                 </span>
-                <span className="text-subtle -mt-1 uppercase tracking-widest text-[10px] font-bold">
+                <span className="text-subtle -mt-1 text-[10px] font-bold tracking-widest uppercase">
                   {analysis?.classification}
                 </span>
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-4 w-full">
-              <div className="flex flex-col items-center p-2 bg-surface-secondary/30 border border-border shadow-inner">
-                <span className="text-[8px] text-slate-500 uppercase font-bold">
+            <div className="mt-4 grid w-full grid-cols-2 gap-4">
+              <div className="bg-surface-secondary/30 border-border flex flex-col items-center border p-2 shadow-inner">
+                <span className="text-[8px] font-bold text-slate-500 uppercase">
                   Classification
                 </span>
                 <span className={`text-xs font-bold ${colorClass}`}>
                   {analysis?.classification}
                 </span>
               </div>
-              <div className="flex flex-col items-center p-2 bg-surface-secondary/30 border border-border shadow-inner">
-                <span className="text-[8px] text-slate-500 uppercase font-bold">
+              <div className="bg-surface-secondary/30 border-border flex flex-col items-center border p-2 shadow-inner">
+                <span className="text-[8px] font-bold text-slate-500 uppercase">
                   Certainty
                 </span>
-                <span className="text-xs font-bold text-accent-cyan">
+                <span className="text-accent-cyan text-xs font-bold">
                   {prob > 50 ? Math.round(prob) : Math.round(100 - prob)}%
                 </span>
               </div>
@@ -195,7 +195,7 @@ function InspectorContent() {
 
           <IndustrialCard
             title="LIVE_DETECTION_STREAM"
-            className="flex-1 min-h-0 p-0"
+            className="min-h-0 flex-1 p-0"
           >
             <TerminalLog
               className="h-full border-0 bg-transparent"
@@ -206,10 +206,10 @@ function InspectorContent() {
 
         {/* Middle Column: Ego Graph */}
         <div className="col-span-6">
-          <div className="h-full w-full bg-[#050608] border border-border rounded-sm relative overflow-hidden group shadow-2xl">
+          <div className="border-border group relative h-full w-full overflow-hidden rounded-sm border bg-[#050608] shadow-2xl">
             {/* Background Grid - Visible on dark screen */}
-            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 pointer-events-none" />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none" />
+            <div className="pointer-events-none absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px] opacity-20" />
 
             {/* Live 2D Ego Graph */}
             <EgoGraph2D
@@ -219,20 +219,20 @@ function InspectorContent() {
             />
 
             {/* Overlays */}
-            <div className="absolute top-4 left-4 flex gap-2 pointer-events-none">
-              <div className="px-2 py-1 bg-black/80 border border-slate-700 text-[9px] font-mono text-accent-cyan uppercase font-bold">
+            <div className="pointer-events-none absolute top-4 left-4 flex gap-2">
+              <div className="text-accent-cyan border border-slate-700 bg-black/80 px-2 py-1 font-mono text-[9px] font-bold uppercase">
                 EGO_GRAPH_v3_CANVAS
               </div>
-              <div className="px-2 py-1 bg-black/80 border border-slate-700 text-[9px] font-mono text-slate-400 uppercase">
+              <div className="border border-slate-700 bg-black/80 px-2 py-1 font-mono text-[9px] text-slate-400 uppercase">
                 REAL_TIME_2D_VIEW
               </div>
             </div>
 
-            <div className="absolute bottom-4 right-4 flex flex-col gap-1 items-end pointer-events-none">
-              <span className="text-[8px] font-mono text-slate-500 uppercase font-bold">
+            <div className="pointer-events-none absolute right-4 bottom-4 flex flex-col items-end gap-1">
+              <span className="font-mono text-[8px] font-bold text-slate-500 uppercase">
                 Node Connections: {data?.local_graph?.nodes?.length || 0}
               </span>
-              <span className="text-[8px] font-mono text-slate-500 uppercase font-bold">
+              <span className="font-mono text-[8px] font-bold text-slate-500 uppercase">
                 Network Depth: 4
               </span>
             </div>
@@ -242,47 +242,47 @@ function InspectorContent() {
         {/* Right Column: Profile Data */}
         <div className="col-span-3 flex flex-col gap-6 overflow-hidden">
           <IndustrialCard title="ENTITY_IDENTITY">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-surface-secondary border-2 border-border rounded-sm flex items-center justify-center relative overflow-hidden group shadow-inner">
+            <div className="mb-6 flex items-center gap-4">
+              <div className="bg-surface-secondary border-border group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-sm border-2 shadow-inner">
                 {profile?.picture_url ? (
                   <Image
                     src={profile.picture_url}
                     alt={profile.handle}
                     width={64}
                     height={64}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                   />
                 ) : (
                   <User
                     size={32}
-                    className="text-slate-400 group-hover:text-accent-cyan transition-colors"
+                    className="group-hover:text-accent-cyan text-slate-400 transition-colors"
                   />
                 )}
-                <div className="absolute inset-0 bg-accent-cyan/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="bg-accent-cyan/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" />
               </div>
               <div className="flex flex-col">
                 <span className="text-subtle tracking-tighter">Alias</span>
-                <span className="text-lg font-black text-foreground italic uppercase truncate max-w-[180px]">
+                <span className="text-foreground max-w-[180px] truncate text-lg font-black uppercase italic">
                   {profile?.handle || "UNKNOWN_ENTITY"}
                 </span>
               </div>
             </div>
 
             <div className="space-y-4">
-              <div className="flex justify-between items-center p-3 bg-surface-secondary/20 border border-border rounded-sm shadow-sm">
+              <div className="bg-surface-secondary/20 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Wallet size={14} className="text-slate-400" />
-                  <span className="text-[10px] text-slate-500 uppercase font-mono font-bold">
+                  <span className="font-mono text-[10px] font-bold text-slate-500 uppercase">
                     Owner
                   </span>
                 </div>
-                <span className="text-xs font-mono text-accent-cyan font-bold">
+                <span className="text-accent-cyan font-mono text-xs font-bold">
                   {profile?.owned_by
                     ? `${profile.owned_by.slice(0, 6)}...${profile.owned_by.slice(-4)}`
                     : "N/A"}
                 </span>
               </div>
-              <div className="flex justify-between items-center p-3 bg-surface-secondary/20 border border-border rounded-sm shadow-sm">
+              <div className="bg-surface-secondary/20 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <ShieldCheck
                     size={14}
@@ -290,22 +290,22 @@ function InspectorContent() {
                       prob > 70 ? "text-accent-red" : "text-accent-green"
                     }
                   />
-                  <span className="text-[10px] text-slate-500 uppercase font-mono font-bold">
+                  <span className="font-mono text-[10px] font-bold text-slate-500 uppercase">
                     Risk Level
                   </span>
                 </div>
-                <span className={`text-xs font-mono font-bold ${colorClass}`}>
+                <span className={`font-mono text-xs font-bold ${colorClass}`}>
                   {analysis?.classification}
                 </span>
               </div>
-              <div className="flex justify-between items-center p-3 bg-surface-secondary/20 border border-border rounded-sm shadow-sm">
+              <div className="bg-surface-secondary/20 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Activity size={14} className="text-accent-cyan" />
-                  <span className="text-[10px] text-slate-500 uppercase font-mono font-bold">
+                  <span className="font-mono text-[10px] font-bold text-slate-500 uppercase">
                     Status
                   </span>
                 </div>
-                <span className="text-xs font-mono text-accent-cyan font-bold uppercase">
+                <span className="text-accent-cyan font-mono text-xs font-bold uppercase">
                   {isLoading ? "Analyzing" : "Processed"}
                 </span>
               </div>
@@ -314,18 +314,18 @@ function InspectorContent() {
 
           <IndustrialCard title="DETECTION_METRICS" className="flex-1">
             <div className="space-y-4">
-              <div className="p-3 bg-surface-secondary/20 border border-border rounded-sm">
-                <div className="flex justify-between mb-2">
-                  <span className="text-[9px] font-mono text-slate-500 font-bold uppercase">
+              <div className="bg-surface-secondary/20 border-border rounded-sm border p-3">
+                <div className="mb-2 flex justify-between">
+                  <span className="font-mono text-[9px] font-bold text-slate-500 uppercase">
                     Sybil Probability
                   </span>
                   <span
-                    className={`text-[9px] font-bold font-mono ${colorClass}`}
+                    className={`font-mono text-[9px] font-bold ${colorClass}`}
                   >
                     {Math.round(prob)}%
                   </span>
                 </div>
-                <div className="w-full h-1.5 bg-background overflow-hidden rounded-full border border-border">
+                <div className="bg-background border-border h-1.5 w-full overflow-hidden rounded-full border">
                   <div
                     className={`h-full transition-all duration-1000 ease-out ${prob > 70 ? "bg-accent-red" : prob > 30 ? "bg-orange-500" : "bg-accent-green"}`}
                     style={{ width: `${prob}%` }}
@@ -334,7 +334,7 @@ function InspectorContent() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <span className="text-[9px] font-mono text-slate-500 font-bold uppercase px-1">
+                <span className="px-1 font-mono text-[9px] font-bold text-slate-500 uppercase">
                   Reasoning Tokens:
                 </span>
                 <div className="flex flex-wrap gap-2">
@@ -346,7 +346,7 @@ function InspectorContent() {
                     return (
                       <span
                         key={i}
-                        className="px-2 py-0.5 bg-surface-secondary border border-border text-[8px] font-mono text-slate-400 uppercase"
+                        className="bg-surface-secondary border-border border px-2 py-0.5 font-mono text-[8px] text-slate-400 uppercase"
                       >
                         {tag}
                       </span>
@@ -366,9 +366,9 @@ export default function InspectorPage() {
   return (
     <Suspense
       fallback={
-        <div className="h-full flex flex-col items-center justify-center gap-6">
+        <div className="flex h-full flex-col items-center justify-center gap-6">
           <Loader2 className="text-accent-cyan animate-spin" size={48} />
-          <span className="text-sm font-mono text-accent-cyan animate-pulse uppercase tracking-[0.2em] font-bold">
+          <span className="text-accent-cyan animate-pulse font-mono text-sm font-bold tracking-[0.2em] uppercase">
             [SYS] INITIALIZING MODULE...
           </span>
         </div>
