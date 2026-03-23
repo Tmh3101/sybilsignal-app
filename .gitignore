@@ -41,7 +41,7 @@ Thumbs.db
 *.swp
 *.swo
 
-.agents/
+# .agents/
 
 # Gemini CLI / Agents (Optional: keep if you want to sync prompts, ignore if temp)
 # .agents/tasks/*.log
