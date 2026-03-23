@@ -1,8 +1,35 @@
 "use client";
 
-import { Terminal, ShieldCheck, Cpu, Power, Sun, Moon } from "lucide-react";
+import { Terminal, ShieldCheck, Cpu, Power, Sun, Moon, Search } from "lucide-react";
 import { useThemeStore } from "@/store/theme-store";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
+const SearchForm = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [searchValue, setSearchValue] = useState(searchParams.get("wallet") || "");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchValue.trim()) {
+      router.push(`/inspector?wallet=${searchValue.trim()}`);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSearch} className="flex-1 max-w-md mx-8 relative group">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-accent-cyan transition-colors" size={16} />
+      <input
+        type="text"
+        placeholder="ENTER WALLET_ID OR HANDLE..."
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        className="w-full bg-background border border-border px-10 py-2 text-xs font-mono uppercase tracking-widest focus:outline-none focus:border-accent-cyan focus:ring-1 focus:ring-accent-cyan/20 transition-all placeholder:text-slate-600 rounded-sm"
+      />
+    </form>
+  );
+};
 
 export const TopHeader = () => {
   const { theme, toggleTheme } = useThemeStore();
@@ -37,6 +64,10 @@ export const TopHeader = () => {
           </div>
         </div>
       </div>
+
+      <Suspense fallback={<div className="flex-1 max-w-md mx-8 h-10 bg-surface-secondary/50 animate-pulse rounded-sm" />}>
+        <SearchForm />
+      </Suspense>
 
       <div className="flex items-center gap-8">
         {mounted && (

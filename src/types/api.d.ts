@@ -1,3 +1,33 @@
+export interface ProfileInfo {
+  id: string;
+  handle: string;
+  picture_url: string;
+  owned_by: string;
+}
+
+export interface InferenceReasoning {
+  type: string; // e.g., "SIM_BIO", "PATTERN_XYZ"
+  description: string;
+  severity: "low" | "medium" | "high" | "critical";
+}
+
+export interface Analysis {
+  sybil_probability: number;
+  classification: "BENIGN" | "WARNING" | "SYBIL";
+  reasoning: string[];
+}
+
+export interface LocalGraph {
+  nodes: any[]; // Detailed in Task 3
+  links: any[];
+}
+
+export interface InspectorResponse {
+  profile_info: ProfileInfo;
+  analysis: Analysis;
+  local_graph: LocalGraph;
+}
+
 export interface SybilNode {
   id: string;
   label: string;
@@ -16,21 +46,4 @@ export interface SybilEdge {
   target: string;
   type: "comment" | "follow" | "upvote" | "transfer";
   weight: number;
-}
-
-export interface InferenceReasoning {
-  type: string; // e.g., "SIM_BIO", "PATTERN_XYZ"
-  description: string;
-  severity: "low" | "medium" | "high" | "critical";
-}
-
-export interface InspectorResponse {
-  profile_id: string;
-  final_probability: number;
-  classification: "SYBIL" | "HUMAN" | "SUSPICIOUS";
-  reasoning: InferenceReasoning[];
-  local_graph: {
-    nodes: SybilNode[];
-    links: SybilEdge[];
-  };
 }
