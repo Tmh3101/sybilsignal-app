@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopHeader } from "@/components/layout/top-header";
 
@@ -47,6 +48,12 @@ export default function RootLayout({
                 </main>
               </div>
             </div>
+            <Toaster 
+              theme="dark" 
+              toastOptions={{ 
+                className: 'bg-slate-950 border border-slate-800 text-accent-cyan font-mono rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,0.3)]' 
+              }} 
+            />
           </ThemeProvider>
         </QueryProvider>
       </body>

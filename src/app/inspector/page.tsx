@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useInspectProfile } from "@/hooks/use-sybil-inference";
 import { IndustrialCard } from "@/components/ui/industrial-card";
 import { TerminalLog } from "@/components/ui/terminal-log";
+import { BootSequenceLoader } from "@/components/ui/boot-sequence-loader";
 import Image from "next/image";
 import {
   Wallet,
@@ -14,6 +15,7 @@ import {
   Activity,
   AlertTriangle,
   Loader2,
+  Radar,
 } from "lucide-react";
 
 const EgoGraph2D = dynamic(() => import("@/components/graph/ego-graph-2d"), {
@@ -48,40 +50,45 @@ function InspectorContent() {
 
   if (!walletId) {
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-4">
-        <div className="border-border bg-surface/50 max-w-lg rounded-lg border-2 border-dashed p-8 text-center">
-          <Activity
-            className="mx-auto mb-4 animate-pulse text-slate-500"
-            size={48}
-          />
-          <h2 className="text-foreground mb-2 text-xl font-black tracking-tighter uppercase italic">
-            Awaiting Target Input...
-          </h2>
-          <p className="font-mono text-sm leading-relaxed tracking-widest text-slate-500 uppercase">
-            Please enter a wallet address or handle in the search bar above to
-            begin risk assessment.
-          </p>
+      <div className="flex h-full flex-col items-center justify-center">
+        <div className="relative flex h-[500px] w-full max-w-2xl flex-col items-center justify-center overflow-hidden rounded-sm border border-slate-800 bg-slate-950/50 shadow-2xl">
+          <div className="absolute inset-0 opacity-10">
+            <div className="h-full w-full bg-[radial-gradient(circle_at_center,var(--accent-cyan)_0%,transparent_70%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px]" />
+          </div>
+
+          <div className="relative flex flex-col items-center gap-6">
+            <div className="relative">
+              <Radar className="text-slate-700" size={120} strokeWidth={1} />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-2 w-2 animate-ping rounded-full bg-accent-cyan/50" />
+              </div>
+            </div>
+            
+            <div className="flex flex-col items-center text-center">
+              <h2 className="mb-2 text-2xl font-black tracking-tighter text-slate-400 uppercase italic">
+                [ SYSTEM STANDBY ]
+              </h2>
+              <div className="flex items-center gap-3">
+                <span className="h-[1px] w-8 bg-slate-800" />
+                <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan/60 uppercase">
+                  Awaiting Target Input
+                </p>
+                <span className="h-[1px] w-8 bg-slate-800" />
+              </div>
+            </div>
+          </div>
+
+          <div className="absolute bottom-8 font-mono text-[8px] tracking-widest text-slate-600 uppercase">
+            Radar Module v2.4 // Passive Scan Mode Active
+          </div>
         </div>
       </div>
     );
   }
 
   if (isLoading) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center gap-6">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="text-accent-cyan animate-spin" size={48} />
-          <div className="flex flex-col items-center">
-            <span className="text-accent-cyan animate-pulse font-mono text-sm font-bold tracking-[0.2em] uppercase">
-              [SYS] Waking up AI Core...
-            </span>
-            <span className="mt-1 font-mono text-[10px] tracking-widest text-slate-500 uppercase">
-              Warming up tensors & loading local graph
-            </span>
-          </div>
-        </div>
-      </div>
-    );
+    return <BootSequenceLoader />;
   }
 
   if (isError) {
@@ -124,7 +131,7 @@ function InspectorContent() {
               {walletId.slice(0, 6)}...{walletId.slice(-4)}
             </span>
           </div>
-          <button className="bg-accent-red rounded-sm px-6 py-2 text-xs font-black tracking-widest text-white uppercase italic shadow-lg transition-all hover:brightness-110 dark:text-black">
+          <button className="bg-accent-red rounded-sm px-6 py-2 text-xs font-black tracking-widest text-white uppercase italic shadow-lg transition-all hover:brightness-110 active:shadow-neo-concave active:translate-y-0.5 dark:text-black">
             QUARANTINE
           </button>
         </div>

@@ -107,3 +107,12 @@ h6 {
 .text-subtle {
   @apply font-mono text-[10px] tracking-widest text-slate-500 uppercase dark:text-slate-400;
 }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}

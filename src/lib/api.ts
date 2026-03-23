@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -14,6 +15,12 @@ apiClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    const errorMessage = error.response?.data?.error || error.message || "UNKNOWN_SYSTEM_ERROR";
+    
+    toast.error(`[SYS_ERR] ${errorMessage.toUpperCase()}`, {
+      description: `TIME: ${new Date().toISOString()}`,
+    });
+
     console.error("API Error:", error.response?.data || error.message);
     return Promise.reject(error);
   }

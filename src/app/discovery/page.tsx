@@ -122,7 +122,7 @@ export default function DiscoveryPage() {
             </label>
             <input
               type="date"
-              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner outline-none"
+              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner outline-none transition-all disabled:opacity-50"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               disabled={!!isProcessing}
@@ -134,7 +134,7 @@ export default function DiscoveryPage() {
             </label>
             <input
               type="date"
-              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner outline-none"
+              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner outline-none transition-all disabled:opacity-50"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               disabled={!!isProcessing}
@@ -146,14 +146,14 @@ export default function DiscoveryPage() {
             </label>
             <input
               type="number"
-              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-24 rounded-sm border p-2 font-mono text-xs shadow-inner outline-none"
+              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-24 rounded-sm border p-2 font-mono text-xs shadow-inner outline-none transition-all disabled:opacity-50"
               value={maxNodes}
               onChange={(e) => setMaxNodes(Number(e.target.value))}
               disabled={!!isProcessing}
             />
           </div>
           <button
-            className={`group relative flex flex-1 items-center justify-center gap-3 overflow-hidden rounded-sm py-2.5 font-black text-white shadow-lg transition-all hover:brightness-110 dark:text-black ${isProcessing ? "cursor-not-allowed bg-slate-700" : "bg-accent-red"}`}
+            className={`group relative flex flex-1 items-center justify-center gap-3 overflow-hidden rounded-sm py-2.5 font-black text-white shadow-lg transition-all active:shadow-neo-concave active:translate-y-0.5 disabled:translate-y-0 dark:text-black ${isProcessing ? "cursor-not-allowed bg-slate-700 shadow-none grayscale" : "bg-accent-red hover:brightness-110 active:shadow-inner"}`}
             onClick={handleStart}
             disabled={!!isProcessing}
           >
@@ -174,32 +174,52 @@ export default function DiscoveryPage() {
 
       {/* Cluster Map - Dark Screen for clarity */}
       <div className="border-border relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm border bg-[#050608] shadow-2xl">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1e293b20_0%,_transparent_70%)]" />
+        {/* Background Grid */}
+        <div className="pointer-events-none absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px]" />
+          <div className="h-full w-full bg-[radial-gradient(circle_at_center,_#1e293b20_0%,_transparent_70%)]" />
+        </div>
 
         {statusData?.status === "COMPLETED" && statusData.graph_data ? (
           <ClusterMap2D graphData={statusData.graph_data} />
         ) : (
-          <div className="flex flex-col items-center gap-6">
-            <div className="relative">
-              <div className="border-accent-cyan/20 absolute inset-0 animate-ping rounded-full border duration-[3s]" />
-              <div className="border-accent-cyan/10 absolute inset-[-20px] animate-ping rounded-full border duration-[5s]" />
-              <div className="border-accent-cyan/30 flex h-48 w-48 animate-[spin_20s_linear_infinite] items-center justify-center rounded-full border-2 border-dashed">
-                <div className="border-accent-cyan/50 border-t-accent-cyan flex h-32 w-32 animate-spin items-center justify-center rounded-full border">
-                  <Database size={32} className="text-accent-cyan opacity-50" />
+          <div className="relative flex flex-col items-center gap-6">
+            {!taskId && !isProcessing ? (
+               <div className="flex flex-col items-center text-center">
+                 <div className="mb-6 flex h-24 w-24 items-center justify-center border border-slate-800 bg-slate-900/50 text-slate-700">
+                    <Database size={40} />
+                 </div>
+                 <h2 className="mb-2 text-xl font-black tracking-tighter text-slate-500 uppercase italic">
+                    [ NO SCAN DATA ]
+                 </h2>
+                 <p className="max-w-xs font-mono text-[10px] leading-relaxed tracking-widest text-slate-600 uppercase">
+                    Select time range & max nodes to begin network scanning.
+                 </p>
+               </div>
+            ) : (
+              <>
+                <div className="relative">
+                  <div className="border-accent-cyan/20 absolute inset-0 animate-ping rounded-full border duration-[3s]" />
+                  <div className="border-accent-cyan/10 absolute inset-[-20px] animate-ping rounded-full border duration-[5s]" />
+                  <div className="border-accent-cyan/30 flex h-48 w-48 animate-[spin_20s_linear_infinite] items-center justify-center rounded-full border-2 border-dashed">
+                    <div className="border-accent-cyan/50 border-t-accent-cyan flex h-32 w-32 animate-spin items-center justify-center rounded-full border">
+                      <Database size={32} className="text-accent-cyan opacity-50" />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-accent-cyan font-mono text-sm font-bold tracking-[0.3em] uppercase italic">
-                {isProcessing ? "SCANNING_NETWORK..." : "AWAITING_PROTOCOLS..."}
-              </span>
-              {statusData && (
-                <span className="font-mono text-[10px] text-slate-500 uppercase">
-                  Progress: {statusData.progress}% | Step:{" "}
-                  {statusData.current_step}
-                </span>
-              )}
-            </div>
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-accent-cyan font-mono text-sm font-bold tracking-[0.3em] uppercase italic">
+                    {isProcessing ? "SCANNING_NETWORK..." : "AWAITING_PROTOCOLS..."}
+                  </span>
+                  {statusData && (
+                    <span className="font-mono text-[10px] text-slate-500 uppercase">
+                      Progress: {statusData.progress}% | Step:{" "}
+                      {statusData.current_step}
+                    </span>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
 
