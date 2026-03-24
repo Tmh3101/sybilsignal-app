@@ -41,7 +41,7 @@ const SearchForm = () => {
       />
       <input
         type="text"
-        placeholder="ENTER WALLET_ID OR HANDLE..."
+        placeholder="ENTER PROFILE_ID..."
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
         className="bg-background border-border focus:border-accent-cyan focus:ring-accent-cyan/20 w-full rounded-sm border px-10 py-2 font-mono text-xs tracking-widest uppercase transition-all placeholder:text-slate-600 focus:ring-1 focus:outline-none"
@@ -268,21 +268,12 @@ function InspectorContent() {
             />
 
             {/* Overlays */}
-            <div className="pointer-events-none absolute top-4 left-4 flex gap-2">
-              <div className="text-accent-cyan bg-surface/80 border-border border px-2 py-1 font-mono text-[9px] font-bold uppercase backdrop-blur-sm">
-                EGO_GRAPH_v3_CANVAS
-              </div>
-              <div className="bg-surface/80 border-border text-subtle border px-2 py-1 font-mono text-[9px] uppercase backdrop-blur-sm">
-                REAL_TIME_2D_VIEW
-              </div>
-            </div>
-
             <div className="pointer-events-none absolute right-4 bottom-4 flex flex-col items-end gap-1">
               <span className="text-subtle font-mono text-[8px] font-bold uppercase">
                 Node Connections: {data?.local_graph?.nodes?.length || 0}
               </span>
               <span className="text-subtle font-mono text-[8px] font-bold uppercase">
-                Network Depth: 4
+                Network Depth: 2
               </span>
             </div>
           </div>

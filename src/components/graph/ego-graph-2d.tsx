@@ -78,7 +78,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
             <div class="text-accent-cyan font-bold mb-1">${node.label || node.id}</div>
             <div class="flex justify-between gap-4">
               <span class="text-slate-500">TRUST_SCORE</span>
-              <span class="${node.trust_score < 3 ? "text-accent-red" : "text-accent-green"}">${node.trust_score.toFixed(2)}</span>
+              <span class="${(node.trust_score ?? 0) < 3 ? "text-accent-red" : "text-accent-green"}">${(node.trust_score ?? 0).toFixed(2)}</span>
             </div>
             ${node.is_sybil ? '<div class="text-accent-red font-bold mt-1">[SYBIL_DETECTED]</div>' : ""}
           </div>

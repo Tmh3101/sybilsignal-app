@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { IndustrialCard } from "@/components/ui/industrial-card";
 import { TerminalLog } from "@/components/ui/terminal-log";
@@ -18,7 +18,7 @@ const ClusterMap2D = dynamic(
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="text-accent-cyan animate-spin" size={40} />
         <span className="animate-pulse font-mono text-xs tracking-widest text-slate-500 uppercase italic">
-          Loading_Cluster_Map_Engine...
+          Loading Cluster Map Engine...
         </span>
       </div>
     ),
@@ -30,6 +30,53 @@ export default function DiscoveryPage() {
   const [startDate, setStartDate] = useState("2026-03-01");
   const [endDate, setEndDate] = useState("2026-03-23");
   const [maxNodes, setMaxNodes] = useState(1000);
+
+  const startPickerRef = useRef<HTMLInputElement>(null);
+  const endPickerRef = useRef<HTMLInputElement>(null);
+
+  // Helper: YYYY-MM-DD -> DD/MM/YYYY
+  const toDisplayDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    const parts = dateStr.split("-");
+    if (parts.length !== 3) return dateStr;
+    const [y, m, d] = parts;
+    return `${d}/${m}/${y}`;
+  };
+
+  // Improved approach: Separate display state for inputs
+  const [startDisplay, setStartDisplay] = useState(toDisplayDate(startDate));
+  const [endDisplay, setEndDisplay] = useState(toDisplayDate(endDate));
+
+  const onDateInput = (
+    val: string,
+    setDisplay: (v: string) => void,
+    setActual: (v: string) => void
+  ) => {
+    const clean = val.replace(/[^\d]/g, "");
+    let formatted = clean;
+    if (clean.length > 2) formatted = clean.slice(0, 2) + "/" + clean.slice(2);
+    if (clean.length > 4)
+      formatted =
+        clean.slice(0, 2) + "/" + clean.slice(2, 4) + "/" + clean.slice(4, 8);
+
+    setDisplay(formatted);
+
+    if (clean.length === 8) {
+      const d = clean.slice(0, 2);
+      const m = clean.slice(2, 4);
+      const y = clean.slice(4, 8);
+      setActual(`${y}-${m}-${d}`);
+    }
+  };
+
+  const onPickerChange = (
+    val: string,
+    setDisplay: (v: string) => void,
+    setActual: (v: string) => void
+  ) => {
+    setActual(val);
+    setDisplay(toDisplayDate(val));
+  };
 
   const startDiscovery = useStartDiscovery();
   const { data: statusData } = useDiscoveryStatus(taskId);
@@ -120,25 +167,70 @@ export default function DiscoveryPage() {
             <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
               <Calendar size={12} /> Start Date
             </label>
-            <input
-              type="date"
-              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              disabled={!!isProcessing}
-            />
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                placeholder="DD/MM/YYYY"
+                className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                value={startDisplay}
+                onChange={(e) =>
+                  onDateInput(e.target.value, setStartDisplay, setStartDate)
+                }
+                disabled={!!isProcessing}
+              />
+              <button
+                type="button"
+                className="hover:text-accent-cyan absolute right-2 text-slate-500 transition-colors"
+                onClick={() => startPickerRef.current?.showPicker()}
+                disabled={!!isProcessing}
+              >
+                <Calendar size={16} />
+              </button>
+              <input
+                ref={startPickerRef}
+                type="date"
+                className="pointer-events-none absolute inset-0 opacity-0"
+                onChange={(e) =>
+                  onPickerChange(e.target.value, setStartDisplay, setStartDate)
+                }
+                value={startDate}
+              />
+            </div>
           </div>
+
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
               <Calendar size={12} /> End Date
             </label>
-            <input
-              type="date"
-              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              disabled={!!isProcessing}
-            />
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                placeholder="DD/MM/YYYY"
+                className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                value={endDisplay}
+                onChange={(e) =>
+                  onDateInput(e.target.value, setEndDisplay, setEndDate)
+                }
+                disabled={!!isProcessing}
+              />
+              <button
+                type="button"
+                className="hover:text-accent-cyan absolute right-2 text-slate-500 transition-colors"
+                onClick={() => endPickerRef.current?.showPicker()}
+                disabled={!!isProcessing}
+              >
+                <Calendar size={16} />
+              </button>
+              <input
+                ref={endPickerRef}
+                type="date"
+                className="pointer-events-none absolute inset-0 opacity-0"
+                onChange={(e) =>
+                  onPickerChange(e.target.value, setEndDisplay, setEndDate)
+                }
+                value={endDate}
+              />
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
@@ -211,8 +303,8 @@ export default function DiscoveryPage() {
                 <div className="flex flex-col items-center gap-1">
                   <span className="text-accent-cyan font-mono text-sm font-bold tracking-[0.3em] uppercase italic">
                     {isProcessing
-                      ? "SCANNING_NETWORK..."
-                      : "AWAITING_PROTOCOLS..."}
+                      ? "SCANNING NETWORK..."
+                      : "AWAITING PROTOCOLS..."}
                   </span>
                   {statusData && (
                     <span className="font-mono text-[10px] text-slate-500 uppercase">
