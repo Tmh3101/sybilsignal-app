@@ -99,7 +99,7 @@ export const Sidebar = () => {
               System Interface
             </span>
             <span className="text-accent-cyan font-mono text-[8px] font-bold uppercase italic">
-              {theme === "light" ? "LIGHT_MODE" : "DARK_MODE"}
+              {theme === "light" ? "LIGHT MODE" : "DARK MODE"}
             </span>
           </div>
 
