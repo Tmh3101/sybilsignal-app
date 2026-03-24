@@ -1,28 +1,27 @@
-import axios from "axios";
-import { toast } from "sonner";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-const apiClient = axios.create({
+const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  timeout: 60000,
+  timeout: 30000, // 30s timeout to handle potential Modal Backend Cold Starts
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
   },
 });
 
+// Response Interceptor
 apiClient.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
+    // Return the data directly for easier consumption
     return response.data;
   },
   (error) => {
-    const errorMessage =
-      error.response?.data?.error || error.message || "UNKNOWN_SYSTEM_ERROR";
-
-    toast.error(`[SYS_ERR] ${errorMessage.toUpperCase()}`, {
-      description: `TIME: ${new Date().toISOString()}`,
+    // Log error for debugging and reject to allow UI handling
+    console.error("API Pipeline Error:", {
+      status: error.response?.status,
+      message: error.response?.data?.message || error.message,
+      url: error.config?.url,
     });
-
-    console.error("API Error:", error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
