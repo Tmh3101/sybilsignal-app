@@ -239,7 +239,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         nodeCanvasObjectMode={() => "always"}
         // Link Rendering
         linkColor={(link: LinkObject<ExtendedNode, ExtendedLink>) =>
-          MULTIGRAPH_SCHEMA[link.type]?.color ||
+          (link.type && MULTIGRAPH_SCHEMA[link.type]?.color) ||
           MULTIGRAPH_SCHEMA["UNKNOWN"].color
         }
         linkWidth={(link: LinkObject<ExtendedNode, ExtendedLink>) =>
@@ -254,12 +254,12 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         // Directional Arrows
         linkDirectionalArrowLength={(
           link: LinkObject<ExtendedNode, ExtendedLink>
-        ) => (MULTIGRAPH_SCHEMA[link.type]?.directed ? 3 : 0)}
+        ) => (link.type && MULTIGRAPH_SCHEMA[link.type]?.directed ? 3 : 0)}
         linkDirectionalArrowRelPos={0.5}
         // Particles for activity
         linkDirectionalParticles={(
           link: LinkObject<ExtendedNode, ExtendedLink>
-        ) => (MULTIGRAPH_SCHEMA[link.type]?.directed ? 2 : 0)}
+        ) => (link.type && MULTIGRAPH_SCHEMA[link.type]?.directed ? 2 : 0)}
         linkDirectionalParticleWidth={1.5}
         linkDirectionalParticleSpeed={0.005}
         // Interactive tooltips

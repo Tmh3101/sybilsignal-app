@@ -12,7 +12,7 @@ import {
   Wallet,
   ShieldCheck,
   User,
-  Activity,
+  // Activity,
   AlertTriangle,
   Loader2,
   Radar,
@@ -173,7 +173,7 @@ function InspectorContent() {
               {walletId.slice(0, 6)}...{walletId.slice(-4)}
             </span>
           </div>
-          <button className="bg-accent-red active:shadow-neo-concave rounded-sm px-6 py-2 text-xs font-black tracking-widest text-white uppercase italic shadow-lg transition-all hover:brightness-110 active:translate-y-0.5 dark:text-black">
+          <button className="bg-accent-red rounded-sm px-6 py-2 text-xs font-black tracking-widest text-white uppercase italic shadow-lg transition-all hover:brightness-110 active:translate-y-0.5 dark:text-black">
             QUARANTINE
           </button>
         </div>
@@ -284,7 +284,7 @@ function InspectorContent() {
 
         {/* Right Column: Profile Data */}
         <div className="col-span-3 flex flex-col gap-6 overflow-hidden">
-          <IndustrialCard title="ENTITY_IDENTITY">
+          <IndustrialCard title="ENTITY IDENTITY">
             <div className="mb-6 flex items-center gap-4">
               <div className="bg-surface-secondary border-border group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-sm border-2 shadow-inner transition-colors duration-300">
                 {profile?.picture_url ? (
@@ -341,7 +341,7 @@ function InspectorContent() {
                   {analysis?.classification}
                 </span>
               </div>
-              <div className="bg-surface-secondary/40 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm transition-colors duration-300">
+              {/* <div className="bg-surface-secondary/40 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm transition-colors duration-300">
                 <div className="flex items-center gap-2">
                   <Activity size={14} className="text-accent-cyan" />
                   <span className="text-subtle font-mono text-[10px] font-bold uppercase">
@@ -351,7 +351,7 @@ function InspectorContent() {
                 <span className="text-accent-cyan font-mono text-xs font-bold uppercase">
                   {isLoading ? "Analyzing" : "Processed"}
                 </span>
-              </div>
+              </div> */}
             </div>
           </IndustrialCard>
 

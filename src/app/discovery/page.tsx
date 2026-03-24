@@ -148,7 +148,7 @@ export default function DiscoveryPage() {
       (statusData.status === "PENDING" || statusData.status === "PROCESSING"));
 
   return (
-    <div className="flex h-full flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex flex-col">
           <h2 className="text-foreground text-3xl font-black tracking-tighter uppercase italic">
@@ -269,7 +269,7 @@ export default function DiscoveryPage() {
       </IndustrialCard>
 
       {/* Cluster Map - Dark Screen for clarity */}
-      <div className="border-border relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-sm border bg-[#050608] shadow-2xl">
+      <div className="border-border relative flex min-h-[800px] w-full items-center justify-center overflow-hidden rounded-sm border bg-[#050608] shadow-2xl">
         {/* Background Grid */}
         <div className="pointer-events-none absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:40px_40px]" />
@@ -324,34 +324,41 @@ export default function DiscoveryPage() {
           </div>
         )}
 
-        {/* Legend */}
         {statusData?.status === "COMPLETED" && (
-          <div className="absolute top-6 right-6 z-10 flex flex-col gap-3 border border-slate-700 bg-black/80 p-4 shadow-2xl backdrop-blur-sm">
+          <div className="absolute top-6 left-6 z-10 flex flex-col gap-2 border border-slate-700 bg-black/80 p-4 shadow-2xl backdrop-blur-sm">
             <div className="mb-1 text-[8px] font-bold tracking-[0.2em] text-slate-500 uppercase">
-              Legend
+              Scan Statistics
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[#ff1744] shadow-[0_0_8px_#ff1744]" />
-              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                High Risk Sybil
+            <div className="flex items-center justify-between gap-8">
+              <span className="font-mono text-[10px] text-slate-400 uppercase">
+                K (clusters)
+              </span>
+              <span className="text-accent-cyan font-mono text-[11px] font-bold">
+                {statusData.graph_data?.cluster_count}
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[#00f2ff]" />
-              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                Cluster Engine A
+            <div className="flex items-center justify-between gap-8">
+              <span className="font-mono text-[10px] text-slate-400 uppercase">
+                CLUSTERS FOUND
+              </span>
+              <span className="text-accent-cyan font-mono text-[11px] font-bold">
+                {statusData.graph_data?.cluster_count || 0}
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[#8b5cf6]" />
-              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                Cluster Engine B
+            <div className="flex items-center justify-between gap-8 border-t border-slate-800 pt-1">
+              <span className="font-mono text-[10px] text-slate-400 uppercase">
+                Nodes Found
+              </span>
+              <span className="font-mono text-[11px] font-bold text-white">
+                {statusData.graph_data?.nodes.length || 0}
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="h-2 w-2 rounded-full bg-[#f43f5e]" />
-              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                Cluster Engine C
+            <div className="flex items-center justify-between gap-8">
+              <span className="font-mono text-[10px] text-slate-400 uppercase">
+                Edges Found
+              </span>
+              <span className="font-mono text-[11px] font-bold text-white">
+                {statusData.graph_data?.links.length || 0}
               </span>
             </div>
           </div>

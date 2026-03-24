@@ -14,17 +14,40 @@ interface ClusterMap2DProps {
   };
 }
 
-// Neon color palette for clusters
-const CLUSTER_COLORS = [
-  "#00f2ff", // Cyan
-  "#f43f5e", // Rose/Red
-  "#8b5cf6", // Purple
-  "#fb923c", // Orange
-  "#4ade80", // Green
-  "#e879f9", // Fuchsia
-  "#22d3ee", // Sky
-  "#facc15", // Yellow
-];
+const LABEL_COLORS: Record<string, string> = {
+  "0_BENIGN": "#00f2ff",
+  "1_LOW_RISK": "#4ade80",
+  "2_HIGH_RISK": "#fb923c",
+  "3_MALICIOUS": "#ef4444",
+  UNKNOWN: "#94a3b8",
+};
+
+const RELATION_COLORS: Record<string, string> = {
+  // Follow Layer
+  FOLLOW: "#3b82f6",
+
+  // Interact Layer
+  UPVOTE: "#10b981",
+  REACTION: "#10b981",
+  COMMENT: "#10b981",
+  QUOTE: "#10b981",
+  MIRROR: "#10b981",
+  COLLECT: "#10b981",
+  TIP: "#10b981",
+  INTERACT: "#10b981",
+
+  // Co-Owner Layer
+  "CO-OWNER": "#f97316",
+
+  // Similarity Layer
+  SAME_AVATAR: "#a855f7",
+  FUZZY_HANDLE: "#a855f7",
+  SIM_BIO: "#a855f7",
+  CLOSE_CREATION_TIME: "#a855f7",
+  SIMILARITY: "#a855f7",
+
+  UNKNOWN: "#64748b",
+};
 
 const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
   const fgRef = useRef<ForceGraphMethods<SybilNode, SybilEdge> | undefined>(
@@ -33,10 +56,11 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
-  // Update dimensions based on parent container
+  // Thêm cache cho avatar để tối ưu render giống ego-graph
+  const imgCache = useRef<Record<string, HTMLImageElement>>({});
+
   useEffect(() => {
     if (!containerRef.current) return;
-
     const handleResize = () => {
       if (containerRef.current) {
         setDimensions({
@@ -45,22 +69,89 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
         });
       }
     };
-
     handleResize();
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(containerRef.current);
     return () => resizeObserver.disconnect();
   }, []);
 
+  // Tune D3 Forces for compactness
+  useEffect(() => {
+    if (!fgRef.current) return;
+
+    // Repulsion strength (negative is repulsion) - weaker repulsion means nodes stay closer
+    fgRef.current.d3Force("charge")?.strength(-120);
+
+    // Link distance - shorter distance brings linked nodes together
+    fgRef.current.d3Force("link")?.distance(30);
+
+    // Ensure collision force is active to prevent overlapping
+    // Note: react-force-graph doesn't add 'collide' by default, we can add it
+    // if needed, but let's see if the defaults + our tweaks are enough first.
+    // fgRef.current.d3Force('collide', d3.forceCollide(8));
+  }, [graphData]);
+
   const getNodeColor = useCallback((node: NodeObject<SybilNode>) => {
-    if (node.is_high_risk) return "#ff1744"; // Vivid Red for high risk
-
-    if (node.cluster_id !== undefined) {
-      return CLUSTER_COLORS[node.cluster_id % CLUSTER_COLORS.length];
-    }
-
-    return "#475569"; // Slate-600 default
+    return (node.label && LABEL_COLORS[node.label]) || LABEL_COLORS.UNKNOWN;
   }, []);
+
+  // Custom vẽ Node: bao gồm Avatar và chỉnh size to hơn
+  const drawNode = useCallback(
+    (node: NodeObject<SybilNode>, ctx: CanvasRenderingContext2D) => {
+      // Logic xác định size và color dựa trên label
+      const isMalicious = node.label === "3_MALICIOUS";
+      const size = isMalicious ? 8 : 5;
+      const x = node.x ?? 0;
+      const y = node.y ?? 0;
+      const color = getNodeColor(node);
+
+      // 1. Vẽ Glow (viền mờ) cho node malicious
+      if (isMalicious) {
+        ctx.beginPath();
+        ctx.arc(x, y, size + 3, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "rgba(239, 68, 68, 0.3)";
+        ctx.fill();
+      }
+
+      // 2. Logic load và vẽ Avatar
+      const imgUrl = node.attributes?.picture_url;
+      let img = null;
+      if (imgUrl) {
+        if (imgCache.current[imgUrl]) {
+          img = imgCache.current[imgUrl];
+        } else {
+          const newImg = new Image();
+          newImg.src = imgUrl;
+          newImg.onload = () => {
+            imgCache.current[imgUrl] = newImg;
+          };
+          imgCache.current[imgUrl] = newImg;
+        }
+      }
+
+      // Vẽ nền node (Clip thành hình tròn cho avatar)
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+      ctx.clip();
+
+      if (img && img.complete) {
+        ctx.drawImage(img, x - size, y - size, size * 2, size * 2);
+      } else {
+        ctx.fillStyle = "#1e293b"; // Fallback color
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 3. Vẽ Viền (Stroke) thể hiện màu nhãn
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = isMalicious ? 2 : 1;
+      ctx.stroke();
+    },
+    [getNodeColor]
+  );
 
   return (
     <div ref={containerRef} className="relative h-full w-full bg-black/40">
@@ -70,49 +161,103 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
         height={dimensions.height}
         graphData={graphData}
         backgroundColor="rgba(0,0,0,0)"
-        nodeColor={getNodeColor}
-        nodeVal={(node) => (node.is_high_risk ? 4 : 2)}
-        linkColor={() => "rgba(71, 85, 105, 0.2)"} // Very subtle links
-        linkWidth={0.5}
-        // Performance optimizations for large graphs
+        // --- SỬA CẠNH (LINKS) Ở ĐÂY ---
+        linkColor={(link: SybilEdge) => {
+          const color =
+            (link.edge_type && RELATION_COLORS[link.edge_type]) ||
+            RELATION_COLORS.UNKNOWN;
+          return `${color}CC`; // 0.8 opacity (CC in hex)
+        }}
+        linkWidth={1}
+        // --- SỬA NODE Ở ĐÂY ---
+        nodeCanvasObjectMode={() => "replace"}
+        nodeCanvasObject={drawNode}
         enableNodeDrag={true}
         enableZoomInteraction={true}
         enablePanInteraction={true}
-        // Hide labels for performance
-        nodeLabel={(node: NodeObject<SybilNode>) => `
-          <div class="bg-black/90 border border-slate-700 p-2 font-mono text-[10px] uppercase">
-            <div class="text-accent-cyan font-bold mb-1">CLUSTER_${node.cluster_id}</div>
-            <div class="text-slate-400">ID: ${node.id.slice(0, 8)}...</div>
-            ${node.is_high_risk ? '<div class="text-accent-red font-bold mt-1">[HIGH_RISK_ENTITY]</div>' : ""}
-          </div>
-        `}
-        // Draw glow for high risk nodes on canvas
-        nodeCanvasObjectMode={() => "after"}
-        nodeCanvasObject={(node, ctx, globalScale) => {
-          if (node.is_high_risk) {
-            const x = node.x ?? 0;
-            const y = node.y ?? 0;
-            ctx.beginPath();
-            ctx.arc(x, y, 5 / globalScale, 0, 2 * Math.PI, false);
-            ctx.fillStyle = "rgba(255, 23, 68, 0.3)";
-            ctx.fill();
-          }
+        nodeLabel={(node: NodeObject<SybilNode>) => {
+          const isHighRisk = node.risk_score && node.risk_score >= 0.8;
+          return `
+            <div class="bg-black/95 border border-slate-700 p-3 font-mono text-[10px] shadow-2xl min-w-[200px]">
+              <div class="flex items-center justify-between mb-1">
+                <div class="text-accent-cyan font-bold text-xs">${node.attributes?.handle || "Unknown Handle"}</div>
+                <div class="text-[8px] font-bold text-slate-500 bg-slate-800/50 px-1 rounded uppercase">${node.label || "UNKNOWN"}</div>
+              </div>
+              <div class="text-slate-500 mb-2 break-all">ID: ${node.id}</div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-slate-400">RISK SCORE:</span>
+                <span class="${isHighRisk ? "text-accent-red" : "text-green-500"} font-bold text-sm">
+                  ${(node.risk_score || 0).toFixed(2)}
+                </span>
+              </div>
+              <div class="text-slate-400 border-t border-slate-800 pt-2 italic leading-relaxed">
+                ${node.attributes?.reason || "No reasoning provided."}
+              </div>
+            </div>
+          `;
         }}
       />
 
-      {/* Mini Legend Overlay */}
-      <div className="pointer-events-none absolute bottom-4 left-4 rounded-sm border border-slate-800 bg-black/60 p-2 backdrop-blur-md">
-        <div className="mb-1 flex items-center gap-2">
-          <div className="h-2 w-2 animate-pulse rounded-full bg-[#ff1744]"></div>
-          <span className="font-mono text-[8px] tracking-widest text-slate-400 uppercase">
-            High Risk Entity
-          </span>
+      {/* Legend Overlay */}
+      <div className="absolute top-6 right-6 z-10 flex min-w-[180px] flex-col gap-4 border border-slate-700 bg-black/80 p-4 shadow-2xl backdrop-blur-md">
+        <div className="flex flex-col gap-2">
+          <div className="mb-1 text-[8px] font-bold tracking-[0.2em] text-slate-500 uppercase">
+            Node Map
+          </div>
+          {[
+            {
+              label: "Normal / Benign",
+              color: LABEL_COLORS["0_BENIGN"],
+              key: "0_BENIGN",
+            },
+            {
+              label: "Low Risk Entity",
+              color: LABEL_COLORS["1_LOW_RISK"],
+              key: "1_LOW_RISK",
+            },
+            {
+              label: "High Risk Entity",
+              color: LABEL_COLORS["2_HIGH_RISK"],
+              key: "2_HIGH_RISK",
+            },
+            {
+              label: "Malicious / Sybil",
+              color: LABEL_COLORS["3_MALICIOUS"],
+              key: "3_MALICIOUS",
+            },
+          ].map(({ label, color, key }) => (
+            <div key={key} className="flex items-center gap-3">
+              <div
+                className={`h-2 w-2 rounded-full ${key === "3_MALICIOUS" ? "animate-pulse shadow-[0_0_8px_#ef4444]" : ""}`}
+                style={{ backgroundColor: color }}
+              />
+              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
+                {label}
+              </span>
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-[#00f2ff]"></div>
-          <span className="font-mono text-[8px] tracking-widest text-slate-400 uppercase">
-            Sybil Cluster
-          </span>
+
+        <div className="flex flex-col gap-2 border-t border-slate-800 pt-3">
+          <div className="mb-1 text-[8px] font-bold tracking-[0.2em] text-slate-500 uppercase">
+            Relation Layers
+          </div>
+          {[
+            { label: "Co-Owner", type: "CO-OWNER" },
+            { label: "Follow", type: "FOLLOW" },
+            { label: "Interact", type: "INTERACT" },
+            { label: "Similarity", type: "SIMILARITY" },
+          ].map(({ label, type }) => (
+            <div key={type} className="flex items-center gap-3">
+              <div
+                className="h-0.5 w-3"
+                style={{ backgroundColor: RELATION_COLORS[type] }}
+              />
+              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
+                {label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

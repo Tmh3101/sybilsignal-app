@@ -20,19 +20,22 @@ export interface Analysis {
 export interface SybilNode {
   id: string;
   label: string;
-  trust_score: number;
-  is_sybil: boolean;
+  trust_score?: number;
+  is_sybil?: boolean;
   cluster_id?: number;
-  is_high_risk?: boolean;
+  risk_score?: number;
   x?: number;
   y?: number;
   z?: number;
   attributes: {
+    handle?: string;
+    trust_score?: number;
     follower_count?: number;
     following_count?: number;
     account_age?: string;
     picture_url?: string;
     total_reposts?: number;
+    reason?: string;
     [key: string]: string | number | boolean | undefined;
   };
 }
@@ -40,7 +43,8 @@ export interface SybilNode {
 export interface SybilEdge {
   source: string;
   target: string;
-  type: "comment" | "follow" | "upvote" | "transfer";
+  type?: "comment" | "follow" | "upvote" | "transfer";
+  edge_type?: string;
   weight: number;
 }
 
@@ -74,6 +78,10 @@ export interface DiscoveryStatusResponse {
   status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
   progress: number;
   current_step: string;
-  graph_data: { nodes: SybilNode[]; links: SybilEdge[] } | null;
+  graph_data: {
+    nodes: SybilNode[];
+    links: SybilEdge[];
+    cluster_count?: number;
+  } | null;
   message: string | null;
 }
