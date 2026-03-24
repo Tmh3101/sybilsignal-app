@@ -47,8 +47,21 @@ export default function DiscoveryPage() {
   const [startDisplay, setStartDisplay] = useState(toDisplayDate(startDate));
   const [endDisplay, setEndDisplay] = useState(toDisplayDate(endDate));
 
+  const validateDateRange = (start: string, end: string): string | null => {
+    const s = new Date(start);
+    const e = new Date(end);
+    if (s > e) return "Start date cannot be after end date";
+
+    const diffTime = Math.abs(e.getTime() - s.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    if (diffDays > 7) return "Date range cannot exceed 7 days";
+
+    return null;
+  };
+
   const onDateInput = (
     val: string,
+    isStart: boolean,
     setDisplay: (v: string) => void,
     setActual: (v: string) => void
   ) => {
@@ -65,17 +78,40 @@ export default function DiscoveryPage() {
       const d = clean.slice(0, 2);
       const m = clean.slice(2, 4);
       const y = clean.slice(4, 8);
-      setActual(`${y}-${m}-${d}`);
+      const newActual = `${y}-${m}-${d}`;
+
+      const error = isStart
+        ? validateDateRange(newActual, endDate)
+        : validateDateRange(startDate, newActual);
+
+      if (!error) {
+        setActual(newActual);
+      } else {
+        // Reset display to current valid actual date
+        setTimeout(
+          () => setDisplay(toDisplayDate(isStart ? startDate : endDate)),
+          500
+        );
+      }
     }
   };
 
   const onPickerChange = (
     val: string,
+    isStart: boolean,
     setDisplay: (v: string) => void,
     setActual: (v: string) => void
   ) => {
-    setActual(val);
-    setDisplay(toDisplayDate(val));
+    const error = isStart
+      ? validateDateRange(val, endDate)
+      : validateDateRange(startDate, val);
+
+    if (!error) {
+      setActual(val);
+      setDisplay(toDisplayDate(val));
+    } else {
+      alert(error);
+    }
   };
 
   const startDiscovery = useStartDiscovery();
@@ -180,7 +216,12 @@ export default function DiscoveryPage() {
                 className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
                 value={startDisplay}
                 onChange={(e) =>
-                  onDateInput(e.target.value, setStartDisplay, setStartDate)
+                  onDateInput(
+                    e.target.value,
+                    true,
+                    setStartDisplay,
+                    setStartDate
+                  )
                 }
                 disabled={!!isProcessing}
               />
@@ -197,7 +238,12 @@ export default function DiscoveryPage() {
                 type="date"
                 className="pointer-events-none absolute inset-0 opacity-0"
                 onChange={(e) =>
-                  onPickerChange(e.target.value, setStartDisplay, setStartDate)
+                  onPickerChange(
+                    e.target.value,
+                    true,
+                    setStartDisplay,
+                    setStartDate
+                  )
                 }
                 value={startDate}
               />
@@ -215,7 +261,7 @@ export default function DiscoveryPage() {
                 className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
                 value={endDisplay}
                 onChange={(e) =>
-                  onDateInput(e.target.value, setEndDisplay, setEndDate)
+                  onDateInput(e.target.value, false, setEndDisplay, setEndDate)
                 }
                 disabled={!!isProcessing}
               />
@@ -232,7 +278,12 @@ export default function DiscoveryPage() {
                 type="date"
                 className="pointer-events-none absolute inset-0 opacity-0"
                 onChange={(e) =>
-                  onPickerChange(e.target.value, setEndDisplay, setEndDate)
+                  onPickerChange(
+                    e.target.value,
+                    false,
+                    setEndDisplay,
+                    setEndDate
+                  )
                 }
                 value={endDate}
               />
