@@ -4,7 +4,16 @@ import { useState, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { IndustrialCard } from "@/components/ui/industrial-card";
 import { TerminalLog } from "@/components/ui/terminal-log";
-import { Play, Calendar, Filter, Database, Loader2 } from "lucide-react";
+import {
+  Play,
+  Calendar,
+  Filter,
+  Database,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  Settings,
+} from "lucide-react";
 import {
   useStartDiscovery,
   useDiscoveryStatus,
@@ -31,6 +40,12 @@ export default function DiscoveryPage() {
   const [endDate, setEndDate] = useState("2026-03-23");
   const [maxNodes, setMaxNodes] = useState(1000);
 
+  // Advanced Hyperparameters
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [maxEpochs, setMaxEpochs] = useState(400);
+  const [patience, setPatience] = useState(30);
+  const [learningRate, setLearningRate] = useState(0.005);
+
   const startPickerRef = useRef<HTMLInputElement>(null);
   const endPickerRef = useRef<HTMLInputElement>(null);
 
@@ -46,6 +61,7 @@ export default function DiscoveryPage() {
   // Improved approach: Separate display state for inputs
   const [startDisplay, setStartDisplay] = useState(toDisplayDate(startDate));
   const [endDisplay, setEndDisplay] = useState(toDisplayDate(endDate));
+  const [dateError, setDateError] = useState<string | null>(null);
 
   const validateDateRange = (start: string, end: string): string | null => {
     const s = new Date(start);
@@ -61,7 +77,6 @@ export default function DiscoveryPage() {
 
   const onDateInput = (
     val: string,
-    isStart: boolean,
     setDisplay: (v: string) => void,
     setActual: (v: string) => void
   ) => {
@@ -78,46 +93,32 @@ export default function DiscoveryPage() {
       const d = clean.slice(0, 2);
       const m = clean.slice(2, 4);
       const y = clean.slice(4, 8);
-      const newActual = `${y}-${m}-${d}`;
-
-      const error = isStart
-        ? validateDateRange(newActual, endDate)
-        : validateDateRange(startDate, newActual);
-
-      if (!error) {
-        setActual(newActual);
-      } else {
-        // Reset display to current valid actual date
-        setTimeout(
-          () => setDisplay(toDisplayDate(isStart ? startDate : endDate)),
-          500
-        );
-      }
+      setActual(`${y}-${m}-${d}`);
+      setDateError(null);
     }
   };
 
   const onPickerChange = (
     val: string,
-    isStart: boolean,
     setDisplay: (v: string) => void,
     setActual: (v: string) => void
   ) => {
-    const error = isStart
-      ? validateDateRange(val, endDate)
-      : validateDateRange(startDate, val);
-
-    if (!error) {
-      setActual(val);
-      setDisplay(toDisplayDate(val));
-    } else {
-      alert(error);
-    }
+    setActual(val);
+    setDisplay(toDisplayDate(val));
+    setDateError(null);
   };
 
   const startDiscovery = useStartDiscovery();
   const { data: statusData } = useDiscoveryStatus(taskId);
 
   const handleStart = async () => {
+    const error = validateDateRange(startDate, endDate);
+    if (error) {
+      setDateError(error);
+      return;
+    }
+
+    setDateError(null);
     try {
       const response = await startDiscovery.mutateAsync({
         time_range: {
@@ -125,6 +126,11 @@ export default function DiscoveryPage() {
           end_date: endDate,
         },
         max_nodes: maxNodes,
+        hyperparameters: {
+          max_epochs: maxEpochs,
+          patience: patience,
+          learning_rate: learningRate,
+        },
       });
       setTaskId(response.task_id);
     } catch (error) {
@@ -204,118 +210,172 @@ export default function DiscoveryPage() {
 
       {/* Top Controls */}
       <IndustrialCard title="DISCOVERY PARAMETERS">
-        <div className="flex items-end gap-8">
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
-              <Calendar size={12} /> Start Date
-            </label>
-            <div className="relative flex items-center">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-end gap-8">
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
+                <Calendar size={12} /> Start Date
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  placeholder="DD/MM/YYYY"
+                  className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                  value={startDisplay}
+                  onChange={(e) =>
+                    onDateInput(e.target.value, setStartDisplay, setStartDate)
+                  }
+                  disabled={!!isProcessing}
+                />
+                <button
+                  type="button"
+                  className="hover:text-accent-cyan absolute right-2 text-slate-500 transition-colors"
+                  onClick={() => startPickerRef.current?.showPicker()}
+                  disabled={!!isProcessing}
+                >
+                  <Calendar size={16} />
+                </button>
+                <input
+                  ref={startPickerRef}
+                  type="date"
+                  className="pointer-events-none absolute inset-0 opacity-0"
+                  onChange={(e) =>
+                    onPickerChange(
+                      e.target.value,
+                      setStartDisplay,
+                      setStartDate
+                    )
+                  }
+                  value={startDate}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
+                <Calendar size={12} /> End Date
+              </label>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  placeholder="DD/MM/YYYY"
+                  className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                  value={endDisplay}
+                  onChange={(e) =>
+                    onDateInput(e.target.value, setEndDisplay, setEndDate)
+                  }
+                  disabled={!!isProcessing}
+                />
+                <button
+                  type="button"
+                  className="hover:text-accent-cyan absolute right-2 text-slate-500 transition-colors"
+                  onClick={() => endPickerRef.current?.showPicker()}
+                  disabled={!!isProcessing}
+                >
+                  <Calendar size={16} />
+                </button>
+                <input
+                  ref={endPickerRef}
+                  type="date"
+                  className="pointer-events-none absolute inset-0 opacity-0"
+                  onChange={(e) =>
+                    onPickerChange(e.target.value, setEndDisplay, setEndDate)
+                  }
+                  value={endDate}
+                />
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
+                <Filter size={12} /> Max Nodes
+              </label>
               <input
-                type="text"
-                placeholder="DD/MM/YYYY"
-                className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
-                value={startDisplay}
-                onChange={(e) =>
-                  onDateInput(
-                    e.target.value,
-                    true,
-                    setStartDisplay,
-                    setStartDate
-                  )
-                }
+                type="number"
+                className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-24 rounded-sm border p-2 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                value={maxNodes}
+                onChange={(e) => setMaxNodes(Number(e.target.value))}
                 disabled={!!isProcessing}
               />
+            </div>
+            <div className="flex flex-1 flex-col gap-2">
               <button
-                type="button"
-                className="hover:text-accent-cyan absolute right-2 text-slate-500 transition-colors"
-                onClick={() => startPickerRef.current?.showPicker()}
+                className={`group active:shadow-neo-concave relative flex w-full items-center justify-center gap-3 overflow-hidden rounded-sm py-2.5 font-black text-white shadow-lg transition-all active:translate-y-0.5 disabled:translate-y-0 dark:text-black ${isProcessing ? "cursor-not-allowed bg-slate-700 shadow-none grayscale" : "bg-accent-red hover:brightness-110 active:shadow-inner"}`}
+                onClick={handleStart}
                 disabled={!!isProcessing}
               >
-                <Calendar size={16} />
+                <div className="absolute inset-0 translate-x-[-100%] bg-white/20 italic transition-transform duration-500 group-hover:translate-x-[100%]" />
+                {isProcessing ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <Play size={18} fill="currentColor" />
+                )}
+                <span className="tracking-[0.2em] uppercase italic">
+                  {isProcessing ? "PROCESSING..." : "START DISCOVERY"}
+                </span>
               </button>
-              <input
-                ref={startPickerRef}
-                type="date"
-                className="pointer-events-none absolute inset-0 opacity-0"
-                onChange={(e) =>
-                  onPickerChange(
-                    e.target.value,
-                    true,
-                    setStartDisplay,
-                    setStartDate
-                  )
-                }
-                value={startDate}
-              />
+              {dateError && (
+                <span className="text-accent-red mt-1 font-mono text-[10px] font-bold uppercase italic">
+                  [ERR] {dateError}
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
-              <Calendar size={12} /> End Date
-            </label>
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                placeholder="DD/MM/YYYY"
-                className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-32 rounded-sm border p-2 pr-10 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
-                value={endDisplay}
-                onChange={(e) =>
-                  onDateInput(e.target.value, false, setEndDisplay, setEndDate)
-                }
-                disabled={!!isProcessing}
-              />
-              <button
-                type="button"
-                className="hover:text-accent-cyan absolute right-2 text-slate-500 transition-colors"
-                onClick={() => endPickerRef.current?.showPicker()}
-                disabled={!!isProcessing}
-              >
-                <Calendar size={16} />
-              </button>
-              <input
-                ref={endPickerRef}
-                type="date"
-                className="pointer-events-none absolute inset-0 opacity-0"
-                onChange={(e) =>
-                  onPickerChange(
-                    e.target.value,
-                    false,
-                    setEndDisplay,
-                    setEndDate
-                  )
-                }
-                value={endDate}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
-              <Filter size={12} /> Max Nodes
-            </label>
-            <input
-              type="number"
-              className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan w-24 rounded-sm border p-2 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
-              value={maxNodes}
-              onChange={(e) => setMaxNodes(Number(e.target.value))}
-              disabled={!!isProcessing}
-            />
-          </div>
-          <button
-            className={`group active:shadow-neo-concave relative flex flex-1 items-center justify-center gap-3 overflow-hidden rounded-sm py-2.5 font-black text-white shadow-lg transition-all active:translate-y-0.5 disabled:translate-y-0 dark:text-black ${isProcessing ? "cursor-not-allowed bg-slate-700 shadow-none grayscale" : "bg-accent-red hover:brightness-110 active:shadow-inner"}`}
-            onClick={handleStart}
-            disabled={!!isProcessing}
-          >
-            <div className="absolute inset-0 translate-x-[-100%] bg-white/20 italic transition-transform duration-500 group-hover:translate-x-[100%]" />
-            {isProcessing ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              <Play size={18} fill="currentColor" />
+          <div className="border-t border-slate-800 pt-2">
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase transition-colors hover:text-slate-300"
+            >
+              {showAdvanced ? (
+                <ChevronUp size={12} />
+              ) : (
+                <ChevronDown size={12} />
+              )}
+              Advanced Options
+            </button>
+
+            {showAdvanced && (
+              <div className="mt-4 grid grid-cols-4 gap-8">
+                <div className="flex flex-col gap-2">
+                  <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
+                    <Settings size={12} /> Max Epochs
+                  </label>
+                  <input
+                    type="number"
+                    className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                    value={maxEpochs}
+                    onChange={(e) => setMaxEpochs(Number(e.target.value))}
+                    disabled={!!isProcessing}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
+                    <Settings size={12} /> Patience
+                  </label>
+                  <input
+                    type="number"
+                    className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                    value={patience}
+                    onChange={(e) => setPatience(Number(e.target.value))}
+                    disabled={!!isProcessing}
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="flex items-center gap-2 font-mono text-[10px] font-bold text-slate-500 uppercase">
+                    <Settings size={12} /> Learning Rate
+                  </label>
+                  <input
+                    type="number"
+                    step="0.0001"
+                    className="bg-surface-secondary/50 border-border text-foreground focus:border-accent-cyan rounded-sm border p-2 font-mono text-xs shadow-inner transition-all outline-none disabled:opacity-50"
+                    value={learningRate}
+                    onChange={(e) => setLearningRate(Number(e.target.value))}
+                    disabled={!!isProcessing}
+                  />
+                </div>
+              </div>
             )}
-            <span className="tracking-[0.2em] uppercase italic">
-              {isProcessing ? "PROCESSING..." : "START DISCOVERY"}
-            </span>
-          </button>
+          </div>
         </div>
       </IndustrialCard>
 

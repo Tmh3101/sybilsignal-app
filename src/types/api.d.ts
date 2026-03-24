@@ -64,9 +64,16 @@ export interface TimeRange {
   end_date: string; // YYYY-MM-DD
 }
 
+export interface DiscoveryHyperparameter {
+  max_epochs?: number;
+  patience?: number;
+  learning_rate?: number;
+}
+
 export interface DiscoveryStartRequest {
   time_range: TimeRange;
   max_nodes: number;
+  hyperparameters?: DiscoveryHyperparameter;
 }
 
 export interface DiscoveryStartResponse {

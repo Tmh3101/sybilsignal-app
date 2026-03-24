@@ -79,17 +79,18 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
   useEffect(() => {
     if (!fgRef.current) return;
 
+    // Pull nodes toward the center - especially important for disconnected clusters
+    fgRef.current
+      .d3Force("center")
+      ?.x(dimensions.width / 2)
+      .y(dimensions.height / 2);
+
     // Repulsion strength (negative is repulsion) - weaker repulsion means nodes stay closer
-    fgRef.current.d3Force("charge")?.strength(-120);
+    fgRef.current.d3Force("charge")?.strength(-150);
 
     // Link distance - shorter distance brings linked nodes together
     fgRef.current.d3Force("link")?.distance(30);
-
-    // Ensure collision force is active to prevent overlapping
-    // Note: react-force-graph doesn't add 'collide' by default, we can add it
-    // if needed, but let's see if the defaults + our tweaks are enough first.
-    // fgRef.current.d3Force('collide', d3.forceCollide(8));
-  }, [graphData]);
+  }, [graphData, dimensions]);
 
   const getNodeColor = useCallback((node: NodeObject<SybilNode>) => {
     return (node.label && LABEL_COLORS[node.label]) || LABEL_COLORS.UNKNOWN;
