@@ -3,7 +3,6 @@ import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { Sidebar } from "@/components/layout/sidebar";
-import { TopHeader } from "@/components/layout/top-header";
 
 import { ThemeProvider } from "@/store/theme-store";
 import QueryProvider from "@/providers/query-provider";
@@ -36,17 +35,14 @@ export default function RootLayout({
 
               <Sidebar />
 
-              <div className="flex flex-1 flex-col overflow-hidden">
-                <TopHeader />
-                <main className="scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent relative flex-1 overflow-y-auto p-10">
-                  {/* Subtle radial gradient to focus content */}
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_var(--background)_100%)] opacity-40 transition-colors duration-300" />
+              <main className="scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent relative flex-1 overflow-y-auto p-10">
+                {/* Subtle radial gradient to focus content */}
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_var(--background)_100%)] opacity-40 transition-colors duration-300" />
 
-                  <div className="relative z-10 mx-auto h-full max-w-[1600px]">
-                    {children}
-                  </div>
-                </main>
-              </div>
+                <div className="relative z-10 mx-auto h-full max-w-[1600px]">
+                  {children}
+                </div>
+              </main>
             </div>
             <Toaster
               theme="dark"
