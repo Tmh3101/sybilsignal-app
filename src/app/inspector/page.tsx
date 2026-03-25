@@ -42,17 +42,20 @@ const SearchForm = () => {
   );
 };
 
-const EgoGraph2D = dynamic(() => import("@/components/graph/ego-graph-2d"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-black/20">
-      <Loader2 className="text-accent-cyan animate-spin" size={32} />
-      <span className="text-accent-cyan animate-pulse font-mono text-[10px] font-bold tracking-[0.2em] uppercase">
-        INITIALIZING 2D RENDER ENGINE...
-      </span>
-    </div>
-  ),
-});
+const UniversalGraph2D = dynamic(
+  () => import("@/components/graph/universal-graph-2d"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 bg-black/20">
+        <Loader2 className="text-accent-cyan animate-spin" size={32} />
+        <span className="text-accent-cyan animate-pulse font-mono text-[10px] font-bold tracking-[0.2em] uppercase">
+          INITIALIZING 2D RENDER ENGINE...
+        </span>
+      </div>
+    ),
+  }
+);
 
 function InspectorContent() {
   const router = useRouter();
@@ -272,7 +275,8 @@ function InspectorContent() {
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(var(--border-rgb),0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgba(var(--border-rgb),0.3)_1px,transparent_1px)] bg-[size:40px_40px] opacity-50 dark:opacity-20" />
 
           {/* Live 2D Ego Graph */}
-          <EgoGraph2D
+          <UniversalGraph2D
+            mode="EGO"
             graphData={data?.local_graph || { nodes: [], links: [] }}
             targetId={walletId || ""}
             risk_label={data?.analysis?.predict_label}

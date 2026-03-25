@@ -21,17 +21,19 @@ interface ExtendedNode extends SybilNode {
   __img?: HTMLImageElement;
 }
 
-interface EgoGraph2DProps {
+export interface UniversalGraph2DProps {
   graphData: {
     nodes: SybilNode[];
     links: SybilEdge[];
   };
-  targetId: string;
-  risk_label?: RiskClassification;
+  mode: "EGO" | "CLUSTER";
+  targetId?: string; // Required for EGO mode
+  risk_label?: RiskClassification; // Optional highlight for EGO
 }
 
-const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
+const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
   graphData,
+  mode,
   targetId,
   risk_label,
 }) => {
@@ -45,7 +47,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
 
   // Use the standardized graph processor hook
   const processedData = useGraphProcessor(graphData, {
-    targetId,
+    targetId: mode === "EGO" ? targetId : undefined,
     aggregateEdges: true,
   });
 
@@ -64,16 +66,27 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
 
   // Physics Tuning
   useEffect(() => {
-    if (fgRef.current) {
+    if (!fgRef.current) return;
+
+    if (mode === "EGO") {
       fgRef.current.d3Force("radial", d3.forceRadial(150, 0, 0));
       const charge = fgRef.current.d3Force("charge");
       if (charge) {
         (charge as d3.ForceManyBody<ExtendedNode>).strength(-200);
       }
-      // Re-heat simulation to apply changes
-      fgRef.current.d3ReheatSimulation();
+    } else {
+      // CLUSTER mode forces
+      fgRef.current
+        .d3Force("center")
+        ?.x(dimensions.width / 2)
+        .y(dimensions.height / 2);
+      fgRef.current.d3Force("charge")?.strength(-150);
+      fgRef.current.d3Force("link")?.distance(30);
     }
-  }, [processedData]);
+
+    // Re-heat simulation to apply changes
+    fgRef.current.d3ReheatSimulation();
+  }, [processedData, mode, dimensions.width, dimensions.height]);
 
   const getTargetColor = useCallback(() => {
     if (risk_label === "MALICIOUS" || risk_label === "HIGH_RISK")
@@ -93,24 +106,41 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
       ctx: CanvasRenderingContext2D,
       globalScale: number
     ) => {
-      const isTarget = node.id === targetId;
-      const size = isTarget ? 10 : 6;
+      const isTarget = mode === "EGO" && node.id === targetId;
+      const isMalicious = node.risk_label === "MALICIOUS";
+
+      // Node size logic
+      let size = 5;
+      if (mode === "EGO") {
+        size = isTarget ? 10 : 6;
+      } else {
+        size = isMalicious ? 8 : 5;
+      }
+
       const x = node.x ?? 0;
       const y = node.y ?? 0;
       const color = isTarget ? getTargetColor() : getNodeColor(node);
 
-      // 1. Draw Glow (Target only in EgoGraph)
+      // 1. Draw Glow
       if (isTarget) {
         ctx.beginPath();
         ctx.arc(x, y, size + 4, 0, 2 * Math.PI, false);
         ctx.fillStyle = `${color}33`; // 0.2 opacity
         ctx.fill();
+      } else if (mode === "CLUSTER" && isMalicious) {
+        ctx.beginPath();
+        ctx.arc(x, y, size + 3, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "rgba(239, 68, 68, 0.3)";
+        ctx.fill();
       }
 
-      // 2. Avatar Logic (Ported from ClusterMap2D)
+      // 2. Avatar Logic
+      // Optimization: Skip image rendering if too many nodes in CLUSTER mode
+      const skipImages = mode === "CLUSTER" && processedData.nodes.length > 500;
       const rawImgUrl = node.attributes?.picture_url;
       let img = null;
-      if (rawImgUrl) {
+
+      if (!skipImages && rawImgUrl) {
         if (imgCache.current[rawImgUrl]) {
           img = imgCache.current[rawImgUrl];
         } else {
@@ -118,7 +148,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
           newImg.src = resolvePictureUrl(rawImgUrl);
           newImg.onload = () => {
             imgCache.current[rawImgUrl] = newImg;
-            setImagesLoaded((prev) => prev + 1); // Trigger re-render
+            setImagesLoaded((prev) => prev + 1);
           };
           imgCache.current[rawImgUrl] = newImg;
         }
@@ -147,12 +177,12 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
       ctx.beginPath();
       ctx.arc(x, y, size, 0, 2 * Math.PI, false);
       ctx.strokeStyle = color;
-      ctx.lineWidth = isTarget ? 2 : 1;
+      ctx.lineWidth = isTarget || (mode === "CLUSTER" && isMalicious) ? 2 : 1;
       ctx.stroke();
 
-      // 4. Label (Handle)
+      // 4. Label (EGO mode only or high zoom)
       const label = node.attributes?.handle || (node.id as string).slice(0, 8);
-      if (globalScale > 2) {
+      if (mode === "EGO" && globalScale > 2) {
         ctx.font = `${10 / globalScale}px "JetBrains Mono", monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
@@ -160,13 +190,16 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         ctx.fillText(label, x, y + size + 2);
       }
     },
-    [targetId, getNodeColor, getTargetColor]
+    [mode, targetId, getNodeColor, getTargetColor, processedData.nodes.length]
   );
 
   return (
-    <div ref={containerRef} className="relative h-full min-h-[400px] w-full">
+    <div
+      ref={containerRef}
+      className="relative h-full min-h-[400px] w-full bg-black/40"
+    >
       <ForceGraph2D
-        key={`fg-${imagesLoaded}`}
+        key={`fg-${imagesLoaded}-${mode}`}
         ref={fgRef}
         width={dimensions.width}
         height={dimensions.height}
@@ -182,21 +215,27 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
             RELATION_COLORS.UNKNOWN;
 
           const weight = link.aggregated_weight || 1;
-          const opacity = Math.min(0.4 + Math.log10(weight) * 0.2, 0.8);
 
-          const r = parseInt(baseColor.slice(1, 3), 16);
-          const g = parseInt(baseColor.slice(3, 5), 16);
-          const b = parseInt(baseColor.slice(5, 7), 16);
-
-          return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+          if (mode === "EGO") {
+            const opacity = Math.min(0.4 + Math.log10(weight) * 0.2, 0.8);
+            const r = parseInt(baseColor.slice(1, 3), 16);
+            const g = parseInt(baseColor.slice(3, 5), 16);
+            const b = parseInt(baseColor.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+          } else {
+            // CLUSTER mode: higher transparency
+            return `${baseColor}66`;
+          }
         }}
         linkWidth={(link: LinkObject<ExtendedNode, AggregatedLink>) => {
+          if (mode === "CLUSTER") return MIN_LINK_WIDTH;
           const weight = link.aggregated_weight || 1;
           return Math.max(MIN_LINK_WIDTH, Math.sqrt(weight));
         }}
         linkDirectionalParticles={(
           link: LinkObject<ExtendedNode, AggregatedLink>
         ) => {
+          if (mode === "CLUSTER") return 0;
           const weight = link.aggregated_weight || 1;
           return weight > 1
             ? Math.min(Math.floor(Math.log2(weight)) + 1, 5)
@@ -216,9 +255,12 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         }}
         // Interactive tooltips
         nodeLabel={(node: NodeObject<ExtendedNode>) => {
-          const isTarget = node.id === targetId;
+          if (mode === "CLUSTER" && processedData.nodes.length > 500) return "";
+
+          const isTarget = mode === "EGO" && node.id === targetId;
           const isHighRisk =
             node.risk_label === "MALICIOUS" || node.risk_label === "HIGH_RISK";
+
           return `
             <div class="bg-black/95 border border-slate-700 p-3 font-mono text-[10px] shadow-2xl min-w-[200px]">
               <div class="flex items-center justify-between mb-1">
@@ -254,16 +296,18 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
 
       <GraphLegend
         extraItems={
-          <div className="mb-1 flex items-center gap-3">
-            <div className="h-3 w-3 animate-pulse rounded-full bg-[#00f2ff] shadow-[0_0_8px_rgba(0,242,255,0.6)]" />
-            <span className="text-accent-cyan font-mono text-[9px] font-bold uppercase italic">
-              Target Node
-            </span>
-          </div>
+          mode === "EGO" ? (
+            <div className="mb-1 flex items-center gap-3">
+              <div className="h-3 w-3 animate-pulse rounded-full bg-[#00f2ff] shadow-[0_0_8px_rgba(0,242,255,0.6)]" />
+              <span className="text-accent-cyan font-mono text-[9px] font-bold uppercase italic">
+                Target Node
+              </span>
+            </div>
+          ) : undefined
         }
       />
     </div>
   );
 };
 
-export default EgoGraph2D;
+export default UniversalGraph2D;

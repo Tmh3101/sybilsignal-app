@@ -19,8 +19,8 @@ import {
   useDiscoveryStatus,
 } from "@/hooks/use-sybil-discovery";
 
-const ClusterMap2D = dynamic(
-  () => import("@/components/graph/cluster-map-2d"),
+const UniversalGraph2D = dynamic(
+  () => import("@/components/graph/universal-graph-2d"),
   {
     ssr: false,
     loading: () => (
@@ -388,7 +388,7 @@ export default function DiscoveryPage() {
         </div>
 
         {statusData?.status === "COMPLETED" && statusData.graph_data ? (
-          <ClusterMap2D graphData={statusData.graph_data} />
+          <UniversalGraph2D mode="CLUSTER" graphData={statusData.graph_data} />
         ) : (
           <div className="relative flex flex-col items-center gap-6">
             {!taskId && !isProcessing ? (
