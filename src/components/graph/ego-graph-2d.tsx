@@ -7,6 +7,7 @@ import React, {
   useState,
   useMemo,
 } from "react";
+import * as d3 from "d3";
 import ForceGraph2D, {
   ForceGraphMethods,
   NodeObject,
@@ -14,49 +15,40 @@ import ForceGraph2D, {
 } from "react-force-graph-2d";
 import { SybilNode, SybilEdge } from "@/types/api";
 
-// --- MULTIGRAPH SCHEMA ---
-// Defines visual properties for each relationship type
-const MULTIGRAPH_SCHEMA: Record<
-  string,
-  { color: string; dash?: number[]; directed: boolean; label: string }
-> = {
-  // Directed Layers (Social/Interaction)
-  FOLLOW: { color: "#3b82f6", directed: true, label: "FOLLOW" },
-  UPVOTE: { color: "#06b6d4", directed: true, label: "UPVOTE" },
-  REACTION: { color: "#06b6d4", directed: true, label: "REACTION" },
-  COMMENT: { color: "#10b981", directed: true, label: "COMMENT" },
-  QUOTE: { color: "#8b5cf6", directed: true, label: "QUOTE" },
-  MIRROR: { color: "#f59e0b", directed: true, label: "MIRROR" },
-  COLLECT: { color: "#ec4899", directed: true, label: "COLLECT" },
+// --- VISUAL CONSTANTS (Unified with ClusterMap2D) ---
+const LABEL_COLORS: Record<string, string> = {
+  "0_BENIGN": "#00f2ff",
+  "1_LOW_RISK": "#4ade80",
+  "2_HIGH_RISK": "#fb923c",
+  "3_MALICIOUS": "#ef4444",
+  UNKNOWN: "#94a3b8",
+};
 
-  // Undirected Layers (Ownership/Similarity)
-  "CO-OWNER": { color: "#ef4444", directed: false, label: "CO-OWNER" },
-  SAME_AVATAR: {
-    color: "#f43f5e",
-    dash: [2, 2],
-    directed: false,
-    label: "SAME_AVATAR",
-  },
-  FUZZY_HANDLE: {
-    color: "#fb923c",
-    dash: [4, 2],
-    directed: false,
-    label: "FUZZY_HANDLE",
-  },
-  SIM_BIO: {
-    color: "#fbbf24",
-    dash: [1, 3],
-    directed: false,
-    label: "SIM_BIO",
-  },
-  CLOSE_CREATION_TIME: {
-    color: "#a855f7",
-    dash: [5, 5],
-    directed: false,
-    label: "CLOSE_CREATION_TIME",
-  },
+const RELATION_COLORS: Record<string, string> = {
+  // Follow Layer
+  FOLLOW: "#3b82f6",
 
-  UNKNOWN: { color: "#64748b", directed: false, label: "UNKNOWN" },
+  // Interact Layer
+  UPVOTE: "#10b981",
+  REACTION: "#10b981",
+  COMMENT: "#10b981",
+  QUOTE: "#10b981",
+  MIRROR: "#10b981",
+  COLLECT: "#10b981",
+  TIP: "#10b981",
+  INTERACT: "#10b981",
+
+  // Co-Owner Layer
+  "CO-OWNER": "#f97316",
+
+  // Similarity Layer
+  SAME_AVATAR: "#a855f7",
+  FUZZY_HANDLE: "#a855f7",
+  SIM_BIO: "#a855f7",
+  CLOSE_CREATION_TIME: "#a855f7",
+  SIMILARITY: "#a855f7",
+
+  UNKNOWN: "#64748b",
 };
 
 interface ExtendedNode extends SybilNode {
@@ -93,7 +85,14 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
 
   // Process data for multi-link support
   const processedData = useMemo(() => {
-    const nodes = graphData.nodes.map((n) => ({ ...n }) as ExtendedNode);
+    const nodes = graphData.nodes.map((n) => {
+      const isTarget = n.id === targetId;
+      return {
+        ...n,
+        fx: isTarget ? 0 : undefined,
+        fy: isTarget ? 0 : undefined,
+      } as ExtendedNode;
+    });
     const links = graphData.links.map((l) => ({ ...l }) as ExtendedLink);
 
     // Group links by pair
@@ -114,7 +113,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
     });
 
     return { nodes, links };
-  }, [graphData]);
+  }, [graphData, targetId]);
 
   // Update dimensions based on parent container
   useEffect(() => {
@@ -129,19 +128,28 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
     return () => resizeObserver.disconnect();
   }, []);
 
+  // Physics Tuning
+  useEffect(() => {
+    if (fgRef.current) {
+      fgRef.current.d3Force("radial", d3.forceRadial(150, 0, 0));
+      const charge = fgRef.current.d3Force("charge");
+      if (charge) {
+        (charge as d3.ForceManyBody<ExtendedNode>).strength(-200);
+      }
+      // Re-heat simulation to apply changes
+      fgRef.current.d3ReheatSimulation();
+    }
+  }, [processedData]);
+
   const getTargetColor = useCallback(() => {
     if (classification === "SYBIL" || classification === "WARNING")
-      return "#ff1744";
-    return "#00f2ff";
+      return LABEL_COLORS["3_MALICIOUS"];
+    return LABEL_COLORS["0_BENIGN"];
   }, [classification]);
 
-  const getNodeColor = useCallback(
-    (node: NodeObject<ExtendedNode>) => {
-      if (node.id === targetId) return getTargetColor();
-      return node.is_sybil ? "#f44336" : "#00f2ff";
-    },
-    [targetId, getTargetColor]
-  );
+  const getNodeColor = useCallback((node: NodeObject<ExtendedNode>) => {
+    return (node.label && LABEL_COLORS[node.label]) || LABEL_COLORS.UNKNOWN;
+  }, []);
 
   const drawNode = useCallback(
     (
@@ -149,23 +157,22 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
       ctx: CanvasRenderingContext2D,
       globalScale: number
     ) => {
-      const size = node.id === targetId ? 10 : 6;
+      const isTarget = node.id === targetId;
+      const size = isTarget ? 10 : 6;
       const x = node.x ?? 0;
       const y = node.y ?? 0;
-      const color = getNodeColor(node);
+      const color = isTarget ? getTargetColor() : getNodeColor(node);
 
-      // Draw Outer Glow for Target/Sybil
-      if (node.id === targetId || node.is_sybil) {
+      // 1. Draw Glow (Target only in EgoGraph)
+      if (isTarget) {
         ctx.beginPath();
-        ctx.arc(x, y, size + 2, 0, 2 * Math.PI, false);
-        ctx.fillStyle = node.is_sybil
-          ? "rgba(244, 67, 54, 0.2)"
-          : "rgba(0, 242, 255, 0.2)";
+        ctx.arc(x, y, size + 4, 0, 2 * Math.PI, false);
+        ctx.fillStyle = `${color}33`; // 0.2 opacity
         ctx.fill();
       }
 
-      // Avatar Logic
-      const imgUrl = node.attributes.picture_url;
+      // 2. Avatar Logic (Ported from ClusterMap2D)
+      const imgUrl = node.attributes?.picture_url;
       let img = null;
       if (imgUrl) {
         if (imgCache.current[imgUrl]) {
@@ -175,47 +182,39 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
           newImg.src = imgUrl;
           newImg.onload = () => {
             imgCache.current[imgUrl] = newImg;
-            // Refresh graph if needed or just wait for next frame
           };
           imgCache.current[imgUrl] = newImg;
         }
       }
 
+      // Draw Node Base (Clip for Avatar)
       ctx.save();
       ctx.beginPath();
       ctx.arc(x, y, size, 0, 2 * Math.PI, false);
       ctx.clip();
 
       if (img && img.complete) {
-        ctx.drawImage(img, x - size, y - size, size * 2, size * 2);
+        try {
+          ctx.drawImage(img, x - size, y - size, size * 2, size * 2);
+        } catch {
+          ctx.fillStyle = "#1e293b";
+          ctx.fill();
+        }
       } else {
-        // Placeholder
         ctx.fillStyle = "#1e293b";
-        ctx.fill();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        // Industrial placeholder icon (stylized silhouette)
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(x, y - size / 4, size / 3, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x, y + size, size, Math.PI, 2 * Math.PI);
         ctx.fill();
       }
       ctx.restore();
 
-      // Node Border
+      // 3. Draw Border (Stroke)
       ctx.beginPath();
       ctx.arc(x, y, size, 0, 2 * Math.PI, false);
       ctx.strokeStyle = color;
-      ctx.lineWidth = node.id === targetId ? 2 : 1;
+      ctx.lineWidth = isTarget ? 2 : 1;
       ctx.stroke();
 
-      // Label
-      const label = node.label || (node.id as string);
+      // 4. Label (Handle)
+      const label = node.attributes?.handle || (node.id as string).slice(0, 8);
       if (globalScale > 2) {
         ctx.font = `${10 / globalScale}px "JetBrains Mono", monospace`;
         ctx.textAlign = "center";
@@ -224,7 +223,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         ctx.fillText(label, x, y + size + 2);
       }
     },
-    [targetId, getNodeColor]
+    [targetId, getNodeColor, getTargetColor]
   );
 
   return (
@@ -238,10 +237,12 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         nodeCanvasObject={drawNode}
         nodeCanvasObjectMode={() => "always"}
         // Link Rendering
-        linkColor={(link: LinkObject<ExtendedNode, ExtendedLink>) =>
-          (link.type && MULTIGRAPH_SCHEMA[link.type]?.color) ||
-          MULTIGRAPH_SCHEMA["UNKNOWN"].color
-        }
+        linkColor={(link: LinkObject<ExtendedNode, ExtendedLink>) => {
+          const color =
+            (link.type && RELATION_COLORS[link.type]) ||
+            RELATION_COLORS.UNKNOWN;
+          return `${color}CC`; // 0.8 opacity matching ClusterMap2D
+        }}
         linkWidth={(link: LinkObject<ExtendedNode, ExtendedLink>) =>
           link.multiLinkCount && link.multiLinkCount > 1 ? 1.5 : 1
         }
@@ -251,39 +252,34 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
           const count = link.multiLinkCount;
           return (index - (count - 1) / 2) * 0.15;
         }}
-        // Directional Arrows
-        linkDirectionalArrowLength={(
-          link: LinkObject<ExtendedNode, ExtendedLink>
-        ) => (link.type && MULTIGRAPH_SCHEMA[link.type]?.directed ? 3 : 0)}
-        linkDirectionalArrowRelPos={0.5}
-        // Particles for activity
-        linkDirectionalParticles={(
-          link: LinkObject<ExtendedNode, ExtendedLink>
-        ) => (link.type && MULTIGRAPH_SCHEMA[link.type]?.directed ? 2 : 0)}
-        linkDirectionalParticleWidth={1.5}
-        linkDirectionalParticleSpeed={0.005}
         // Interactive tooltips
-        nodeLabel={(node: NodeObject<ExtendedNode>) => `
-          <div class="bg-slate-950 border border-slate-800 p-3 font-mono text-[10px] uppercase shadow-2xl">
-            <div class="text-accent-cyan font-bold mb-2 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full ${node.is_sybil ? "bg-accent-red" : "bg-accent-green"}"></span>
-              ${node.label || node.id}
-            </div>
-            <div class="space-y-1">
-              <div class="flex justify-between gap-8 text-slate-500">
-                <span>TRUST_SCORE</span>
-                <span class="${(node.trust_score ?? 0) < 3 ? "text-accent-red" : "text-accent-green"} font-bold">
-                  ${(node.trust_score ?? 0).toFixed(2)}
+        nodeLabel={(node: NodeObject<ExtendedNode>) => {
+          const isTarget = node.id === targetId;
+          const isHighRisk =
+            (node.risk_score && node.risk_score >= 0.8) ||
+            (node.label && node.label.includes("MALICIOUS"));
+          return `
+            <div class="bg-black/95 border border-slate-700 p-3 font-mono text-[10px] shadow-2xl min-w-[200px]">
+              <div class="flex items-center justify-between mb-1">
+                <div class="text-accent-cyan font-bold text-xs">
+                  ${node.attributes?.handle || "Unknown Handle"}
+                  ${isTarget ? '<span class="ml-2 text-[8px] px-1 bg-accent-cyan/20 border border-accent-cyan/50 animate-pulse text-accent-cyan">[TARGET_ENTITY]</span>' : ""}
+                </div>
+                <div class="text-[8px] font-bold text-slate-500 bg-slate-800/50 px-1 rounded uppercase">${node.label || "UNKNOWN"}</div>
+              </div>
+              <div class="text-slate-500 mb-2 break-all">ID: ${node.id}</div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-slate-400">RISK SCORE:</span>
+                <span class="${isHighRisk ? "text-accent-red" : "text-green-500"} font-bold text-sm">
+                  ${(node.risk_score || 0).toFixed(2)}
                 </span>
               </div>
-              <div class="flex justify-between gap-8 text-slate-500">
-                <span>REPOSTS</span>
-                <span class="text-accent-cyan font-bold">${node.attributes.total_reposts ?? 0}</span>
+              <div class="text-slate-400 border-t border-slate-800 pt-2 italic leading-relaxed">
+                ${node.attributes?.reason || "No reasoning provided."}
               </div>
-              ${node.is_sybil ? '<div class="text-accent-red font-black mt-2 border-t border-accent-red/20 pt-1 text-center animate-pulse">[SYBIL_WARNING]</div>' : ""}
             </div>
-          </div>
-        `}
+          `;
+        }}
         onNodeClick={(node: NodeObject<ExtendedNode>) => {
           if (fgRef.current && node.x !== undefined && node.y !== undefined) {
             fgRef.current.centerAt(node.x, node.y, 1000);
@@ -296,24 +292,76 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
       />
 
       {/* Legend Overlay */}
-      <div className="pointer-events-none absolute top-4 left-4 rounded-sm border border-slate-800 bg-black/60 p-3 backdrop-blur-md">
-        <div className="mb-2 text-[8px] font-bold tracking-[0.2em] text-slate-500 uppercase">
-          Relationship Layers
+      <div className="absolute top-6 right-6 z-10 flex min-w-[180px] flex-col gap-4 border border-slate-700 bg-black/80 p-4 shadow-2xl backdrop-blur-md">
+        <div className="flex flex-col gap-2">
+          <div className="mb-1 text-[8px] font-bold tracking-[0.2em] text-slate-500 uppercase">
+            Node Map
+          </div>
+          {/* Target Entity Highlight (Specific to EgoGraph) */}
+          <div className="flex items-center gap-3">
+            <div className="h-3 w-3 animate-pulse rounded-full bg-[#00f2ff] shadow-[0_0_8px_rgba(0,242,255,0.6)]" />
+            <span className="text-accent-cyan font-mono text-[9px] font-bold uppercase italic">
+              Target Entity (Larger Node)
+            </span>
+          </div>
+
+          {[
+            {
+              label: "Normal / Benign",
+              color: LABEL_COLORS["0_BENIGN"],
+              key: "0_BENIGN",
+            },
+            {
+              label: "Low Risk Entity",
+              color: LABEL_COLORS["1_LOW_RISK"],
+              key: "1_LOW_RISK",
+            },
+            {
+              label: "High Risk Entity",
+              color: LABEL_COLORS["2_HIGH_RISK"],
+              key: "2_HIGH_RISK",
+            },
+            {
+              label: "Malicious / Sybil",
+              color: LABEL_COLORS["3_MALICIOUS"],
+              key: "3_MALICIOUS",
+            },
+          ].map(({ label, color, key }) => (
+            <div key={key} className="flex items-center gap-3">
+              <div
+                className={`h-2 w-2 rounded-full ${key === "3_MALICIOUS" ? "animate-pulse shadow-[0_0_8px_#ef4444]" : ""}`}
+                style={{ backgroundColor: color }}
+              />
+              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
+                {label}
+              </span>
+            </div>
+          ))}
         </div>
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1">
-          {Object.entries(MULTIGRAPH_SCHEMA)
-            .slice(0, 10)
-            .map(([key, value]) => (
-              <div key={key} className="flex items-center gap-2">
-                <div
-                  className="h-0.5 w-2"
-                  style={{ backgroundColor: value.color }}
-                ></div>
-                <span className="font-mono text-[7px] tracking-widest text-slate-400">
-                  {value.label}
-                </span>
-              </div>
-            ))}
+
+        <div className="flex flex-col gap-2 border-t border-slate-800 pt-3">
+          <div className="mb-1 text-[8px] font-bold tracking-[0.2em] text-slate-500 uppercase">
+            Relation Layers
+          </div>
+          {[
+            { label: "Co-Owner", type: "CO-OWNER" },
+            { label: "Follow", type: "FOLLOW" },
+            { label: "Interact", type: "INTERACT" },
+            { label: "Similarity", type: "SIMILARITY" },
+          ].map(({ label, type }) => (
+            <div key={type} className="flex items-center gap-3">
+              <div
+                className="h-0.5 w-3"
+                style={{
+                  backgroundColor:
+                    RELATION_COLORS[type] || RELATION_COLORS.UNKNOWN,
+                }}
+              />
+              <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
+                {label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
