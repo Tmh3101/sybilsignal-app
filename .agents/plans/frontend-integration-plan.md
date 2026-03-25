@@ -5,7 +5,8 @@
 ---
 
 ## 🛠️ Phase 1: Chuẩn hóa Tầng Dữ Liệu (Type Definitions)
-*Tầng này cần làm đầu tiên để TypeScript compiler giúp chúng ta phát hiện các lỗi ở các phase sau.*
+
+_Tầng này cần làm đầu tiên để TypeScript compiler giúp chúng ta phát hiện các lỗi ở các phase sau._
 
 - [ ] **1.1. Cập nhật `src/types/api.d.ts` (Core Types)**
   - Thay thế interface `SybilEdge` cũ bằng 12 loại type mới: `"FOLLOW" | "UPVOTE" | "REACTION" | "COMMENT" | "QUOTE" | "MIRROR" | "COLLECT" | "CO-OWNER" | "SAME_AVATAR" | "FUZZY_HANDLE" | "SIM_BIO" | "CLOSE_CREATION_TIME" | "UNKNOWN"`.
@@ -21,7 +22,8 @@
 ---
 
 ## 🔌 Phase 2: Cập nhật Tầng Giao Tiếp (API Client & Hooks)
-*Đảm bảo các request bắn đi đúng địa chỉ và đúng định dạng payload.*
+
+_Đảm bảo các request bắn đi đúng địa chỉ và đúng định dạng payload._
 
 - [ ] **2.1. Cập nhật `src/hooks/use-sybil-discovery.ts` (Luồng Train AI)**
   - Đổi endpoint khởi chạy từ `POST /api/v1/sybil/discovery` thành `POST /api/v1/sybil/discovery/start`.
@@ -37,7 +39,8 @@
 ---
 
 ## 🎨 Phase 3: Nâng cấp Tầng Hiển Thị (UI Components)
-*Sửa các lỗi crash UI và render lại giao diện hiển thị đồ thị.*
+
+_Sửa các lỗi crash UI và render lại giao diện hiển thị đồ thị._
 
 - [ ] **3.1. Cập nhật Component Đồ thị `src/components/graph/ego-graph-2d.tsx` (hoặc 3D)**
   - **Color Mapping:** Bổ sung bảng màu (color palette) cho 12 loại Edge mới. (Ví dụ: `CO-OWNER` màu đỏ rực, `SIM_BIO` màu cam, `FOLLOW` màu xám nhạt).
@@ -54,7 +57,8 @@
 ---
 
 ## 🚀 Phase 4: Tinh chỉnh Tầng Luồng (Pages)
-*Cập nhật logic xử lý form của người dùng trước khi gọi API.*
+
+_Cập nhật logic xử lý form của người dùng trước khi gọi API._
 
 - [ ] **4.1. Trang `src/app/discovery/page.tsx`**
   - Khi người dùng bấm nút "Start Discovery", format lại dữ liệu form thành cấu trúc Nested JSON:
@@ -62,7 +66,7 @@
     const payload = {
       time_range: { start_date: form.startDate, end_date: form.endDate },
       max_nodes: 2000,
-      hyperparameters: { max_epochs: 400, patience: 30 }
+      hyperparameters: { max_epochs: 400, patience: 30 },
     };
     ```
 
@@ -75,6 +79,6 @@
 
 - [ ] **5.1. Xóa Cache:** Clear cache của trình duyệt và state của React Query để tránh dính dữ liệu theo schema cũ.
 - [ ] **5.2. Test Discovery Luồng (Module 1):** Bấm start, theo dõi terminal log tiến độ (polling) xem có báo lỗi 404 không.
-- [ ] **5.3. Test Inference Luồng (Module 2):** Nhập 1 Profile ID mới toanh. Đợi API Fallback chạy (khoảng ~1-2s do đã tối ưu Vector Cache). Kiểm tra xem biểu đồ 2D/3D có vẽ đúng các cạnh `SIM_BIO` hoặc `CO-OWNER` hay không. 
+- [ ] **5.3. Test Inference Luồng (Module 2):** Nhập 1 Profile ID mới toanh. Đợi API Fallback chạy (khoảng ~1-2s do đã tối ưu Vector Cache). Kiểm tra xem biểu đồ 2D/3D có vẽ đúng các cạnh `SIM_BIO` hoặc `CO-OWNER` hay không.
 
 ---

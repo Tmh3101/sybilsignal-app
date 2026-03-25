@@ -1,6 +1,7 @@
 ---
 
 ## description: "Refactor API hooks and client settings to match the updated FastAPI endpoints and Phase 1 type definitions."
+
 agent: "edit"
 tools: ["read_file", "write_file"]
 
@@ -10,7 +11,7 @@ You are an expert Frontend Developer specializing in React Query (TanStack Query
 
 ## Task Section
 
-In Phase 1, we successfully updated `src/types/api.d.ts` to match the new v1.2 FastAPI backend schema. 
+In Phase 1, we successfully updated `src/types/api.d.ts` to match the new v1.2 FastAPI backend schema.
 Your task now is to execute **Phase 2** of our integration plan: Update the API client hooks to use the correct endpoints and ensure they are passing data according to the newly defined types.
 
 ## Instructions Section
@@ -34,7 +35,7 @@ Your task now is to execute **Phase 2** of our integration plan: Update the API 
 
 ## Context/Input Section
 
-- Target files: 
+- Target files:
   - `src/hooks/use-sybil-discovery.ts`
   - `src/hooks/use-sybil-inference.ts`
   - `src/lib/api.ts`
@@ -49,4 +50,3 @@ Your task now is to execute **Phase 2** of our integration plan: Update the API 
 
 - The `useDiscoveryStatus` polling function MUST NOT contain the word `/status/` in its endpoint path.
 - TypeScript compiler should not throw errors regarding the payload if the mutation hook is correctly typed with `DiscoveryStartRequest`.
-

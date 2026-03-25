@@ -9,28 +9,33 @@ tools: ["read_file", "write_file"]
 You are an expert Frontend Developer and TypeScript architect specializing in Next.js and strict type safety.
 
 ## Task Section
-Our FastAPI backend has recently been heavily refactored. The frontend's current type definitions are now out of sync, which will cause the UI to crash when mapping API responses. 
 
-Your task is to execute **Phase 1** of our integration plan: Overwrite the existing `src/types/api.d.ts` file with the newly standardized schema. 
+Our FastAPI backend has recently been heavily refactored. The frontend's current type definitions are now out of sync, which will cause the UI to crash when mapping API responses.
+
+Your task is to execute **Phase 1** of our integration plan: Overwrite the existing `src/types/api.d.ts` file with the newly standardized schema.
 
 ## Instructions Section
 
 **Step 1: Update Graph Elements**
+
 - Overwrite `SybilNode` and `SybilEdge`.
 - CRITICAL: Change `total_mirrors` to `total_reposts` inside `SybilNode['attributes']`.
 - Update the `type` property in `SybilEdge` to strictly accept the 12 new relation types.
 
 **Step 2: Update Module 2 (Inspector) Types**
+
 - Remove old `Analysis` and `LocalGraph` interfaces.
 - Create a new `SybilReport` interface.
 - Update `InspectorResponse` to use the new nested `report` and `ego_graph` properties.
 
 **Step 3: Update Module 1 (Discovery) Types**
+
 - Create `TimeRange` and `Hyperparameters` interfaces.
 - Refactor `DiscoveryStartRequest` to use these nested objects instead of a flat structure.
 - Update `DiscoveryStatusResponse` to include the new `cluster_count` property inside `graph_data`.
 
 ## Context/Input Section
+
 - Target file: `src/types/api.d.ts`
 - **Exact Schema to Apply:** Use the following TypeScript definitions as your absolute source of truth:
 
@@ -65,15 +70,28 @@ export interface SybilNode {
 export interface SybilEdge {
   source: string;
   target: string;
-  type: "FOLLOW" | "UPVOTE" | "REACTION" | "COMMENT" | "QUOTE" | "MIRROR" | "COLLECT" | "CO-OWNER" | "SAME_AVATAR" | "FUZZY_HANDLE" | "SIM_BIO" | "CLOSE_CREATION_TIME" | "UNKNOWN";
+  type:
+    | "FOLLOW"
+    | "UPVOTE"
+    | "REACTION"
+    | "COMMENT"
+    | "QUOTE"
+    | "MIRROR"
+    | "COLLECT"
+    | "CO-OWNER"
+    | "SAME_AVATAR"
+    | "FUZZY_HANDLE"
+    | "SIM_BIO"
+    | "CLOSE_CREATION_TIME"
+    | "UNKNOWN";
   weight: number;
 }
 
 export interface SybilReport {
   label: "BENIGN" | "LOW_RISK" | "HIGH_RISK" | "MALICIOUS";
   risk_score: number;
-  risk_level: string; 
-  reasoning: string;  
+  risk_level: string;
+  reasoning: string;
 }
 
 export interface InspectorResponse {
@@ -113,20 +131,22 @@ export interface DiscoveryStatusResponse {
   status: "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED";
   progress: number;
   current_step: string;
-  graph_data: { 
+  graph_data: {
     cluster_count: number;
-    nodes: SybilNode[]; 
-    links: SybilEdge[]; 
+    nodes: SybilNode[];
+    links: SybilEdge[];
   } | null;
   message: string | null;
 }
 ```
 
 ## Output Section
+
 - Replace the entire contents of `src/types/api.d.ts` with the provided code.
 - Do not modify any other files in this step.
 
 ## Quality/Validation Section
+
 - Verify that `total_mirrors` no longer exists anywhere in the file.
 - Verify that `InspectorResponse` has an `edges` array inside `ego_graph` (not `links`).
 - Ensure all TypeScript syntax is valid and all interfaces are properly exported.
