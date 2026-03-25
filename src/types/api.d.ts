@@ -37,7 +37,7 @@ export interface SybilNode {
     follower_count: number;
     post_count: number;
     trust_score: number;
-    reason: string;
+    reasons: string[];
     handle?: string;
     following_count?: number;
     account_age?: string;
@@ -94,7 +94,11 @@ export interface DiscoveryStatusResponse {
   graph_data: {
     nodes: SybilNode[];
     links: SybilEdge[];
-    cluster_count?: number;
+    cluster_count: number;
+    num_nodes: number;
+    num_edges: number;
+    start_date: string;
+    end_date: string;
   } | null;
   message: string | null;
 }

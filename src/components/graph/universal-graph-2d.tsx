@@ -277,12 +277,17 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
                   ${node.risk_score.toFixed(2)}
                 </span>
               </div>
-              <div class="text-slate-400 border-t border-slate-800 pt-2 italic leading-relaxed">
-                ${node.attributes?.reason || "No reasoning provided."}
+              <div class="text-slate-400 border-t border-slate-800 pt-2">
+                <div class="mb-1 text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Detection Reasons:</div>
+                <div class="flex flex-wrap gap-1 mt-1">
+                  ${(node.attributes?.reasons as string[] || [])
+                    .map(r => `<span class="bg-slate-800/80 border border-slate-700 px-1.5 py-0.5 rounded-sm text-[8px] uppercase italic text-slate-300 leading-none whitespace-nowrap">${r}</span>`)
+                    .join('') || '<span class="text-[9px] italic text-slate-600">No specific flags detected</span>'}
+                </div>
               </div>
-            </div>
-          `;
-        }}
+              </div>
+              `;
+              }}
         onNodeClick={(node: NodeObject<ExtendedNode>) => {
           if (fgRef.current && node.x !== undefined && node.y !== undefined) {
             fgRef.current.centerAt(node.x, node.y, 1000);
