@@ -7,6 +7,7 @@ import { useInspectProfile } from "@/hooks/use-sybil-inference";
 import { IndustrialCard } from "@/components/ui/industrial-card";
 import { BootSequenceLoader } from "@/components/ui/boot-sequence-loader";
 import { resolvePictureUrl } from "@/lib/utils";
+import { ProbabilityEqualizer } from "@/components/inspector/probability-equalizer";
 import Image from "next/image";
 import {
   ShieldCheck,
@@ -71,8 +72,8 @@ function InspectorContent() {
     router.push("/inspector");
   };
 
-  const getClassificationColor = (risk_label: string) => {
-    switch (risk_label) {
+  const getClassificationColor = (predict_label: string) => {
+    switch (predict_label) {
       case "MALICIOUS":
         return "text-accent-red";
       case "HIGH_RISK":
@@ -153,8 +154,8 @@ function InspectorContent() {
 
   const analysis = data?.analysis;
   const profile = data?.profile_info;
-  const prob = (analysis?.sybil_probability || 0) * 100;
-  const colorClass = getClassificationColor(analysis?.risk_label || "");
+
+  const colorClass = getClassificationColor(analysis?.predict_label || "");
 
   return (
     <div className="flex h-full flex-col gap-6">
@@ -168,17 +169,7 @@ function InspectorContent() {
           </span>
         </div>
 
-        <div className="flex flex-1 justify-center px-12">
-          <SearchForm />
-        </div>
-
         <div className="flex items-center gap-4">
-          <div className="bg-surface border-border rounded-sm border px-4 py-2 font-mono text-xs shadow-sm">
-            PROFILE ID:{" "}
-            <span className="text-accent-cyan font-bold uppercase">
-              {walletId}
-            </span>
-          </div>
           <button
             onClick={handleReset}
             className="text-accent-cyan rounded-sm border border-slate-700 bg-slate-800 px-6 py-2 text-xs font-black tracking-widest uppercase italic shadow-lg transition-all hover:bg-slate-700 active:translate-y-0.5"
@@ -191,89 +182,56 @@ function InspectorContent() {
       {/* Top Info Row */}
       <div className="grid grid-cols-12 gap-6">
         {/* Profile & Risk Merged Card */}
-        <div className="col-span-7">
-          <IndustrialCard title="ENTITY_ANALYSIS_OVERVIEW" className="h-full">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <div className="bg-surface-secondary border-border group relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-sm border-2 shadow-inner transition-colors duration-300">
+        <div className="col-span-4">
+          <IndustrialCard title="ANALYSIS OVERVIEW" className="h-full">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-surface-secondary border-border group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-sm border-2 shadow-inner transition-colors duration-300">
                   {profile?.picture_url ? (
                     <Image
                       src={resolvePictureUrl(profile.picture_url)}
                       alt={profile.handle}
-                      width={80}
-                      height={80}
+                      width={64}
+                      height={64}
                       className="h-full w-full object-cover"
                     />
                   ) : (
                     <User
-                      size={40}
+                      size={32}
                       className="group-hover:text-accent-cyan text-slate-400 transition-colors"
                     />
                   )}
                   <div className="bg-accent-cyan/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-col">
-                    <span className="text-subtle tracking-tighter">Handle</span>
-                    <span className="text-foreground max-w-[220px] truncate text-xl font-black uppercase italic">
-                      {profile?.handle || "UNKNOWN_ENTITY"}
-                    </span>
-                  </div>
-                  <div className="bg-surface-secondary/40 border-border flex items-center gap-2 rounded-sm border px-3 py-1 shadow-sm">
-                    <ShieldCheck
-                      size={14}
-                      className={
-                        prob > 70 ? "text-accent-red" : "text-accent-green"
-                      }
-                    />
-                    <span
-                      className={`font-mono text-xs font-bold ${colorClass}`}
-                    >
-                      {analysis?.risk_label}
-                    </span>
-                  </div>
+                <div className="flex flex-col">
+                  <span className="text-subtle text-[10px] tracking-tighter uppercase">
+                    Handle
+                  </span>
+                  <span className="text-foreground max-w-[180px] truncate text-lg font-black uppercase italic">
+                    {profile?.handle || "UNKNOWN_ENTITY"}
+                  </span>
                 </div>
               </div>
 
-              <div className="bg-border/20 h-16 w-[1px]" />
+              <div className="font-mono text-xs">
+                <span>PROFILE ID:</span>
+                <br />
+                <span className="text-accent-cyan font-bold uppercase">
+                  {walletId}
+                </span>
+              </div>
 
-              <div className="flex items-center gap-6 pr-4">
-                <div>
-                  <span className="text-subtle font-mono text-[10px] font-bold uppercase">
-                    Sybil_Probability
-                  </span>
-                  <div className="relative flex h-24 w-24 items-center justify-center">
-                    <svg className="h-full w-full -rotate-90 transform">
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="transparent"
-                        className="text-slate-100 dark:text-slate-800"
-                      />
-                      <circle
-                        cx="48"
-                        cy="48"
-                        r="40"
-                        stroke="currentColor"
-                        strokeWidth="6"
-                        fill="transparent"
-                        strokeDasharray={251.2}
-                        strokeDashoffset={251.2 * (1 - prob / 100)}
-                        className={`${colorClass} transition-all duration-1000 ease-out`}
-                        strokeLinecap="round"
-                      />
-                    </svg>
-
-                    <div className="absolute flex flex-col items-center">
-                      <span
-                        className={`text-xl font-black tracking-tighter italic ${colorClass}`}
-                      >
-                        {Math.round(prob)}%
-                      </span>
-                    </div>
+              <div className="flex items-center justify-between border-t border-slate-800/60 pt-2">
+                <div className="flex items-center gap-6">
+                  <div className="flex flex-col">
+                    <span className="text-subtle font-mono text-[9px] font-bold uppercase">
+                      Predict Label
+                    </span>
+                    <span
+                      className={`text-base font-black italic ${colorClass}`}
+                    >
+                      {analysis?.predict_label}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -281,22 +239,30 @@ function InspectorContent() {
           </IndustrialCard>
         </div>
 
+        {/* Probability Equalizer */}
+        <div className="col-span-4">
+          <ProbabilityEqualizer
+            probabilities={analysis?.predict_proba || {}}
+            className="h-full"
+          />
+        </div>
+
         {/* Detection Metrics */}
-        <div className="col-span-5">
-          <IndustrialCard title="DETECTION_METRICS" className="h-full">
+        <div className="col-span-4">
+          <IndustrialCard title="DETECTION METRICS" className="h-full">
             <div className="flex flex-col gap-2">
               <span className="text-subtle px-1 font-mono text-[9px] font-bold uppercase">
-                Reasoning Tokens:
+                Reasoning:
               </span>
-              <div className="flex flex-wrap gap-2">
-                {(analysis?.reasoning || []).slice(0, 8).map((r, i) => {
-                  const tag = r.split(":")[0].replace("[", "").replace("]", "");
+              <div className="flex flex-wrap gap-1">
+                {(analysis?.reasoning || []).slice(0, 10).map((r, i) => {
+                  // const tag = r.split(":")[0].replace("[", "").replace("]", "");
                   return (
                     <span
                       key={i}
-                      className="bg-surface-secondary border-border border px-2 py-0.5 font-mono text-[8px] text-slate-500 uppercase transition-colors duration-300 dark:text-slate-400"
+                      className="bg-surface-secondary border-border border px-1.5 py-0.5 font-mono text-xs uppercase duration-300 dark:text-slate-400"
                     >
-                      {tag}
+                      {r}
                     </span>
                   );
                 })}
@@ -317,7 +283,7 @@ function InspectorContent() {
           <EgoGraph2D
             graphData={data?.local_graph || { nodes: [], links: [] }}
             targetId={walletId || ""}
-            risk_label={data?.analysis?.risk_label}
+            risk_label={data?.analysis?.predict_label}
           />
 
           {/* Overlays */}

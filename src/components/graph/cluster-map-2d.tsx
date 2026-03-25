@@ -211,22 +211,22 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
           </div>
           {[
             {
-              label: "Normal / Benign",
+              label: "Benign",
               color: LABEL_COLORS["BENIGN"],
               key: "BENIGN",
             },
             {
-              label: "Low Risk Entity",
+              label: "Low Risk",
               color: LABEL_COLORS["LOW_RISK"],
               key: "LOW_RISK",
             },
             {
-              label: "High Risk Entity",
+              label: "High Risk",
               color: LABEL_COLORS["HIGH_RISK"],
               key: "HIGH_RISK",
             },
             {
-              label: "Malicious / Sybil",
+              label: "Malicious",
               color: LABEL_COLORS["MALICIOUS"],
               key: "MALICIOUS",
             },

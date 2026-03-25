@@ -59,6 +59,7 @@ interface ExtendedNode extends SybilNode {
 interface ExtendedLink extends Omit<SybilEdge, "source" | "target"> {
   source: string | NodeObject<ExtendedNode>;
   target: string | NodeObject<ExtendedNode>;
+  aggregated_weight?: number;
   multiLinkIndex?: number;
   multiLinkCount?: number;
 }
@@ -82,9 +83,10 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
   >(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [imagesLoaded, setImagesLoaded] = useState(0); // Trigger re-render when images load
   const imgCache = useRef<Record<string, HTMLImageElement>>({});
 
-  // Process data for multi-link support
+  // Process data for aggregation and multi-link support
   const processedData = useMemo(() => {
     const nodes = graphData.nodes.map((n) => {
       const isTarget = n.id === targetId;
@@ -94,18 +96,57 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         fy: isTarget ? 0 : undefined,
       } as ExtendedNode;
     });
-    const links = graphData.links.map((l) => ({ ...l }) as ExtendedLink);
 
-    // Group links by pair
-    const linkGroups: Record<string, ExtendedLink[]> = {};
-    links.forEach((link) => {
-      const id = [link.source, link.target].sort().join("-");
-      if (!linkGroups[id]) linkGroups[id] = [];
-      linkGroups[id].push(link);
+    // 1. Aggregate links by source-target-type
+    const linkMap = new Map<string, ExtendedLink>();
+
+    graphData.links.forEach((link) => {
+      // Safely handle source/target which might be objects from force-graph mutation
+      const sId =
+        typeof link.source === "object"
+          ? (link.source as NodeObject<ExtendedNode>).id
+          : (link.source as string);
+      const tId =
+        typeof link.target === "object"
+          ? (link.target as NodeObject<ExtendedNode>).id
+          : (link.target as string);
+      const type = link.edge_type || "UNKNOWN";
+      const key = `${sId}-${tId}-${type}`;
+
+      if (linkMap.has(key)) {
+        const existing = linkMap.get(key)!;
+        existing.aggregated_weight =
+          (existing.aggregated_weight || 0) + (link.weight || 1);
+      } else {
+        linkMap.set(key, {
+          ...link,
+          source: sId as string,
+          target: tId as string,
+          aggregated_weight: link.weight || 1,
+          edge_type: type,
+        } as ExtendedLink);
+      }
     });
 
-    // Assign indices for curvature
-    Object.values(linkGroups).forEach((group) => {
+    const aggregatedLinks = Array.from(linkMap.values());
+
+    // 2. Assign indices for curvature if multiple edge types exist between same pair
+    const pairGroups: Record<string, ExtendedLink[]> = {};
+    aggregatedLinks.forEach((link) => {
+      const sId =
+        typeof link.source === "object"
+          ? (link.source as NodeObject<ExtendedNode>).id
+          : link.source;
+      const tId =
+        typeof link.target === "object"
+          ? (link.target as NodeObject<ExtendedNode>).id
+          : link.target;
+      const id = [sId as string, tId as string].sort().join("-");
+      if (!pairGroups[id]) pairGroups[id] = [];
+      pairGroups[id].push(link);
+    });
+
+    Object.values(pairGroups).forEach((group) => {
       const count = group.length;
       group.forEach((link, i) => {
         link.multiLinkIndex = i;
@@ -113,8 +154,8 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
       });
     });
 
-    return { nodes, links };
-  }, [graphData, targetId]);
+    return { nodes, links: aggregatedLinks };
+  }, [graphData, targetId, imagesLoaded]);
 
   // Update dimensions based on parent container
   useEffect(() => {
@@ -185,6 +226,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
           newImg.src = resolvePictureUrl(rawImgUrl);
           newImg.onload = () => {
             imgCache.current[rawImgUrl] = newImg;
+            setImagesLoaded((prev) => prev + 1); // Trigger re-render
           };
           imgCache.current[rawImgUrl] = newImg;
         }
@@ -241,16 +283,21 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         nodeCanvasObjectMode={() => "always"}
         // Link Rendering
         linkColor={(link: LinkObject<ExtendedNode, ExtendedLink>) => {
-          // Lấy edge_type, dự phòng fallback về type nếu có tàn dư thư viện
-          const relationType = link.edge_type || link.type;
-          const color =
+          const relationType = link.edge_type;
+          const baseColor =
             (relationType && RELATION_COLORS[relationType as string]) ||
             RELATION_COLORS.UNKNOWN;
-          return `${color}CC`;
+
+          // Simple transparent industrial vibe
+          return `${baseColor}99`; // 0.6 opacity
         }}
-        linkWidth={(link: LinkObject<ExtendedNode, ExtendedLink>) =>
-          link.multiLinkCount && link.multiLinkCount > 1 ? 1.5 : 1
-        }
+        linkWidth={1.5}
+        linkDirectionalParticles={(link: LinkObject<ExtendedNode, ExtendedLink>) => {
+          const weight = link.aggregated_weight || 1;
+          // Keep particles only for aggregated edges for subtle feedback, but fixed size
+          return weight > 1 ? 2 : 0;
+        }}
+        linkDirectionalParticleWidth={2}
         linkCurvature={(link: LinkObject<ExtendedNode, ExtendedLink>) => {
           if (!link.multiLinkCount || link.multiLinkCount <= 1) return 0;
           const index = link.multiLinkIndex ?? 0;
@@ -305,28 +352,28 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
           <div className="flex items-center gap-3">
             <div className="h-3 w-3 animate-pulse rounded-full bg-[#00f2ff] shadow-[0_0_8px_rgba(0,242,255,0.6)]" />
             <span className="text-accent-cyan font-mono text-[9px] font-bold uppercase italic">
-              Target Entity (Larger Node)
+              Target Node
             </span>
           </div>
 
           {[
             {
-              label: "Normal / Benign",
+              label: "Normal",
               color: LABEL_COLORS["BENIGN"],
               key: "BENIGN",
             },
             {
-              label: "Low Risk Entity",
+              label: "Low Risk",
               color: LABEL_COLORS["LOW_RISK"],
               key: "LOW_RISK",
             },
             {
-              label: "High Risk Entity",
+              label: "High Risk",
               color: LABEL_COLORS["HIGH_RISK"],
               key: "HIGH_RISK",
             },
             {
-              label: "Malicious / Sybil",
+              label: "Malicious",
               color: LABEL_COLORS["MALICIOUS"],
               key: "MALICIOUS",
             },

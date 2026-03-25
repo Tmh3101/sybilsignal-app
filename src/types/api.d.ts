@@ -18,8 +18,8 @@ export interface InferenceReasoning {
 }
 
 export interface Analysis {
-  sybil_probability: number;
-  risk_label: RiskClassification;
+  predict_label: RiskClassification;
+  predict_proba: Record<RiskClassification, number>;
   reasoning: string[];
 }
 
