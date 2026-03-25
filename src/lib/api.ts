@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  timeout: 60000, // 30s timeout to handle potential Modal Backend Cold Starts
+  timeout: 120000, // 30s timeout to handle potential Modal Backend Cold Starts
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "ik.imagekit.io",
       },
+      {
+        protocol: "https",
+        hostname: "api.grove.storage",
+      },
+      {
+        protocol: "https",
+        hostname: "wsrv.nl",
+      },
     ],
   },
 };

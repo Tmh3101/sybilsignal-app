@@ -5,11 +5,10 @@ import dynamic from "next/dynamic";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useInspectProfile } from "@/hooks/use-sybil-inference";
 import { IndustrialCard } from "@/components/ui/industrial-card";
-import { TerminalLog } from "@/components/ui/terminal-log";
 import { BootSequenceLoader } from "@/components/ui/boot-sequence-loader";
+import { resolvePictureUrl } from "@/lib/utils";
 import Image from "next/image";
 import {
-  Wallet,
   ShieldCheck,
   User,
   // Activity,
@@ -63,15 +62,22 @@ const EgoGraph2D = dynamic(() => import("@/components/graph/ego-graph-2d"), {
 });
 
 function InspectorContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const walletId = searchParams.get("wallet");
   const { data, isLoading, isError } = useInspectProfile(walletId);
 
-  const getClassificationColor = (classification: string) => {
-    switch (classification) {
-      case "SYBIL":
+  const handleReset = () => {
+    router.push("/inspector");
+  };
+
+  const getClassificationColor = (risk_label: string) => {
+    switch (risk_label) {
+      case "MALICIOUS":
         return "text-accent-red";
-      case "WARNING":
+      case "HIGH_RISK":
+        return "text-rose-500";
+      case "LOW_RISK":
         return "text-orange-500";
       case "BENIGN":
         return "text-accent-green";
@@ -148,7 +154,7 @@ function InspectorContent() {
   const analysis = data?.analysis;
   const profile = data?.profile_info;
   const prob = (analysis?.sybil_probability || 0) * 100;
-  const colorClass = getClassificationColor(analysis?.classification || "");
+  const colorClass = getClassificationColor(analysis?.risk_label || "");
 
   return (
     <div className="flex h-full flex-col gap-6">
@@ -168,237 +174,164 @@ function InspectorContent() {
 
         <div className="flex items-center gap-4">
           <div className="bg-surface border-border rounded-sm border px-4 py-2 font-mono text-xs shadow-sm">
-            ID:{" "}
+            PROFILE ID:{" "}
             <span className="text-accent-cyan font-bold uppercase">
-              {walletId.slice(0, 6)}...{walletId.slice(-4)}
+              {walletId}
             </span>
           </div>
-          <button className="bg-accent-red rounded-sm px-6 py-2 text-xs font-black tracking-widest text-white uppercase italic shadow-lg transition-all hover:brightness-110 active:translate-y-0.5 dark:text-black">
-            QUARANTINE
+          <button
+            onClick={handleReset}
+            className="text-accent-cyan rounded-sm border border-slate-700 bg-slate-800 px-6 py-2 text-xs font-black tracking-widest uppercase italic shadow-lg transition-all hover:bg-slate-700 active:translate-y-0.5"
+          >
+            RESET
           </button>
         </div>
       </div>
 
-      <div className="grid min-h-0 flex-1 grid-cols-12 gap-6">
-        {/* Left Column: Risk Score & Logs */}
-        <div className="col-span-3 flex flex-col gap-6 overflow-hidden">
-          <IndustrialCard
-            title="RISK_SCORE_GAUGE"
-            className="flex flex-col items-center"
-          >
-            <div className="relative flex h-48 w-48 items-center justify-center">
-              {/* SVG Gauge */}
-              <svg className="h-full w-full -rotate-90 transform">
-                <circle
-                  cx="96"
-                  cy="96"
-                  r="80"
-                  stroke="currentColor"
-                  strokeWidth="8"
-                  fill="transparent"
-                  className="text-slate-100 dark:text-slate-800"
-                />
-                <circle
-                  cx="96"
-                  cy="96"
-                  r="80"
-                  stroke="currentColor"
-                  strokeWidth="12"
-                  fill="transparent"
-                  strokeDasharray={502.4}
-                  strokeDashoffset={502.4 * (1 - prob / 100)}
-                  className={`${colorClass} transition-all duration-1000 ease-out`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute flex flex-col items-center">
-                <span
-                  className={`text-5xl font-black tracking-tighter italic ${colorClass}`}
-                >
-                  {Math.round(prob)}%
-                </span>
-                <span className="text-subtle -mt-1 text-[10px] font-bold tracking-widest uppercase">
-                  {analysis?.classification}
-                </span>
+      {/* Top Info Row */}
+      <div className="grid grid-cols-12 gap-6">
+        {/* Profile & Risk Merged Card */}
+        <div className="col-span-7">
+          <IndustrialCard title="ENTITY_ANALYSIS_OVERVIEW" className="h-full">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <div className="bg-surface-secondary border-border group relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-sm border-2 shadow-inner transition-colors duration-300">
+                  {profile?.picture_url ? (
+                    <Image
+                      src={resolvePictureUrl(profile.picture_url)}
+                      alt={profile.handle}
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User
+                      size={40}
+                      className="group-hover:text-accent-cyan text-slate-400 transition-colors"
+                    />
+                  )}
+                  <div className="bg-accent-cyan/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col">
+                    <span className="text-subtle tracking-tighter">Handle</span>
+                    <span className="text-foreground max-w-[220px] truncate text-xl font-black uppercase italic">
+                      {profile?.handle || "UNKNOWN_ENTITY"}
+                    </span>
+                  </div>
+                  <div className="bg-surface-secondary/40 border-border flex items-center gap-2 rounded-sm border px-3 py-1 shadow-sm">
+                    <ShieldCheck
+                      size={14}
+                      className={
+                        prob > 70 ? "text-accent-red" : "text-accent-green"
+                      }
+                    />
+                    <span
+                      className={`font-mono text-xs font-bold ${colorClass}`}
+                    >
+                      {analysis?.risk_label}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="mt-4 grid w-full grid-cols-2 gap-4">
-              <div className="bg-surface-secondary/50 border-border flex flex-col items-center border p-2 shadow-inner">
-                <span className="text-[8px] font-bold text-slate-500 uppercase">
-                  Classification
-                </span>
-                <span className={`text-xs font-bold ${colorClass}`}>
-                  {analysis?.classification}
-                </span>
-              </div>
-              <div className="bg-surface-secondary/50 border-border flex flex-col items-center border p-2 shadow-inner">
-                <span className="text-[8px] font-bold text-slate-500 uppercase">
-                  Certainty
-                </span>
-                <span className="text-accent-cyan text-xs font-bold">
-                  {prob > 50 ? Math.round(prob) : Math.round(100 - prob)}%
-                </span>
-              </div>
-            </div>
-          </IndustrialCard>
 
-          <IndustrialCard
-            title="LIVE_DETECTION_STREAM"
-            className="min-h-0 flex-1 p-0"
-          >
-            <TerminalLog
-              className="h-full border-0 bg-transparent"
-              logs={analysis?.reasoning || []}
-            />
-          </IndustrialCard>
-        </div>
+              <div className="bg-border/20 h-16 w-[1px]" />
 
-        {/* Middle Column: Ego Graph */}
-        <div className="col-span-6">
-          <div className="border-border bg-background group relative h-full w-full overflow-hidden rounded-sm border shadow-2xl transition-colors duration-300">
-            {/* Background Grid */}
-            <div className="pointer-events-none absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(var(--border-rgb),0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgba(var(--border-rgb),0.3)_1px,transparent_1px)] bg-[size:40px_40px] opacity-50 dark:opacity-20" />
-
-            {/* Live 2D Ego Graph */}
-            <EgoGraph2D
-              graphData={data?.local_graph || { nodes: [], links: [] }}
-              targetId={walletId || ""}
-              classification={data?.analysis?.classification}
-            />
-
-            {/* Overlays */}
-            <div className="pointer-events-none absolute right-4 bottom-4 flex flex-col items-end gap-1">
-              <span className="text-accent-cyan/80 animate-pulse font-mono text-[8px] font-bold uppercase">
-                [ 2D RENDER ENGINE ACTIVE ]
-              </span>
-              <span className="text-subtle font-mono text-[8px] font-bold uppercase">
-                Node Connections: {data?.local_graph?.nodes?.length || 0}
-              </span>
-              <span className="text-subtle font-mono text-[8px] font-bold uppercase">
-                Network Depth: 2
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Profile Data */}
-        <div className="col-span-3 flex flex-col gap-6 overflow-hidden">
-          <IndustrialCard title="ENTITY IDENTITY">
-            <div className="mb-6 flex items-center gap-4">
-              <div className="bg-surface-secondary border-border group relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-sm border-2 shadow-inner transition-colors duration-300">
-                {profile?.picture_url ? (
-                  <Image
-                    src={profile.picture_url}
-                    alt={profile.handle}
-                    width={64}
-                    height={64}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <User
-                    size={32}
-                    className="group-hover:text-accent-cyan text-slate-400 transition-colors"
-                  />
-                )}
-                <div className="bg-accent-cyan/10 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-subtle tracking-tighter">Alias</span>
-                <span className="text-foreground max-w-[180px] truncate text-lg font-black uppercase italic">
-                  {profile?.handle || "UNKNOWN_ENTITY"}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="bg-surface-secondary/40 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm transition-colors duration-300">
-                <div className="flex items-center gap-2">
-                  <Wallet size={14} className="text-slate-400" />
+              <div className="flex items-center gap-6 pr-4">
+                <div>
                   <span className="text-subtle font-mono text-[10px] font-bold uppercase">
-                    Owner
+                    Sybil_Probability
                   </span>
-                </div>
-                <span className="text-accent-cyan font-mono text-xs font-bold">
-                  {profile?.owned_by
-                    ? `${profile.owned_by.slice(0, 6)}...${profile.owned_by.slice(-4)}`
-                    : "N/A"}
-                </span>
-              </div>
-              <div className="bg-surface-secondary/40 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm transition-colors duration-300">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck
-                    size={14}
-                    className={
-                      prob > 70 ? "text-accent-red" : "text-accent-green"
-                    }
-                  />
-                  <span className="text-subtle font-mono text-[10px] font-bold uppercase">
-                    Risk Level
-                  </span>
-                </div>
-                <span className={`font-mono text-xs font-bold ${colorClass}`}>
-                  {analysis?.classification}
-                </span>
-              </div>
-              {/* <div className="bg-surface-secondary/40 border-border flex items-center justify-between rounded-sm border p-3 shadow-sm transition-colors duration-300">
-                <div className="flex items-center gap-2">
-                  <Activity size={14} className="text-accent-cyan" />
-                  <span className="text-subtle font-mono text-[10px] font-bold uppercase">
-                    Status
-                  </span>
-                </div>
-                <span className="text-accent-cyan font-mono text-xs font-bold uppercase">
-                  {isLoading ? "Analyzing" : "Processed"}
-                </span>
-              </div> */}
-            </div>
-          </IndustrialCard>
+                  <div className="relative flex h-24 w-24 items-center justify-center">
+                    <svg className="h-full w-full -rotate-90 transform">
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="transparent"
+                        className="text-slate-100 dark:text-slate-800"
+                      />
+                      <circle
+                        cx="48"
+                        cy="48"
+                        r="40"
+                        stroke="currentColor"
+                        strokeWidth="6"
+                        fill="transparent"
+                        strokeDasharray={251.2}
+                        strokeDashoffset={251.2 * (1 - prob / 100)}
+                        className={`${colorClass} transition-all duration-1000 ease-out`}
+                        strokeLinecap="round"
+                      />
+                    </svg>
 
-          <IndustrialCard title="DETECTION_METRICS" className="flex-1">
-            <div className="space-y-4">
-              <div className="bg-surface-secondary/40 border-border rounded-sm border p-3 shadow-sm transition-colors duration-300">
-                <div className="mb-2 flex justify-between">
-                  <span className="text-subtle font-mono text-[9px] font-bold uppercase">
-                    Sybil Probability
-                  </span>
-                  <span
-                    className={`font-mono text-[9px] font-bold ${colorClass}`}
-                  >
-                    {Math.round(prob)}%
-                  </span>
-                </div>
-                <div className="bg-background border-border h-1.5 w-full overflow-hidden rounded-full border">
-                  <div
-                    className={`h-full transition-all duration-1000 ease-out ${prob > 70 ? "bg-accent-red" : prob > 30 ? "bg-orange-500" : "bg-accent-green"}`}
-                    style={{ width: `${prob}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <span className="text-subtle px-1 font-mono text-[9px] font-bold uppercase">
-                  Reasoning Tokens:
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {(analysis?.reasoning || []).slice(0, 4).map((r, i) => {
-                    const tag = r
-                      .split(":")[0]
-                      .replace("[", "")
-                      .replace("]", "");
-                    return (
+                    <div className="absolute flex flex-col items-center">
                       <span
-                        key={i}
-                        className="bg-surface-secondary border-border border px-2 py-0.5 font-mono text-[8px] text-slate-500 uppercase transition-colors duration-300 dark:text-slate-400"
+                        className={`text-xl font-black tracking-tighter italic ${colorClass}`}
                       >
-                        {tag}
+                        {Math.round(prob)}%
                       </span>
-                    );
-                  })}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </IndustrialCard>
+        </div>
+
+        {/* Detection Metrics */}
+        <div className="col-span-5">
+          <IndustrialCard title="DETECTION_METRICS" className="h-full">
+            <div className="flex flex-col gap-2">
+              <span className="text-subtle px-1 font-mono text-[9px] font-bold uppercase">
+                Reasoning Tokens:
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {(analysis?.reasoning || []).slice(0, 8).map((r, i) => {
+                  const tag = r.split(":")[0].replace("[", "").replace("]", "");
+                  return (
+                    <span
+                      key={i}
+                      className="bg-surface-secondary border-border border px-2 py-0.5 font-mono text-[8px] text-slate-500 uppercase transition-colors duration-300 dark:text-slate-400"
+                    >
+                      {tag}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </IndustrialCard>
+        </div>
+      </div>
+
+      {/* Main Graph Section */}
+      <div className="min-h-[800px] flex-1">
+        <div className="border-border bg-background group relative h-full w-full overflow-hidden rounded-sm border shadow-2xl transition-colors duration-300">
+          {/* Background Grid */}
+          <div className="pointer-events-none absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-20" />
+          <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(var(--border-rgb),0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgba(var(--border-rgb),0.3)_1px,transparent_1px)] bg-[size:40px_40px] opacity-50 dark:opacity-20" />
+
+          {/* Live 2D Ego Graph */}
+          <EgoGraph2D
+            graphData={data?.local_graph || { nodes: [], links: [] }}
+            targetId={walletId || ""}
+            risk_label={data?.analysis?.risk_label}
+          />
+
+          {/* Overlays */}
+          <div className="pointer-events-none absolute right-4 bottom-4 flex flex-col items-end gap-1">
+            <span className="text-accent-cyan/80 animate-pulse font-mono text-[8px] font-bold uppercase">
+              [ 2D RENDER ENGINE ACTIVE ]
+            </span>
+            <span className="text-subtle font-mono text-[8px] font-bold uppercase">
+              Node Connections: {data?.local_graph?.nodes?.length || 0}
+            </span>
+            <span className="text-subtle font-mono text-[8px] font-bold uppercase">
+              Network Depth: 2
+            </span>
+          </div>
         </div>
       </div>
     </div>

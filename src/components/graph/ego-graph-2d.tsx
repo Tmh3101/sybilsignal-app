@@ -13,14 +13,15 @@ import ForceGraph2D, {
   NodeObject,
   LinkObject,
 } from "react-force-graph-2d";
-import { SybilNode, SybilEdge } from "@/types/api";
+import { SybilNode, SybilEdge, RiskClassification } from "@/types/api";
+import { resolvePictureUrl } from "@/lib/utils";
 
 // --- VISUAL CONSTANTS (Unified with ClusterMap2D) ---
 const LABEL_COLORS: Record<string, string> = {
-  "0_BENIGN": "#00f2ff",
-  "1_LOW_RISK": "#4ade80",
-  "2_HIGH_RISK": "#fb923c",
-  "3_MALICIOUS": "#ef4444",
+  BENIGN: "#00f2ff",
+  LOW_RISK: "#4ade80",
+  HIGH_RISK: "#fb923c",
+  MALICIOUS: "#ef4444",
   UNKNOWN: "#94a3b8",
 };
 
@@ -68,13 +69,13 @@ interface EgoGraph2DProps {
     links: SybilEdge[];
   };
   targetId: string;
-  classification?: "BENIGN" | "WARNING" | "SYBIL";
+  risk_label?: RiskClassification;
 }
 
 const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
   graphData,
   targetId,
-  classification,
+  risk_label,
 }) => {
   const fgRef = useRef<
     ForceGraphMethods<ExtendedNode, ExtendedLink> | undefined
@@ -142,13 +143,15 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
   }, [processedData]);
 
   const getTargetColor = useCallback(() => {
-    if (classification === "SYBIL" || classification === "WARNING")
-      return LABEL_COLORS["3_MALICIOUS"];
-    return LABEL_COLORS["0_BENIGN"];
-  }, [classification]);
+    if (risk_label === "MALICIOUS" || risk_label === "HIGH_RISK")
+      return LABEL_COLORS["MALICIOUS"];
+    return LABEL_COLORS["BENIGN"];
+  }, [risk_label]);
 
   const getNodeColor = useCallback((node: NodeObject<ExtendedNode>) => {
-    return (node.label && LABEL_COLORS[node.label]) || LABEL_COLORS.UNKNOWN;
+    return (
+      (node.risk_label && LABEL_COLORS[node.risk_label]) || LABEL_COLORS.UNKNOWN
+    );
   }, []);
 
   const drawNode = useCallback(
@@ -172,18 +175,18 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
       }
 
       // 2. Avatar Logic (Ported from ClusterMap2D)
-      const imgUrl = node.attributes?.picture_url;
+      const rawImgUrl = node.attributes?.picture_url;
       let img = null;
-      if (imgUrl) {
-        if (imgCache.current[imgUrl]) {
-          img = imgCache.current[imgUrl];
+      if (rawImgUrl) {
+        if (imgCache.current[rawImgUrl]) {
+          img = imgCache.current[rawImgUrl];
         } else {
           const newImg = new Image();
-          newImg.src = imgUrl;
+          newImg.src = resolvePictureUrl(rawImgUrl);
           newImg.onload = () => {
-            imgCache.current[imgUrl] = newImg;
+            imgCache.current[rawImgUrl] = newImg;
           };
-          imgCache.current[imgUrl] = newImg;
+          imgCache.current[rawImgUrl] = newImg;
         }
       }
 
@@ -238,10 +241,12 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         nodeCanvasObjectMode={() => "always"}
         // Link Rendering
         linkColor={(link: LinkObject<ExtendedNode, ExtendedLink>) => {
+          // Lấy edge_type, dự phòng fallback về type nếu có tàn dư thư viện
+          const relationType = link.edge_type || link.type;
           const color =
-            (link.type && RELATION_COLORS[link.type]) ||
+            (relationType && RELATION_COLORS[relationType as string]) ||
             RELATION_COLORS.UNKNOWN;
-          return `${color}CC`; // 0.8 opacity matching ClusterMap2D
+          return `${color}CC`;
         }}
         linkWidth={(link: LinkObject<ExtendedNode, ExtendedLink>) =>
           link.multiLinkCount && link.multiLinkCount > 1 ? 1.5 : 1
@@ -256,8 +261,7 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
         nodeLabel={(node: NodeObject<ExtendedNode>) => {
           const isTarget = node.id === targetId;
           const isHighRisk =
-            (node.risk_score && node.risk_score >= 0.8) ||
-            (node.label && node.label.includes("MALICIOUS"));
+            node.risk_label === "MALICIOUS" || node.risk_label === "HIGH_RISK";
           return `
             <div class="bg-black/95 border border-slate-700 p-3 font-mono text-[10px] shadow-2xl min-w-[200px]">
               <div class="flex items-center justify-between mb-1">
@@ -265,13 +269,13 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
                   ${node.attributes?.handle || "Unknown Handle"}
                   ${isTarget ? '<span class="ml-2 text-[8px] px-1 bg-accent-cyan/20 border border-accent-cyan/50 animate-pulse text-accent-cyan">[TARGET_ENTITY]</span>' : ""}
                 </div>
-                <div class="text-[8px] font-bold text-slate-500 bg-slate-800/50 px-1 rounded uppercase">${node.label || "UNKNOWN"}</div>
+                <div class="text-[8px] font-bold text-slate-500 bg-slate-800/50 px-1 rounded uppercase">${node.risk_label}</div>
               </div>
               <div class="text-slate-500 mb-2 break-all">ID: ${node.id}</div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-slate-400">RISK SCORE:</span>
                 <span class="${isHighRisk ? "text-accent-red" : "text-green-500"} font-bold text-sm">
-                  ${(node.risk_score || 0).toFixed(2)}
+                  ${node.risk_score.toFixed(2)}
                 </span>
               </div>
               <div class="text-slate-400 border-t border-slate-800 pt-2 italic leading-relaxed">
@@ -308,28 +312,28 @@ const EgoGraph2D: React.FC<EgoGraph2DProps> = ({
           {[
             {
               label: "Normal / Benign",
-              color: LABEL_COLORS["0_BENIGN"],
-              key: "0_BENIGN",
+              color: LABEL_COLORS["BENIGN"],
+              key: "BENIGN",
             },
             {
               label: "Low Risk Entity",
-              color: LABEL_COLORS["1_LOW_RISK"],
-              key: "1_LOW_RISK",
+              color: LABEL_COLORS["LOW_RISK"],
+              key: "LOW_RISK",
             },
             {
               label: "High Risk Entity",
-              color: LABEL_COLORS["2_HIGH_RISK"],
-              key: "2_HIGH_RISK",
+              color: LABEL_COLORS["HIGH_RISK"],
+              key: "HIGH_RISK",
             },
             {
               label: "Malicious / Sybil",
-              color: LABEL_COLORS["3_MALICIOUS"],
-              key: "3_MALICIOUS",
+              color: LABEL_COLORS["MALICIOUS"],
+              key: "MALICIOUS",
             },
           ].map(({ label, color, key }) => (
             <div key={key} className="flex items-center gap-3">
               <div
-                className={`h-2 w-2 rounded-full ${key === "3_MALICIOUS" ? "animate-pulse shadow-[0_0_8px_#ef4444]" : ""}`}
+                className={`h-2 w-2 rounded-full ${key === "MALICIOUS" ? "animate-pulse shadow-[0_0_8px_#ef4444]" : ""}`}
                 style={{ backgroundColor: color }}
               />
               <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">

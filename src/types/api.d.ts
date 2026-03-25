@@ -1,3 +1,9 @@
+export type RiskClassification =
+  | "BENIGN"
+  | "LOW_RISK"
+  | "HIGH_RISK"
+  | "MALICIOUS";
+
 export interface ProfileInfo {
   id: string;
   handle: string;
@@ -13,29 +19,30 @@ export interface InferenceReasoning {
 
 export interface Analysis {
   sybil_probability: number;
-  classification: "BENIGN" | "WARNING" | "SYBIL";
+  risk_label: RiskClassification;
   reasoning: string[];
 }
 
 export interface SybilNode {
   id: string;
-  label: string;
-  trust_score?: number;
-  is_sybil?: boolean;
-  cluster_id?: number;
-  risk_score?: number;
+  risk_label: RiskClassification;
+  trust_score: number;
+  is_sybil: boolean;
+  cluster_id: number;
+  risk_score: number;
   x?: number;
   y?: number;
   z?: number;
   attributes: {
+    follower_count: number;
+    post_count: number;
+    trust_score: number;
+    reason: string;
     handle?: string;
-    trust_score?: number;
-    follower_count?: number;
     following_count?: number;
     account_age?: string;
     picture_url?: string;
     total_reposts?: number;
-    reason?: string;
     [key: string]: string | number | boolean | undefined;
   };
 }
@@ -43,8 +50,7 @@ export interface SybilNode {
 export interface SybilEdge {
   source: string;
   target: string;
-  type?: "comment" | "follow" | "upvote" | "transfer";
-  edge_type?: string;
+  edge_type: "comment" | "follow" | "upvote" | "transfer" | string;
   weight: number;
 }
 

@@ -6,6 +6,7 @@ import ForceGraph2D, {
   NodeObject,
 } from "react-force-graph-2d";
 import { SybilNode, SybilEdge } from "@/types/api";
+import { resolvePictureUrl } from "@/lib/utils";
 
 interface ClusterMap2DProps {
   graphData: {
@@ -15,10 +16,10 @@ interface ClusterMap2DProps {
 }
 
 const LABEL_COLORS: Record<string, string> = {
-  "0_BENIGN": "#00f2ff",
-  "1_LOW_RISK": "#4ade80",
-  "2_HIGH_RISK": "#fb923c",
-  "3_MALICIOUS": "#ef4444",
+  BENIGN: "#00f2ff",
+  LOW_RISK: "#4ade80",
+  HIGH_RISK: "#fb923c",
+  MALICIOUS: "#ef4444",
   UNKNOWN: "#94a3b8",
 };
 
@@ -93,14 +94,16 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
   }, [graphData, dimensions]);
 
   const getNodeColor = useCallback((node: NodeObject<SybilNode>) => {
-    return (node.label && LABEL_COLORS[node.label]) || LABEL_COLORS.UNKNOWN;
+    return (
+      (node.risk_label && LABEL_COLORS[node.risk_label]) || LABEL_COLORS.UNKNOWN
+    );
   }, []);
 
   // Custom vẽ Node: bao gồm Avatar và chỉnh size to hơn
   const drawNode = useCallback(
     (node: NodeObject<SybilNode>, ctx: CanvasRenderingContext2D) => {
       // Logic xác định size và color dựa trên label
-      const isMalicious = node.label === "3_MALICIOUS";
+      const isMalicious = node.risk_label === "MALICIOUS";
       const size = isMalicious ? 8 : 5;
       const x = node.x ?? 0;
       const y = node.y ?? 0;
@@ -115,18 +118,18 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
       }
 
       // 2. Logic load và vẽ Avatar
-      const imgUrl = node.attributes?.picture_url;
+      const rawImgUrl = node.attributes?.picture_url;
       let img = null;
-      if (imgUrl) {
-        if (imgCache.current[imgUrl]) {
-          img = imgCache.current[imgUrl];
+      if (rawImgUrl) {
+        if (imgCache.current[rawImgUrl]) {
+          img = imgCache.current[rawImgUrl];
         } else {
           const newImg = new Image();
-          newImg.src = imgUrl;
+          newImg.src = resolvePictureUrl(rawImgUrl);
           newImg.onload = () => {
-            imgCache.current[imgUrl] = newImg;
+            imgCache.current[rawImgUrl] = newImg;
           };
-          imgCache.current[imgUrl] = newImg;
+          imgCache.current[rawImgUrl] = newImg;
         }
       }
 
@@ -177,18 +180,19 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
         enableZoomInteraction={true}
         enablePanInteraction={true}
         nodeLabel={(node: NodeObject<SybilNode>) => {
-          const isHighRisk = node.risk_score && node.risk_score >= 0.8;
+          const isHighRisk =
+            node.risk_label === "MALICIOUS" || node.risk_label === "HIGH_RISK";
           return `
             <div class="bg-black/95 border border-slate-700 p-3 font-mono text-[10px] shadow-2xl min-w-[200px]">
               <div class="flex items-center justify-between mb-1">
                 <div class="text-accent-cyan font-bold text-xs">${node.attributes?.handle || "Unknown Handle"}</div>
-                <div class="text-[8px] font-bold text-slate-500 bg-slate-800/50 px-1 rounded uppercase">${node.label || "UNKNOWN"}</div>
+                <div class="text-[8px] font-bold text-slate-500 bg-slate-800/50 px-1 rounded uppercase">${node.risk_label}</div>
               </div>
               <div class="text-slate-500 mb-2 break-all">ID: ${node.id}</div>
               <div class="flex items-center justify-between mb-2">
                 <span class="text-slate-400">RISK SCORE:</span>
                 <span class="${isHighRisk ? "text-accent-red" : "text-green-500"} font-bold text-sm">
-                  ${(node.risk_score || 0).toFixed(2)}
+                  ${node.risk_score.toFixed(2)}
                 </span>
               </div>
               <div class="text-slate-400 border-t border-slate-800 pt-2 italic leading-relaxed">
@@ -208,28 +212,28 @@ const ClusterMap2D: React.FC<ClusterMap2DProps> = ({ graphData }) => {
           {[
             {
               label: "Normal / Benign",
-              color: LABEL_COLORS["0_BENIGN"],
-              key: "0_BENIGN",
+              color: LABEL_COLORS["BENIGN"],
+              key: "BENIGN",
             },
             {
               label: "Low Risk Entity",
-              color: LABEL_COLORS["1_LOW_RISK"],
-              key: "1_LOW_RISK",
+              color: LABEL_COLORS["LOW_RISK"],
+              key: "LOW_RISK",
             },
             {
               label: "High Risk Entity",
-              color: LABEL_COLORS["2_HIGH_RISK"],
-              key: "2_HIGH_RISK",
+              color: LABEL_COLORS["HIGH_RISK"],
+              key: "HIGH_RISK",
             },
             {
               label: "Malicious / Sybil",
-              color: LABEL_COLORS["3_MALICIOUS"],
-              key: "3_MALICIOUS",
+              color: LABEL_COLORS["MALICIOUS"],
+              key: "MALICIOUS",
             },
           ].map(({ label, color, key }) => (
             <div key={key} className="flex items-center gap-3">
               <div
-                className={`h-2 w-2 rounded-full ${key === "3_MALICIOUS" ? "animate-pulse shadow-[0_0_8px_#ef4444]" : ""}`}
+                className={`h-2 w-2 rounded-full ${key === "MALICIOUS" ? "animate-pulse shadow-[0_0_8px_#ef4444]" : ""}`}
                 style={{ backgroundColor: color }}
               />
               <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
