@@ -28,7 +28,10 @@ import { Maximize2, ZoomIn, ZoomOut } from "lucide-react";
 
 const AVATAR_CACHE: Record<string, HTMLImageElement | "error" | "pending"> = {};
 
-type ExtendedNode = SybilNode;
+type ExtendedNode = SybilNode & {
+  picture_url?: string;
+  handle?: string;
+};
 
 export interface UniversalGraph2DProps {
   graphData: { nodes: SybilNode[]; links: SybilEdge[] };
@@ -173,12 +176,10 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       const url = resolvePictureUrl(rawUrl);
       if (!url) return null;
 
-      console.log(`url: ${url}`);
-
       const cached = AVATAR_CACHE[url];
       if (cached === "error" || cached === "pending") return null;
       if (cached instanceof HTMLImageElement) {
-        return cached.complete && cached.naturalWidth > 0 ? cached : null;
+        return cached.complete ? cached : null;
       }
 
       // First request
@@ -188,12 +189,14 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       img.onload = () => {
         AVATAR_CACHE[url] = img;
         setAvatarTrigger((prev) => prev + 1);
+        // Explicitly refresh graph once image is ready
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setTimeout(() => (fgRef.current as any)?.refresh(), 10);
       };
       img.onerror = () => {
         AVATAR_CACHE[url] = "error";
-        console.error("Failed to load node image:", url);
       };
-      img.src = url + "&canvas=1";
+      img.src = url;
       return null;
     },
     []
@@ -269,21 +272,22 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       }
 
       // ── Node body: 3-layer architecture ──
-      const skipImg = mode === "CLUSTER" && processedData.nodes.length > 1500;
-      const rawUrl = ext.attributes?.picture_url
-        ? String(ext.attributes.picture_url)
-        : undefined;
+      const skipImg = mode === "CLUSTER" && processedData.nodes.length > 2500;
+      const rawUrl =
+        ext.attributes?.picture_url || ext.picture_url
+          ? String(ext.attributes?.picture_url || ext.picture_url)
+          : undefined;
       const handle = String(ext.attributes?.handle || node.id || "?");
       const img = skipImg ? null : getOrLoadImage(rawUrl);
 
       // LAYER 1: Solid Background
       ctx.beginPath();
       ctx.arc(x, y, size, 0, 2 * Math.PI, false);
-      ctx.fillStyle = img ? "#1e293b" : color; // Dark bg if image loading, otherwise risk color
+      ctx.fillStyle = img ? "#0f172a" : color; // Very dark bg if image loading/found, otherwise risk color
       ctx.fill();
 
       // LAYER 2: Clipped Image & Fallback
-      if (img) {
+      if (img && img.complete && img.naturalWidth > 0) {
         ctx.save();
         ctx.beginPath();
         ctx.arc(x, y, size, 0, 2 * Math.PI, false);
@@ -295,7 +299,9 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
         }
         ctx.restore();
       } else {
-        if (globalScale >= 1.5 || mode === "EGO") {
+        // Always draw letter avatar if image is missing, loading, or failed
+        // unless it's way too small (below 1.2 scale in cluster mode)
+        if (globalScale >= 1.2 || mode === "EGO") {
           drawLetterAvatar(ctx, x, y, size, color, handle);
         }
       }
