@@ -31,8 +31,9 @@ export function useGraphProcessor(
 
   return useMemo(() => {
     // 1. Process Nodes (Force target node to center)
+    const tid = targetId?.toLowerCase();
     const nodes = graphData.nodes.map((n) => {
-      const isTarget = targetId && n.id === targetId;
+      const isTarget = tid && n.id.toLowerCase() === tid;
       return {
         ...n,
         fx: isTarget ? 0 : undefined,

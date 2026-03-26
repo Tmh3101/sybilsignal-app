@@ -473,7 +473,6 @@ export default function DiscoveryPage() {
                 className={`flex items-center gap-2 border px-3 py-1.5 font-mono text-[9px] font-bold uppercase backdrop-blur-sm transition-all ${showFilters ? "border-accent-cyan/40 bg-accent-cyan/10 text-accent-cyan" : "border-slate-700 bg-black/70 text-slate-400 hover:text-slate-200"}`}
               >
                 <SlidersHorizontal size={11} />
-                Filters
               </button>
 
               {/* Filter panel */}

@@ -19,6 +19,7 @@ import {
   LABEL_COLORS,
   RELATION_COLORS,
   MIN_LINK_WIDTH,
+  DEFAULT_LINK_WIDTH,
   DIRECTED_EDGE_TYPES,
 } from "@/lib/graph-constants";
 import GraphLegend from "./graph-legend";
@@ -46,8 +47,13 @@ function drawLetterAvatar(
   color: string,
   handle: string
 ) {
-  ctx.fillStyle = color + "1a";
+  // Fill circle background
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, Math.PI * 2);
+  ctx.fillStyle = color + "22"; // slightly more opaque
   ctx.fill();
+
+  // Draw letter
   const letter = (handle || "?").charAt(0).toUpperCase();
   const fs = Math.max(size * 0.85, 5);
   ctx.font = `bold ${fs}px "JetBrains Mono",monospace`;
@@ -79,34 +85,37 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
   // ─── Depth filter (frontend, EGO only) ───
   const depthFilteredData = useMemo(() => {
     if (mode !== "EGO" || depthFilter === 2 || !targetId) return graphData;
-    const direct = new Set<string>([targetId]);
+    const tid = targetId.toLowerCase();
+    const direct = new Set<string>([tid]);
     graphData.links.forEach((l) => {
       const s = String(
         typeof l.source === "object"
           ? (l.source as { id: string }).id
           : l.source
-      );
+      ).toLowerCase();
       const t = String(
         typeof l.target === "object"
           ? (l.target as { id: string }).id
           : l.target
-      );
-      if (s === targetId) direct.add(t);
-      if (t === targetId) direct.add(s);
+      ).toLowerCase();
+      if (s === tid) direct.add(t);
+      if (t === tid) direct.add(s);
     });
     return {
-      nodes: graphData.nodes.filter((n) => direct.has(String(n.id))),
+      nodes: graphData.nodes.filter((n) =>
+        direct.has(String(n.id).toLowerCase())
+      ),
       links: graphData.links.filter((l) => {
         const s = String(
           typeof l.source === "object"
             ? (l.source as { id: string }).id
             : l.source
-        );
+        ).toLowerCase();
         const t = String(
           typeof l.target === "object"
             ? (l.target as { id: string }).id
             : l.target
-        );
+        ).toLowerCase();
         return direct.has(s) && direct.has(t);
       }),
     };
@@ -117,13 +126,14 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
     aggregateEdges: true,
   });
 
-  // ─── FIX 2: Target color derived from data, not from prop ───
+  // Target color for legend
   const targetNodeColor = useMemo(() => {
     if (!targetId) return LABEL_COLORS.BENIGN;
     const found = processedData.nodes.find(
       (n) => String(n.id) === String(targetId)
     );
-    return LABEL_COLORS[found?.risk_label || ""] || LABEL_COLORS.BENIGN;
+    const rl = found?.risk_label || "UNKNOWN";
+    return LABEL_COLORS[rl] || LABEL_COLORS.UNKNOWN;
   }, [processedData.nodes, targetId]);
 
   // Resize
@@ -164,6 +174,8 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       const url = resolvePictureUrl(rawUrl);
       if (!url) return null;
 
+      console.log(`url: ${url}`);
+
       const cached = imgCache.current[url];
       if (cached === "error" || cached === "pending") return null;
       if (cached instanceof HTMLImageElement) {
@@ -181,6 +193,7 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       };
       img.onerror = () => {
         imgCache.current[url] = "error";
+        console.error("Failed to load node image:", url);
       };
       img.src = url;
       return null;
@@ -198,15 +211,17 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       const ext = node as ExtendedNode;
       // ─── FIX 4: Read risk_label correctly ───
       const rl: string = ext.risk_label || "UNKNOWN";
-      const isTarget = mode === "EGO" && String(node.id) === String(targetId);
+      const isTarget =
+        mode === "EGO" &&
+        String(node.id).toLowerCase() === String(targetId).toLowerCase();
       const isMalicious = rl === "MALICIOUS";
       const isHighRisk = rl === "HIGH_RISK";
 
       const size =
         mode === "EGO"
           ? isTarget
-            ? 14
-            : 6
+            ? 20 // Increased from 16
+            : 10 // Increased from 6
           : isMalicious
             ? 9
             : isHighRisk
@@ -215,20 +230,28 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
 
       const x = node.x ?? 0;
       const y = node.y ?? 0;
-      const color = isTarget
-        ? targetNodeColor
-        : LABEL_COLORS[rl] || LABEL_COLORS.UNKNOWN;
+
+      // Color from label
+      const color = LABEL_COLORS[rl] || LABEL_COLORS.UNKNOWN;
 
       // ── Glow aura ──
       if (isTarget) {
-        ([size + 12, size + 7, size + 3] as number[]).forEach(
+        // Larger, more vibrant aura for target
+        ([size + 18, size + 10, size + 4] as number[]).forEach(
           (r: number, i: number) => {
             ctx.beginPath();
             ctx.arc(x, y, r, 0, Math.PI * 2);
-            ctx.fillStyle = color + (["0d", "1f", "38"] as string[])[i];
+            ctx.fillStyle = color + (["0a", "1a", "30"] as string[])[i];
             ctx.fill();
           }
         );
+
+        // Vibrant outer ring
+        ctx.beginPath();
+        ctx.arc(x, y, size + 3, 0, Math.PI * 2);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       } else if (isMalicious && mode === "CLUSTER") {
         ctx.beginPath();
         ctx.arc(x, y, size + 4, 0, Math.PI * 2);
@@ -247,7 +270,7 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       ctx.arc(x, y, size, 0, Math.PI * 2);
       ctx.clip();
 
-      const skipImg = mode === "CLUSTER" && processedData.nodes.length > 500;
+      const skipImg = mode === "CLUSTER" && processedData.nodes.length > 1500;
       const rawUrl = ext.attributes?.picture_url
         ? String(ext.attributes.picture_url)
         : undefined;
@@ -290,8 +313,14 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
         (mode === "CLUSTER" && globalScale > 2.8);
 
       if (showLabel) {
+        if (isTarget) {
+          ctx.font = `bold ${Math.max(10 / globalScale, 6)}px "JetBrains Mono",monospace`;
+          ctx.fillStyle = color;
+          ctx.fillText("[TARGET]", x, y - size - 14 / globalScale);
+        }
+
         const fs =
-          mode === "EGO" && isTarget ? 12 / globalScale : 9 / globalScale;
+          mode === "EGO" && isTarget ? 14 / globalScale : 9 / globalScale;
         ctx.font = `${isTarget ? "bold " : ""}${Math.max(fs, 4)}px "JetBrains Mono",monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
@@ -299,13 +328,7 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
         ctx.fillText(handle.slice(0, 14), x, y + size + 2);
       }
     },
-    [
-      mode,
-      targetId,
-      targetNodeColor,
-      processedData.nodes.length,
-      getOrLoadImage,
-    ]
+    [mode, targetId, processedData.nodes.length, getOrLoadImage]
   );
 
   // ── Tooltip ──
@@ -325,19 +348,20 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
           <span style="font-size:8px;padding:2px 5px;border:1px solid ${c}44;color:${c};background:${c}11;text-transform:uppercase;">${rl}</span>
         </div>
         <div style="color:#1e293b;font-size:8px;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${node.id}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:8px;">
+        <div style="display:grid;grid-template-columns:repeat(${mode === "CLUSTER" ? 3 : 2}, 1fr);gap:3px;margin-bottom:8px;">
           <div style="background:#0a0f1a;padding:4px 6px;border:1px solid #1e293b;">
             <div style="color:#334155;font-size:7px;margin-bottom:2px;">RISK SCORE</div>
             <div style="color:${isHigh ? "#ef4444" : "#22c55e"};font-weight:bold;font-size:13px;">${((ext.risk_score || 0) * 100).toFixed(0)}%</div>
           </div>
+          ${
+            mode === "CLUSTER"
+              ? `
           <div style="background:#0a0f1a;padding:4px 6px;border:1px solid #1e293b;">
             <div style="color:#334155;font-size:7px;margin-bottom:2px;">CLUSTER</div>
             <div style="color:#64748b;font-weight:bold;font-size:13px;">#${ext.cluster_id ?? "-"}</div>
-          </div>
-          <div style="background:#0a0f1a;padding:4px 6px;border:1px solid #1e293b;">
-            <div style="color:#334155;font-size:7px;margin-bottom:2px;">TRUST</div>
-            <div style="color:#64748b;font-size:11px;">${Number(ext.attributes?.trust_score || 0).toFixed(1)}</div>
-          </div>
+          </div>`
+              : ""
+          }
         </div>
         ${
           reasons.length > 0
@@ -433,7 +457,7 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
         }}
         linkWidth={(link: LinkObject<ExtendedNode, AggregatedLink>) =>
           mode === "CLUSTER"
-            ? MIN_LINK_WIDTH
+            ? DEFAULT_LINK_WIDTH
             : Math.max(MIN_LINK_WIDTH, Math.sqrt(link.aggregated_weight || 1))
         }
         linkDirectionalParticles={(

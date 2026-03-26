@@ -102,9 +102,9 @@ export const LABEL_GROUPS = [
   { label: "Malicious", key: "MALICIOUS" },
 ];
 
-export const MIN_LINK_WIDTH = 0.5;
+export const MIN_LINK_WIDTH = 0.8;
 export const MAX_LINK_WIDTH = 5;
-export const DEFAULT_LINK_WIDTH = 1.5;
+export const DEFAULT_LINK_WIDTH = 1.8;
 
 // Compute edge counts per layer from a links array
 export function computeEdgeCounts(links: SybilEdge[]): Record<string, number> {

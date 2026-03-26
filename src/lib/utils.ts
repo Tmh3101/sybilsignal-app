@@ -6,9 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function resolvePictureUrl(rawUrl?: string): string {
-  if (!rawUrl) return "";
+  const picture_url = String(rawUrl || "").trim();
+  if (!picture_url) return "";
 
-  let url = rawUrl.trim();
+  let url = picture_url;
 
   // Convert lens:// to HTTPS via grove storage
   if (url.startsWith("lens://")) {
@@ -21,6 +22,6 @@ export function resolvePictureUrl(rawUrl?: string): string {
   }
 
   // Proxy through wsrv.nl for consistent sizing and format conversion
-  // Using a slightly larger size (128x128) for high-DPI displays
-  return `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=128&h=128&fit=cover&q=75`;
+  const encodedUrl = encodeURIComponent(url);
+  return `https://wsrv.nl/?url=${encodedUrl}&w=64&h=64&fit=cover&q=70`;
 }

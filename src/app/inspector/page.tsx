@@ -342,33 +342,6 @@ function InspectorContent() {
             </div>
           </div>
 
-          {/* TARGET indicator top-center */}
-          {walletId && (
-            <div className="pointer-events-none absolute top-4 left-1/2 z-10 -translate-x-1/2">
-              <div
-                className="flex items-center gap-2 border px-3 py-1.5 backdrop-blur-sm"
-                style={{
-                  borderColor: riskColor + "33",
-                  backgroundColor: "rgba(0,0,0,0.7)",
-                }}
-              >
-                <div
-                  className="h-1.5 w-1.5 animate-pulse rounded-full"
-                  style={{
-                    backgroundColor: riskColor,
-                    boxShadow: `0 0 5px ${riskColor}99`,
-                  }}
-                />
-                <span
-                  className="font-mono text-[8px] font-bold tracking-widest uppercase"
-                  style={{ color: riskColor }}
-                >
-                  TARGET: {walletId.slice(0, 12)}...
-                </span>
-              </div>
-            </div>
-          )}
-
           <UniversalGraph2D
             mode="EGO"
             graphData={displayGraphData}

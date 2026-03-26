@@ -10,109 +10,29 @@
     "predict_proba": {
       "BENIGN": 0.0,
       "LOW_RISK": 0.0,
-      "HIGH_RISK": 0.28,
-      "MALICIOUS": 0.72
+      "HIGH_RISK": 0.27,
+      "MALICIOUS": 0.73
     },
     "reasoning": [
-      "AI model detected strong Sybil-like behavior (Confidence: 72.0%).",
+      "AI model detected strong Sybil-like behavior (Confidence: 73.0%).",
       "Risk-associated connections: 12x SIM_BIO."
     ]
   },
   "local_graph": {
     "nodes": [
       {
-        "id": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "id": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
         "risk_label": "BENIGN",
         "risk_score": 0.0,
         "cluster_id": 0,
         "attributes": {
-          "handle": "sibobmega",
-          "trust_score": 20.49,
-          "follower_count": 0,
-          "following_count": 5,
-          "post_count": 2,
-          "picture_url": "lens://b306b6e6cbd63d394e946b979ee4c6ce25a6c8e1a84c0fd6d363f44481dabe6b",
-          "owned_by": "0xd7400cbea41e51c8ae07620b0a543c49faf77045",
-          "reason": ""
-        }
-      },
-      {
-        "id": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "risk_label": "MALICIOUS",
-        "risk_score": 0.72,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "2121212",
-          "trust_score": 2.22,
-          "follower_count": 147,
-          "following_count": 2,
-          "post_count": 43,
-          "picture_url": "https://ik.imagekit.io/lens/6ab131b4abac898a2cf12e8977e9ce02d7a2b4cf00f96fff0a62770b02cc9928_bZhxmHAKK.png",
-          "owned_by": "0x49884733654720474ac311bebbc36c6c03854e95",
-          "reason": "AI model detected strong Sybil-like behavior (Confidence: 72.0%).; Risk-associated connections: 12x SIM_BIO."
-        }
-      },
-      {
-        "id": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
-        "risk_label": "BENIGN",
-        "risk_score": 0.0,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "sunshine",
-          "trust_score": 99.94,
-          "follower_count": 17342,
-          "following_count": 109,
-          "post_count": 16093,
-          "picture_url": "https://ik.imagekit.io/lens/095d6b8195fb7fa3bbd39d659d4a1780d12d3cf111b4b4bd8146891396dc6125_OoD19I2vm.webp",
-          "owned_by": "0xae6b19b637fdcb9c5c05238e5279754c39de76a9",
-          "reason": ""
-        }
-      },
-      {
-        "id": "0xe675db96c074e01d8359434cd928719810ddedc5",
-        "risk_label": "BENIGN",
-        "risk_score": 0.0,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "rheinn",
-          "trust_score": 0.26,
-          "follower_count": 0,
-          "following_count": 0,
-          "post_count": 0,
-          "picture_url": null,
-          "owned_by": "0x8e477f88685a9c34f69b69fb439f5e0305121999",
-          "reason": ""
-        }
-      },
-      {
-        "id": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
-        "risk_label": "BENIGN",
-        "risk_score": 0.0,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "botkasmin",
-          "trust_score": 2.74,
-          "follower_count": 0,
-          "following_count": 3,
-          "post_count": 16,
-          "picture_url": "https://ik.imagekit.io/lens/c8300c42c6c7f2cc2e4659105564d78746b7a084c467e666f33f5d959a101cef_N3QZsNafY.png",
-          "owned_by": "0xfd4982f0c44377ba0a4126110d147f770b2cddb9",
-          "reason": ""
-        }
-      },
-      {
-        "id": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
-        "risk_label": "BENIGN",
-        "risk_score": 0.0,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "arashi",
-          "trust_score": 0.3,
-          "follower_count": 0,
-          "following_count": 11,
-          "post_count": 2,
-          "picture_url": "https://gw.ipfs-lens.dev/ipfs/bafkreiae7lrebgtwhydxhaqyalrrhgxof3frms7hlooy2hehc26udzggci",
-          "owned_by": "0x88fed84dbabd43b7336042beae1eed9a78463a8e",
+          "handle": "andresbriceno",
+          "trust_score": 99.96,
+          "follower_count": 46380,
+          "following_count": 858,
+          "post_count": 7653,
+          "picture_url": "https://ik.imagekit.io/lens/84cada42370c570787cf9385befaa2f80c40006414e7a04290ee83e3eb49d9f5_YNrEEMoXJ.webp",
+          "owned_by": "0xf1484ba8048349e860e7d9eac49c2764e9e73e05",
           "reason": ""
         }
       },
@@ -133,18 +53,82 @@
         }
       },
       {
-        "id": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
+        "id": "0xe675db96c074e01d8359434cd928719810ddedc5",
         "risk_label": "BENIGN",
         "risk_score": 0.0,
         "cluster_id": 0,
         "attributes": {
-          "handle": "andresbriceno",
-          "trust_score": 99.96,
-          "follower_count": 46380,
-          "following_count": 858,
-          "post_count": 7653,
-          "picture_url": "https://ik.imagekit.io/lens/84cada42370c570787cf9385befaa2f80c40006414e7a04290ee83e3eb49d9f5_YNrEEMoXJ.webp",
-          "owned_by": "0xf1484ba8048349e860e7d9eac49c2764e9e73e05",
+          "handle": "rheinn",
+          "trust_score": 0.26,
+          "follower_count": 0,
+          "following_count": 0,
+          "post_count": 0,
+          "picture_url": null,
+          "owned_by": "0x8e477f88685a9c34f69b69fb439f5e0305121999",
+          "reason": ""
+        }
+      },
+      {
+        "id": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "risk_label": "BENIGN",
+        "risk_score": 0.0,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "arashi",
+          "trust_score": 0.3,
+          "follower_count": 0,
+          "following_count": 11,
+          "post_count": 2,
+          "picture_url": "https://gw.ipfs-lens.dev/ipfs/bafkreiae7lrebgtwhydxhaqyalrrhgxof3frms7hlooy2hehc26udzggci",
+          "owned_by": "0x88fed84dbabd43b7336042beae1eed9a78463a8e",
+          "reason": ""
+        }
+      },
+      {
+        "id": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
+        "risk_label": "BENIGN",
+        "risk_score": 0.0,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "sunshine",
+          "trust_score": 99.94,
+          "follower_count": 17342,
+          "following_count": 109,
+          "post_count": 16093,
+          "picture_url": "https://ik.imagekit.io/lens/095d6b8195fb7fa3bbd39d659d4a1780d12d3cf111b4b4bd8146891396dc6125_OoD19I2vm.webp",
+          "owned_by": "0xae6b19b637fdcb9c5c05238e5279754c39de76a9",
+          "reason": ""
+        }
+      },
+      {
+        "id": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "risk_label": "MALICIOUS",
+        "risk_score": 0.73,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "2121212",
+          "trust_score": 2.22,
+          "follower_count": 147,
+          "following_count": 2,
+          "post_count": 43,
+          "picture_url": "https://ik.imagekit.io/lens/6ab131b4abac898a2cf12e8977e9ce02d7a2b4cf00f96fff0a62770b02cc9928_bZhxmHAKK.png",
+          "owned_by": "0x49884733654720474ac311bebbc36c6c03854e95",
+          "reason": "AI model detected strong Sybil-like behavior (Confidence: 73.0%).; Risk-associated connections: 12x SIM_BIO."
+        }
+      },
+      {
+        "id": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
+        "risk_label": "BENIGN",
+        "risk_score": 0.0,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "botkasmin",
+          "trust_score": 2.74,
+          "follower_count": 0,
+          "following_count": 3,
+          "post_count": 16,
+          "picture_url": "https://ik.imagekit.io/lens/c8300c42c6c7f2cc2e4659105564d78746b7a084c467e666f33f5d959a101cef_N3QZsNafY.png",
+          "owned_by": "0xfd4982f0c44377ba0a4126110d147f770b2cddb9",
           "reason": ""
         }
       },
@@ -163,138 +147,148 @@
           "owned_by": "0x7df086e805769c14a24e111eaf01a991ea04aaa6",
           "reason": ""
         }
+      },
+      {
+        "id": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "risk_label": "BENIGN",
+        "risk_score": 0.0,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "sibobmega",
+          "trust_score": 20.49,
+          "follower_count": 0,
+          "following_count": 5,
+          "post_count": 2,
+          "picture_url": "lens://b306b6e6cbd63d394e946b979ee4c6ce25a6c8e1a84c0fd6d363f44481dabe6b",
+          "owned_by": "0xd7400cbea41e51c8ae07620b0a543c49faf77045",
+          "reason": ""
+        }
       }
     ],
     "links": [
       {
-        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "source": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
         "target": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
         "edge_type": "FOLLOW",
         "weight": 2.0
       },
       {
-        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "source": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
         "target": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
-        "edge_type": "UPVOTE",
-        "weight": 1.0
+        "edge_type": "COMMENT",
+        "weight": 2.0
       },
       {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
+        "source": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
+        "target": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
+        "edge_type": "COMMENT",
+        "weight": 2.0
       },
       {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
         "target": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
         "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "target": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "target": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
@@ -323,38 +317,92 @@
         "weight": 1.0
       },
       {
-        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
+        "edge_type": "UPVOTE",
+        "weight": 1.0
+      },
+      {
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "target": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xe675db96c074e01d8359434cd928719810ddedc5",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "source": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
@@ -395,128 +443,80 @@
         "weight": 3.0
       },
       {
-        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
-        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "target": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
-        "target": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
-        "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
-        "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
-        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
+        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
+        "edge_type": "SIM_BIO",
+        "weight": 3.0
+      },
+      {
+        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
         "target": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
         "edge_type": "FOLLOW",
         "weight": 2.0
       },
       {
-        "source": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
-        "target": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
-        "edge_type": "COMMENT",
-        "weight": 2.0
-      },
-      {
-        "source": "0xe2a3a0045c3b222bf69c728d3e07b7bf3ce6ca8b",
-        "target": "0xdf636a9ceaf2b9eee3f0527be9fcae95b7b115ff",
-        "edge_type": "COMMENT",
-        "weight": 2.0
-      },
-      {
-        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "target": "0xfc84640cb75ad48c1337c83bafbdbe2d328837b4",
+        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "target": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "target": "0xe675db96c074e01d8359434cd928719810ddedc5",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
+        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
         "target": "0x0a246725e7b3ca51e6b7d941910a00d62b1d38b2",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       },
       {
-        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "target": "0xbe4ad9cf117610ce59275c3c975abbc0ec4a8e63",
-        "edge_type": "SIM_BIO",
-        "weight": 3.0
-      },
-      {
-        "source": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
-        "target": "0x8471ffba55821a8cd8ff04680ad2db9ad71c4231",
+        "source": "0xc8881ba842f41d20da5c70fc780ffd65b362ddb8",
+        "target": "0x2274699340165100d1ef3b1c0daffec49e74c62f",
         "edge_type": "SIM_BIO",
         "weight": 3.0
       }
