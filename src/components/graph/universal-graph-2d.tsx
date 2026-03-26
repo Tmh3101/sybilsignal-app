@@ -315,7 +315,7 @@ export default function UniversalGraph2D({
       const midX = ((src.x || 0) + (tgt.x || 0)) / 2;
       const midY = ((src.y || 0) + (tgt.y || 0)) / 2;
 
-      const label = `${(l.gat_attention * 100).toFixed(1)}%`;
+      const label = `${l.gat_attention.toFixed(4)}`;
 
       const fs = Math.max(2.5, 8 / globalScale);
       ctx.font = `bold ${fs}px "JetBrains Mono", monospace`;
@@ -396,9 +396,9 @@ export default function UniversalGraph2D({
       const type = (l.edge_type as string) || "UNKNOWN";
       const weight = l.aggregated_weight || 1;
       const attention = l.gat_attention
-        ? `<br/><span style="color: #ef4444; font-weight: bold;">AI Attention: ${(
-            l.gat_attention * 100
-          ).toFixed(1)}%</span>`
+        ? `<br/><span style="color: #ef4444; font-weight: bold;">AI Attention: ${l.gat_attention.toFixed(
+            4
+          )}</span>`
         : "";
 
       return `<div style="background: rgba(2, 6, 23, 0.95); border: 1px solid #1e293b; padding: 6px 10px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
