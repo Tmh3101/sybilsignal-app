@@ -9,6 +9,7 @@ import { BootSequenceLoader } from "@/components/ui/boot-sequence-loader";
 import { resolvePictureUrl } from "@/lib/utils";
 import { ProbabilityEqualizer } from "@/components/inspector/probability-equalizer";
 import { LABEL_COLORS } from "@/lib/graph-constants";
+import { SybilNode } from "@/types/api";
 import Image from "next/image";
 import {
   User,
@@ -75,13 +76,41 @@ function InspectorContent() {
   // ─── Compute filtered local_graph based on depth (frontend filtering) ───
   const displayGraphData = useMemo(() => {
     if (!data?.local_graph || !walletId) return { nodes: [], links: [] };
-    if (graphDepth === 2) return data.local_graph;
+
+    const targetId = (data.profile_info?.id || walletId).toLowerCase().trim();
+    const nodesWithTargetPicture = data.local_graph.nodes.map(
+      (node): SybilNode => {
+        if (String(node.id).toLowerCase() !== targetId) return node;
+
+        const existingPicture =
+          typeof node.attributes?.picture_url === "string"
+            ? node.attributes.picture_url
+            : "";
+        if (existingPicture || !data.profile_info?.picture_url) return node;
+
+        return {
+          ...node,
+          attributes: {
+            ...node.attributes,
+            picture_url: data.profile_info.picture_url,
+            handle: node.attributes?.handle || data.profile_info.handle,
+          } as SybilNode["attributes"],
+        };
+      }
+    );
+
+    const graphData = {
+      ...data.local_graph,
+      nodes: nodesWithTargetPicture,
+    };
+
+    if (graphDepth === 2) return graphData;
 
     // Depth 1: only nodes with a direct edge to/from the target
-    const tid = walletId.toLowerCase().trim();
+    const tid = targetId;
     const directIds = new Set<string>([tid]);
 
-    data.local_graph.links.forEach((l) => {
+    graphData.links.forEach((l) => {
       const s = String(
         typeof l.source === "object"
           ? (l.source as { id: string }).id
@@ -96,10 +125,10 @@ function InspectorContent() {
       if (t === tid) directIds.add(s);
     });
 
-    const nodes = data.local_graph.nodes.filter((n) =>
+    const nodes = graphData.nodes.filter((n) =>
       directIds.has(String(n.id).toLowerCase())
     );
-    const links = data.local_graph.links.filter((l) => {
+    const links = graphData.links.filter((l) => {
       const s = String(
         typeof l.source === "object"
           ? (l.source as { id: string }).id

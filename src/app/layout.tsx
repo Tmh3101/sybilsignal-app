@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { Sidebar } from "@/components/layout/sidebar";
 
 import { ThemeProvider } from "@/store/theme-store";
 import QueryProvider from "@/providers/query-provider";
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-});
 
 export const metadata: Metadata = {
   title: "SYBIL ENGINE | INDUSTRIAL DASHBOARD",
@@ -24,9 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${jetbrainsMono.variable} bg-background text-foreground selection:bg-accent-cyan h-screen w-screen overflow-hidden font-mono antialiased transition-colors duration-300 selection:text-black`}
-      >
+      <body className="bg-background text-foreground selection:bg-accent-cyan h-screen w-screen overflow-hidden font-mono antialiased transition-colors duration-300 selection:text-black">
         <QueryProvider>
           <ThemeProvider>
             <div className="relative flex h-full w-full">

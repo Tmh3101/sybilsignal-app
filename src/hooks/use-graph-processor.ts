@@ -31,11 +31,14 @@ export function useGraphProcessor(
     // 1. Process nodes — inject __color and __isTarget for reliable canvas access
     const nodes = graphData.nodes.map((n) => {
       const isTarget = !!(targetId && String(n.id) === String(targetId));
-      const riskLabel = n.risk_label as string;
+      const riskLabel = String(n.risk_label || "UNKNOWN")
+        .trim()
+        .toUpperCase();
       const nodeColor = LABEL_COLORS[riskLabel] || LABEL_COLORS.UNKNOWN;
 
       const enriched = {
         ...n,
+        risk_label: riskLabel as SybilNode["risk_label"],
         fx: isTarget ? 0 : undefined,
         fy: isTarget ? 0 : undefined,
         // These two are the KEY FIX — set before d3 processes nodes

@@ -30,6 +30,31 @@ type EnrichedNode = SybilNode & {
   __isTarget?: boolean;
 };
 
+function getNodePictureUrl(
+  node: Partial<SybilNode> & { picture_url?: string }
+) {
+  const attrPicture =
+    typeof node.attributes?.picture_url === "string"
+      ? node.attributes.picture_url
+      : "";
+  const rootPicture =
+    typeof node.picture_url === "string" ? node.picture_url : "";
+  return attrPicture || rootPicture || "";
+}
+
+function getNodeHandle(node: Partial<SybilNode> & { handle?: string }) {
+  const attrHandle =
+    typeof node.attributes?.handle === "string" ? node.attributes.handle : "";
+  const rootHandle = typeof node.handle === "string" ? node.handle : "";
+  return attrHandle || rootHandle || String(node.id || "?");
+}
+
+function getNodeRiskLabel(node: Partial<SybilNode>) {
+  return String(node.risk_label || "UNKNOWN")
+    .trim()
+    .toUpperCase();
+}
+
 export interface UniversalGraph2DProps {
   graphData: { nodes: SybilNode[]; links: SybilEdge[] };
   mode: "EGO" | "CLUSTER";
@@ -54,6 +79,7 @@ export default function UniversalGraph2D({
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [showWeights, setShowWeights] = useState(false);
+  const [, setImageVersion] = useState(0);
 
   const imgCache = useRef<
     Record<string, HTMLImageElement | "error" | "pending">
@@ -146,14 +172,10 @@ export default function UniversalGraph2D({
       // First request
       imgCache.current[url] = "pending";
       const img = new Image();
-      img.crossOrigin = "anonymous";
+      img.decoding = "async";
       img.onload = () => {
         imgCache.current[url] = img;
-        try {
-          (fgRef.current as unknown as { refresh?: () => void })?.refresh?.();
-        } catch {
-          fgRef.current?.d3ReheatSimulation();
-        }
+        setImageVersion((v) => v + 1);
       };
       img.onerror = () => {
         imgCache.current[url] = "error";
@@ -177,7 +199,7 @@ export default function UniversalGraph2D({
       const baseColor = n.__color || LABEL_COLORS.UNKNOWN;
       const color = baseColor;
 
-      const riskLabel = n.risk_label || "UNKNOWN";
+      const riskLabel = getNodeRiskLabel(n);
       const isMalicious = riskLabel === "MALICIOUS";
       const isHighRisk = riskLabel === "HIGH_RISK";
 
@@ -229,10 +251,8 @@ export default function UniversalGraph2D({
       ctx.clip();
 
       const skipImg = mode === "CLUSTER" && processedData.nodes.length > 500;
-      const rawUrl = n.attributes?.picture_url
-        ? String(n.attributes.picture_url)
-        : undefined;
-      const handle = String(n.attributes?.handle || n.id || "?");
+      const rawUrl = getNodePictureUrl(n);
+      const handle = getNodeHandle(n);
       const img = skipImg ? null : getOrLoadImage(rawUrl);
 
       if (img) {
@@ -327,10 +347,11 @@ export default function UniversalGraph2D({
     (node: NodeObject<EnrichedNode>) => {
       if (mode === "CLUSTER" && processedData.nodes.length > 600) return "";
       const n = node as EnrichedNode;
-      const rl = n.risk_label || "UNKNOWN";
+      const rl = getNodeRiskLabel(n);
       const c = n.__color || LABEL_COLORS.UNKNOWN;
       const isHigh = rl === "MALICIOUS" || rl === "HIGH_RISK";
       const reasons = (n.attributes?.reasons as string[]) || [];
+      const handle = getNodeHandle(n);
 
       // Explicit cluster_id access from root or attributes
       const clusterId =
@@ -341,7 +362,7 @@ export default function UniversalGraph2D({
       return `
       <div style="background:#020617;border:1px solid #1e293b;padding:12px;font-family:'JetBrains Mono',monospace;font-size:10px;min-width:230px;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.7);">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <span style="color:#00f2ff;font-weight:bold;font-size:12px;max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.attributes?.handle || "—"}</span>
+          <span style="color:#00f2ff;font-weight:bold;font-size:12px;max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${handle}</span>
           <span style="font-size:8px;padding:2px 5px;border:1px solid ${c}44;color:${c};background:${c}11;text-transform:uppercase;">${rl}</span>
         </div>
         <div style="color:#64748b;font-size:8px;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${node.id}</div>
@@ -431,7 +452,7 @@ export default function UniversalGraph2D({
         graphData={processedData}
         backgroundColor="rgba(0,0,0,0)"
         nodeCanvasObject={drawNode}
-        nodeCanvasObjectMode={() => "always"}
+        nodeCanvasObjectMode={() => "replace"}
         nodeLabel={nodeLabel}
         onNodeClick={handleNodeClick}
         // ─── Directed arrows for Follow/Interact layers ───
