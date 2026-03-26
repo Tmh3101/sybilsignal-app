@@ -9,9 +9,6 @@ import {
   ShieldCheck,
   Shield,
   ShieldAlert,
-  Users,
-  MessageSquare,
-  Activity,
 } from "lucide-react";
 import { resolvePictureUrl } from "@/lib/utils";
 import Image from "next/image";
@@ -83,10 +80,44 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
               {stats.dominantLabel.replace("_", " ")}
             </span>
           </div>
-          <span className="text-[9px] text-slate-600">
-            {nodes.length} accounts · avg risk{" "}
-            {(stats.avgRisk * 100).toFixed(0)}%
-          </span>
+          <div className="flex items-center gap-2 text-[9px]">
+            <span className="font-bold text-slate-200 tabular-nums">
+              {nodes.length}{" "}
+              <span className="font-medium tracking-tighter text-slate-600 uppercase">
+                accounts
+              </span>
+            </span>
+            <span className="h-2 w-[1px] bg-slate-800" />
+            <div
+              className="flex items-center gap-1 font-bold tabular-nums"
+              style={{ color: dominantColor }}
+            >
+              {RISK_ICONS[stats.dominantLabel]}
+              <span>{(stats.avgRisk * 100).toFixed(0)}% RISK</span>
+            </div>
+          </div>
+
+          {/* Reason flags (moved to header as they are identical for the cluster) */}
+          {nodes.length > 0 &&
+            (nodes[0].risk_label === "MALICIOUS" ||
+              nodes[0].risk_label === "HIGH_RISK") &&
+            (nodes[0].attributes?.reasons as string[])?.length > 0 && (
+              <div className="mt-1 flex flex-wrap gap-1">
+                {(nodes[0].attributes.reasons as string[]).map((r, i) => (
+                  <span
+                    key={i}
+                    className="border px-1.5 py-0.5 text-[7px] font-bold tracking-tight uppercase"
+                    style={{
+                      borderColor: dominantColor + "33",
+                      color: dominantColor + "cc",
+                      backgroundColor: dominantColor + "0a",
+                    }}
+                  >
+                    {r.split("+")[0].trim()}
+                  </span>
+                ))}
+              </div>
+            )}
         </div>
         <button
           onClick={onClose}
@@ -101,21 +132,19 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
         {sortedNodes.map((node, idx) => {
           const rl = node.risk_label || "UNKNOWN";
           const color = LABEL_COLORS[rl] || LABEL_COLORS.UNKNOWN;
-          const isHigh = rl === "MALICIOUS" || rl === "HIGH_RISK";
           const pictureUrl = node.attributes?.picture_url
             ? resolvePictureUrl(String(node.attributes.picture_url))
             : "";
           const handle = String(
             node.attributes?.handle || node.id || "Unknown"
           );
-          const reasons = (node.attributes?.reasons as string[]) || [];
 
           return (
             <div
               key={node.id}
               className="group border-b border-slate-800/40 px-4 py-3 transition-colors hover:bg-slate-900/40"
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 {/* Index + avatar */}
                 <div className="flex flex-shrink-0 flex-col items-center gap-1">
                   <span className="text-[8px] text-slate-700 tabular-nums">
@@ -152,20 +181,11 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
                     <span
-                      className="max-w-[130px] truncate text-[11px] font-bold uppercase italic"
+                      className="max-w-full truncate text-[11px] font-bold uppercase italic"
                       style={{ color }}
                     >
                       {handle}
                     </span>
-                    <div
-                      className="flex flex-shrink-0 items-center gap-1"
-                      style={{ color }}
-                    >
-                      {RISK_ICONS[rl]}
-                      <span className="text-[8px] font-bold tabular-nums">
-                        {((node.risk_score || 0) * 100).toFixed(0)}%
-                      </span>
-                    </div>
                   </div>
 
                   <div className="mt-0.5 truncate text-[8px] text-slate-600">
@@ -173,7 +193,7 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
                   </div>
 
                   {/* Mini stats row */}
-                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[7px] font-medium tracking-tight">
+                  {/* <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[7px] font-medium tracking-tight">
                     <div className="flex items-center gap-1 border-r border-slate-800 pr-3 last:border-0">
                       <Activity size={8} className="text-slate-500" />
                       <span className="text-slate-600 uppercase">Trust:</span>
@@ -195,26 +215,7 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
                         {node.attributes?.post_count ?? 0}
                       </span>
                     </div>
-                  </div>
-
-                  {/* Reason flags */}
-                  {isHigh && reasons.length > 0 && (
-                    <div className="mt-1.5 flex flex-wrap gap-1">
-                      {reasons.slice(0, 2).map((r, i) => (
-                        <span
-                          key={i}
-                          className="border px-1.5 py-0.5 text-[7px]"
-                          style={{
-                            borderColor: color + "33",
-                            color: color + "99",
-                            backgroundColor: color + "0a",
-                          }}
-                        >
-                          {r.split("+")[0].trim()}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  </div> */}
                 </div>
               </div>
             </div>
