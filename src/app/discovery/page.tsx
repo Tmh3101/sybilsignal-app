@@ -453,7 +453,7 @@ export default function DiscoveryPage() {
       {/* ── Graph Area (graph + optional drill-down panel) ── */}
       <div
         className={`relative flex overflow-hidden rounded-sm border border-slate-800/70 shadow-2xl`}
-        style={{ minHeight: "700px" }}
+        style={{ height: "700px" }}
       >
         {/* ── Graph canvas ── */}
         <div
@@ -577,7 +577,7 @@ export default function DiscoveryPage() {
               allNodes={statusData?.graph_data?.nodes}
             />
           ) : (
-            <div className="flex h-full min-h-[700px] flex-col items-center justify-center gap-6">
+            <div className="flex h-full flex-col items-center justify-center gap-6">
               {!taskId && !isProcessing ? (
                 <div className="flex flex-col items-center text-center">
                   <div className="mb-6 flex h-24 w-24 items-center justify-center border border-slate-800 bg-slate-900/50 text-slate-700">
@@ -682,7 +682,7 @@ export default function DiscoveryPage() {
         {selectedCluster && (
           <div
             className="w-80 flex-shrink-0 border-l border-slate-800/80"
-            style={{ minHeight: "700px" }}
+            style={{ height: "100%" }}
           >
             <ClusterDetailPanel
               clusterId={selectedCluster.clusterId}

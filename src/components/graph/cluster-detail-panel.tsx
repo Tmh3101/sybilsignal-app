@@ -9,6 +9,9 @@ import {
   ShieldCheck,
   Shield,
   ShieldAlert,
+  Users,
+  MessageSquare,
+  Activity,
 } from "lucide-react";
 import { resolvePictureUrl } from "@/lib/utils";
 import Image from "next/image";
@@ -57,7 +60,7 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
     <div className="flex h-full flex-col overflow-hidden border-l border-slate-800/80 bg-[#050810] font-mono">
       {/* ── Header ── */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-slate-800/80 px-4 py-3">
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <div
               className="h-2 w-2 rounded-full"
@@ -69,8 +72,18 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
             <span className="text-accent-cyan text-[10px] font-bold tracking-[0.18em] uppercase italic">
               CLUSTER #{clusterId}
             </span>
+            <span
+              className="ml-1 border px-1.5 py-0.5 text-[7px] font-bold tracking-widest uppercase"
+              style={{
+                borderColor: dominantColor + "44",
+                color: dominantColor,
+                backgroundColor: dominantColor + "0a",
+              }}
+            >
+              {stats.dominantLabel.replace("_", " ")}
+            </span>
           </div>
-          <span className="mt-0.5 text-[9px] text-slate-600">
+          <span className="text-[9px] text-slate-600">
             {nodes.length} accounts · avg risk{" "}
             {(stats.avgRisk * 100).toFixed(0)}%
           </span>
@@ -81,68 +94,6 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
         >
           <X size={13} />
         </button>
-      </div>
-
-      {/* ── Risk distribution bar ── */}
-      <div className="flex-shrink-0 border-b border-slate-800/60 px-4 py-3">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-[8px] font-bold tracking-widest text-slate-600 uppercase">
-            Risk Distribution
-          </span>
-          <span className="text-[8px] text-slate-600">
-            {nodes.length} total
-          </span>
-        </div>
-        <div className="flex h-2 w-full overflow-hidden rounded-sm bg-slate-900">
-          {(
-            [
-              "MALICIOUS",
-              "HIGH_RISK",
-              "LOW_RISK",
-              "BENIGN",
-            ] as RiskClassification[]
-          ).map((rl) => {
-            const pct = ((stats.counts[rl] || 0) / nodes.length) * 100;
-            if (pct === 0) return null;
-            return (
-              <div
-                key={rl}
-                style={{ width: `${pct}%`, backgroundColor: LABEL_COLORS[rl] }}
-                title={`${rl}: ${stats.counts[rl]} (${pct.toFixed(0)}%)`}
-              />
-            );
-          })}
-        </div>
-        <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
-          {(
-            [
-              "MALICIOUS",
-              "HIGH_RISK",
-              "LOW_RISK",
-              "BENIGN",
-            ] as RiskClassification[]
-          ).map((rl) => {
-            const cnt = stats.counts[rl] || 0;
-            if (cnt === 0) return null;
-            return (
-              <div key={rl} className="flex items-center gap-1.5">
-                <div
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: LABEL_COLORS[rl] }}
-                />
-                <span className="text-[8px] text-slate-500 uppercase">
-                  {rl.replace("_", " ")}
-                </span>
-                <span
-                  className="text-[8px] font-bold"
-                  style={{ color: LABEL_COLORS[rl] }}
-                >
-                  {cnt}
-                </span>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       {/* ── Node list ── */}
@@ -218,29 +169,32 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
                   </div>
 
                   <div className="mt-0.5 truncate text-[8px] text-slate-600">
-                    {String(node.id).slice(0, 22)}...
+                    {node.id}
                   </div>
 
                   {/* Mini stats row */}
-                  <div className="mt-1.5 flex gap-3 text-[8px] text-slate-600">
-                    <span>
-                      Trust:{" "}
-                      <span className="text-slate-400">
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[7px] font-medium tracking-tight">
+                    <div className="flex items-center gap-1 border-r border-slate-800 pr-3 last:border-0">
+                      <Activity size={8} className="text-slate-500" />
+                      <span className="text-slate-600 uppercase">Trust:</span>
+                      <span className="text-slate-300 font-bold tabular-nums">
                         {Number(node.attributes?.trust_score || 0).toFixed(1)}
                       </span>
-                    </span>
-                    <span>
-                      Followers:{" "}
-                      <span className="text-slate-400">
+                    </div>
+                    <div className="flex items-center gap-1 border-r border-slate-800 pr-3 last:border-0">
+                      <Users size={8} className="text-slate-500" />
+                      <span className="text-slate-600 uppercase">Followers:</span>
+                      <span className="text-slate-300 font-bold tabular-nums">
                         {node.attributes?.follower_count ?? 0}
                       </span>
-                    </span>
-                    <span>
-                      Posts:{" "}
-                      <span className="text-slate-400">
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageSquare size={8} className="text-slate-500" />
+                      <span className="text-slate-600 uppercase">Posts:</span>
+                      <span className="text-slate-300 font-bold tabular-nums">
                         {node.attributes?.post_count ?? 0}
                       </span>
-                    </span>
+                    </div>
                   </div>
 
                   {/* Reason flags */}

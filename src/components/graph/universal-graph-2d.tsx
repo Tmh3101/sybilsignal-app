@@ -26,6 +26,8 @@ import GraphLegend from "./graph-legend";
 import { useGraphProcessor, AggregatedLink } from "@/hooks/use-graph-processor";
 import { Maximize2, ZoomIn, ZoomOut } from "lucide-react";
 
+const AVATAR_CACHE: Record<string, HTMLImageElement | "error" | "pending"> = {};
+
 type ExtendedNode = SybilNode;
 
 export interface UniversalGraph2DProps {
@@ -77,10 +79,6 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [avatarTrigger, setAvatarTrigger] = useState(0);
-
-  const imgCache = useRef<
-    Record<string, HTMLImageElement | "error" | "pending">
-  >({});
 
   const depthFilteredData = useMemo(() => {
     if (mode !== "EGO" || depthFilter === 2 || !targetId) return graphData;
@@ -177,26 +175,25 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
 
       console.log(`url: ${url}`);
 
-      const cached = imgCache.current[url];
+      const cached = AVATAR_CACHE[url];
       if (cached === "error" || cached === "pending") return null;
       if (cached instanceof HTMLImageElement) {
         return cached.complete && cached.naturalWidth > 0 ? cached : null;
       }
 
       // First request
-      imgCache.current[url] = "pending";
+      AVATAR_CACHE[url] = "pending";
       const img = new Image();
       img.crossOrigin = "anonymous";
       img.onload = () => {
-        imgCache.current[url] = img;
+        AVATAR_CACHE[url] = img;
         setAvatarTrigger((prev) => prev + 1);
-        fgRef.current?.d3ReheatSimulation();
       };
       img.onerror = () => {
-        imgCache.current[url] = "error";
+        AVATAR_CACHE[url] = "error";
         console.error("Failed to load node image:", url);
       };
-      img.src = url;
+      img.src = url + "&canvas=1";
       return null;
     },
     []
@@ -271,12 +268,7 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
         ctx.fill();
       }
 
-      // ── Node body ──
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.clip();
-
+      // ── Node body: 3-layer architecture ──
       const skipImg = mode === "CLUSTER" && processedData.nodes.length > 1500;
       const rawUrl = ext.attributes?.picture_url
         ? String(ext.attributes.picture_url)
@@ -284,22 +276,35 @@ const UniversalGraph2D: React.FC<UniversalGraph2DProps> = ({
       const handle = String(ext.attributes?.handle || node.id || "?");
       const img = skipImg ? null : getOrLoadImage(rawUrl);
 
+      // LAYER 1: Solid Background
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+      ctx.fillStyle = img ? "#1e293b" : color; // Dark bg if image loading, otherwise risk color
+      ctx.fill();
+
+      // LAYER 2: Clipped Image & Fallback
       if (img) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, 2 * Math.PI, false);
+        ctx.clip();
         try {
           ctx.drawImage(img, x - size, y - size, size * 2, size * 2);
         } catch {
           drawLetterAvatar(ctx, x, y, size, color, handle);
         }
+        ctx.restore();
       } else {
-        drawLetterAvatar(ctx, x, y, size, color, handle);
+        if (globalScale >= 1.5 || mode === "EGO") {
+          drawLetterAvatar(ctx, x, y, size, color, handle);
+        }
       }
-      ctx.restore();
 
-      // ── Border ring ──
+      // LAYER 3: Crisp Border (Drawn over everything, unclipped)
       ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.strokeStyle = color;
+      ctx.arc(x, y, size, 0, 2 * Math.PI, false);
       ctx.lineWidth = isTarget ? 2.5 : isMalicious || isHighRisk ? 1.8 : 1;
+      ctx.strokeStyle = color;
       ctx.stroke();
 
       // ── Target: dashed orbit ──
