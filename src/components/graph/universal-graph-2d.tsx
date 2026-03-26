@@ -92,45 +92,73 @@ export default function UniversalGraph2D({
 
     const tid = String(targetId).toLowerCase();
 
-    // 1. Initial filter based on depth
-    let nodes = graphData.nodes;
-    let links = graphData.links;
+    // 1. Calculate BFS distance (Tier) for each node
+    const distances = new Map<string, number>();
+    distances.set(tid, 0);
 
-    if (depthFilter === 1) {
-      const direct = new Set<string>([tid]);
-      graphData.links.forEach((l) => {
-        const s = String(
-          typeof l.source === "object"
-            ? (l.source as { id: string }).id
-            : l.source
-        ).toLowerCase();
-        const t = String(
-          typeof l.target === "object"
-            ? (l.target as { id: string }).id
-            : l.target
-        ).toLowerCase();
-        if (s === tid) direct.add(t);
-        if (t === tid) direct.add(s);
-      });
-      nodes = graphData.nodes.filter((n) =>
-        direct.has(String(n.id).toLowerCase())
-      );
-      links = graphData.links.filter((l) => {
-        const s = String(
-          typeof l.source === "object"
-            ? (l.source as { id: string }).id
-            : l.source
-        ).toLowerCase();
-        const t = String(
-          typeof l.target === "object"
-            ? (l.target as { id: string }).id
-            : l.target
-        ).toLowerCase();
-        return direct.has(s) && direct.has(t);
-      });
+    const adjacency = new Map<string, Set<string>>();
+    graphData.links.forEach((l) => {
+      const s = String(
+        typeof l.source === "object"
+          ? (l.source as { id: string }).id
+          : l.source
+      ).toLowerCase();
+      const t = String(
+        typeof l.target === "object"
+          ? (l.target as { id: string }).id
+          : l.target
+      ).toLowerCase();
+
+      if (!adjacency.has(s)) adjacency.set(s, new Set());
+      if (!adjacency.has(t)) adjacency.set(t, new Set());
+      adjacency.get(s)!.add(t);
+      adjacency.get(t)!.add(s);
+    });
+
+    const queue: [string, number][] = [[tid, 0]];
+    const visited = new Set<string>([tid]);
+
+    while (queue.length > 0) {
+      const [currId, dist] = queue.shift()!;
+      if (dist >= 2) continue; // Only care about up to Depth 2
+
+      const neighbors = adjacency.get(currId);
+      if (neighbors) {
+        for (const neighbor of neighbors) {
+          if (!visited.has(neighbor)) {
+            visited.add(neighbor);
+            const nextDist = dist + 1;
+            distances.set(neighbor, nextDist);
+            queue.push([neighbor, nextDist]);
+          }
+        }
+      }
     }
 
-    // 2. Filter edges to target-only if not showAllEdges
+    // 2. Filter nodes based on Depth Filter
+    const nodes = graphData.nodes.filter((n) => {
+      const d = distances.get(String(n.id).toLowerCase());
+      if (d === undefined) return false;
+      return d <= depthFilter;
+    });
+
+    const nodeIds = new Set(nodes.map((n) => String(n.id).toLowerCase()));
+
+    // 3. Filter links based on depth and radial logic
+    let links = graphData.links.filter((l) => {
+      const s = String(
+        typeof l.source === "object"
+          ? (l.source as { id: string }).id
+          : l.source
+      ).toLowerCase();
+      const t = String(
+        typeof l.target === "object"
+          ? (l.target as { id: string }).id
+          : l.target
+      ).toLowerCase();
+      return nodeIds.has(s) && nodeIds.has(t);
+    });
+
     if (!showAllEdges) {
       links = links.filter((l) => {
         const s = String(
@@ -143,7 +171,16 @@ export default function UniversalGraph2D({
             ? (l.target as { id: string }).id
             : l.target
         ).toLowerCase();
-        return s === tid || t === tid;
+
+        const distS = distances.get(s);
+        const distT = distances.get(t);
+
+        if (distS === undefined || distT === undefined) return false;
+
+        // Radial logic: show only edges between different tiers
+        // T0-T1, T1-T2, etc. (diff === 1)
+        const diff = Math.abs(distS - distT);
+        return diff === 1;
       });
     }
 
