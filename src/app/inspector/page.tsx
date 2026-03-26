@@ -68,7 +68,7 @@ function InspectorContent() {
   const { data, isLoading, isError } = useInspectProfile(walletId);
 
   // ─── Depth toggle: 1 = direct neighbors only, 2 = full ego-graph ───
-  const [graphDepth, setGraphDepth] = useState<1 | 2>(2);
+  const [graphDepth, setGraphDepth] = useState<1 | 2>(1);
 
   const handleReset = () => router.push("/inspector");
 
