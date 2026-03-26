@@ -23,7 +23,7 @@ import {
 } from "@/lib/graph-constants";
 import GraphLegend from "./graph-legend";
 import { useGraphProcessor, AggregatedLink } from "@/hooks/use-graph-processor";
-import { Maximize2, ZoomIn, ZoomOut, Weight } from "lucide-react";
+import { Maximize2, ZoomIn, ZoomOut, Brain } from "lucide-react";
 
 type EnrichedNode = SybilNode & {
   __color?: string;
@@ -78,7 +78,7 @@ export default function UniversalGraph2D({
   >(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
-  const [showWeights, setShowWeights] = useState(false);
+  const [showAttention, setShowAttention] = useState(false);
   const [, setImageVersion] = useState(0);
 
   const imgCache = useRef<
@@ -296,14 +296,17 @@ export default function UniversalGraph2D({
     [mode, processedData.nodes.length, getOrLoadImage]
   );
 
-  // ── GAT Weight label on edges (shown at high zoom) ──
-  const drawEdgeWeight = useCallback(
+  // ── GAT Attention label on edges (shown at high zoom) ──
+  const drawEdgeAttention = useCallback(
     (
       link: LinkObject<EnrichedNode, AggregatedLink>,
       ctx: CanvasRenderingContext2D,
       globalScale: number
     ) => {
-      if (!showWeights || globalScale < 2.5) return;
+      if (!showAttention || globalScale < 2.5) return;
+
+      const l = link as AggregatedLink;
+      if (!l.gat_attention || l.gat_attention < 0.01) return;
 
       const src = link.source as { x?: number; y?: number };
       const tgt = link.target as { x?: number; y?: number };
@@ -312,25 +315,21 @@ export default function UniversalGraph2D({
       const midX = ((src.x || 0) + (tgt.x || 0)) / 2;
       const midY = ((src.y || 0) + (tgt.y || 0)) / 2;
 
-      const w = (link as AggregatedLink).aggregated_weight || 1;
-      const label = w.toFixed(0);
+      const label = `${(l.gat_attention * 100).toFixed(1)}%`;
 
       const fs = Math.max(2.5, 8 / globalScale);
-      ctx.font = `bold ${fs}px monospace`;
-
-      const edgeType = ((link as AggregatedLink).edge_type as string) || "";
-      const edgeColor = RELATION_COLORS[edgeType] || RELATION_COLORS.UNKNOWN;
+      ctx.font = `bold ${fs}px "JetBrains Mono", monospace`;
 
       const tw = ctx.measureText(label).width;
-      ctx.fillStyle = "rgba(0,0,0,0.65)";
+      ctx.fillStyle = "rgba(2, 6, 23, 0.85)";
       ctx.fillRect(midX - tw / 2 - 2, midY - fs / 2 - 1, tw + 4, fs + 2);
 
-      ctx.fillStyle = edgeColor + "dd";
+      ctx.fillStyle = "#ef4444"; // AI Focus Red
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(label, midX, midY);
     },
-    [showWeights]
+    [showAttention]
   );
 
   // ── Tooltip ──
@@ -548,9 +547,9 @@ export default function UniversalGraph2D({
             ((link.multiLinkIndex ?? 0) - (link.multiLinkCount - 1) / 2) * 0.18
           );
         }}
-        // ─── GAT weight labels (drawn AFTER default link) ───
-        linkCanvasObject={showWeights ? drawEdgeWeight : undefined}
-        linkCanvasObjectMode={showWeights ? () => "after" : undefined}
+        // ─── GAT attention labels (drawn AFTER default link) ───
+        linkCanvasObject={showAttention ? drawEdgeAttention : undefined}
+        linkCanvasObjectMode={showAttention ? () => "after" : undefined}
         cooldownTicks={120}
         d3AlphaDecay={0.018}
         d3VelocityDecay={0.35}
@@ -559,15 +558,15 @@ export default function UniversalGraph2D({
       {/* ── Controls (zoom + weight toggle) ── */}
       <div className="absolute right-6 bottom-6 z-20 flex flex-col gap-1.5">
         <button
-          onClick={() => setShowWeights((v) => !v)}
-          title={showWeights ? "Hide edge weights" : "Show edge weights"}
+          onClick={() => setShowAttention((v) => !v)}
+          title={showAttention ? "Hide AI Attention" : "Show AI Attention"}
           className={`flex h-8 w-8 items-center justify-center border backdrop-blur-sm transition-all active:scale-95 ${
-            showWeights
-              ? "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan"
-              : "hover:border-accent-cyan/30 hover:text-accent-cyan border-slate-700/80 bg-black/80 text-slate-500"
+            showAttention
+              ? "border-accent-red/50 bg-accent-red/10 text-accent-red"
+              : "hover:border-accent-red/30 hover:text-accent-red border-slate-700/80 bg-black/80 text-slate-500"
           }`}
         >
-          <Weight size={12} />
+          <Brain size={12} />
         </button>
         <button
           onClick={zoomToFit}
@@ -593,9 +592,9 @@ export default function UniversalGraph2D({
       </div>
 
       {/* Weight info hint */}
-      {showWeights && (
-        <div className="border-accent-cyan/20 absolute bottom-6 left-4 z-10 border bg-black/80 px-3 py-1.5 font-mono text-[8px] text-slate-500 backdrop-blur-sm">
-          Showing semantic edge weights (1–5 scale)
+      {showAttention && (
+        <div className="border-accent-red/20 absolute bottom-6 left-4 z-10 border bg-black/80 px-3 py-1.5 font-mono text-[8px] text-slate-500 backdrop-blur-sm">
+          Showing GAT Attention Weights (Explainable AI)
           <br />
           <span className="text-slate-700">Zoom in to see labels on edges</span>
         </div>
