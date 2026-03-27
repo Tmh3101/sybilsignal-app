@@ -62,6 +62,7 @@ export interface UniversalGraph2DProps {
   risk_label?: RiskClassification;
   depthFilter?: 1 | 2;
   onClusterNodeClick?: (clusterId: number, nodes: SybilNode[]) => void;
+  onNodeClick?: (node: SybilNode) => void;
   allNodes?: SybilNode[];
 }
 
@@ -71,6 +72,7 @@ export default function UniversalGraph2D({
   targetId,
   depthFilter = 2,
   onClusterNodeClick,
+  onNodeClick,
   allNodes,
 }: UniversalGraph2DProps) {
   const fgRef = useRef<
@@ -490,6 +492,11 @@ export default function UniversalGraph2D({
   // ── Node click ──
   const handleNodeClick = useCallback(
     (node: NodeObject<EnrichedNode>) => {
+      // Trigger side panel for inspector if prop provided
+      if (onNodeClick) {
+        onNodeClick(node as SybilNode);
+      }
+
       if (mode === "CLUSTER" && onClusterNodeClick) {
         const cid = (node as EnrichedNode).cluster_id;
         if (cid !== undefined && cid !== null) {
@@ -507,7 +514,7 @@ export default function UniversalGraph2D({
         fgRef.current.zoom(5, 700);
       }
     },
-    [mode, onClusterNodeClick, allNodes, processedData.nodes]
+    [mode, onClusterNodeClick, onNodeClick, allNodes, processedData.nodes]
   );
 
   const zoomToFit = () => fgRef.current?.zoomToFit(400, 50);

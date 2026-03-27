@@ -8,6 +8,7 @@ import { IndustrialCard } from "@/components/ui/industrial-card";
 import { BootSequenceLoader } from "@/components/ui/boot-sequence-loader";
 import { resolvePictureUrl } from "@/lib/utils";
 import { ProbabilityEqualizer } from "@/components/inspector/probability-equalizer";
+import NodeDetailPanel from "@/components/inspector/node-detail-panel";
 import { LABEL_COLORS } from "@/lib/graph-constants";
 import { SybilNode } from "@/types/api";
 import Image from "next/image";
@@ -67,6 +68,9 @@ function InspectorContent() {
   const searchParams = useSearchParams();
   const walletId = searchParams.get("wallet");
   const { data, isLoading, isError } = useInspectProfile(walletId);
+
+  // ─── Selected Node for Side Panel ───
+  const [selectedNode, setSelectedNode] = useState<SybilNode | null>(null);
 
   // ─── Depth toggle: 1 = direct neighbors only, 2 = full ego-graph ───
   const [graphDepth, setGraphDepth] = useState<1 | 2>(1);
@@ -381,7 +385,18 @@ function InspectorContent() {
             targetId={profile?.id || walletId || ""}
             risk_label={riskLabel as import("@/types/api").RiskClassification}
             depthFilter={graphDepth}
+            onNodeClick={setSelectedNode}
           />
+
+          {/* ── Node Detail Panel Overlay ── */}
+          {selectedNode && (
+            <div className="animate-in fade-in slide-in-from-right absolute top-0 right-0 bottom-0 z-30 w-[320px] duration-300">
+              <NodeDetailPanel
+                node={selectedNode}
+                onClose={() => setSelectedNode(null)}
+              />
+            </div>
+          )}
 
           {/* Overlays bottom-right (handled by graph component's zoom controls) */}
           <div className="pointer-events-none absolute right-16 bottom-6 flex flex-col items-end gap-1">
