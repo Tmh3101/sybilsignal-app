@@ -34,16 +34,23 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
   const stats = useMemo(() => {
     const counts: Record<string, number> = {};
     let totalRisk = 0;
+    const allReasons = new Set<string>();
+
     for (const n of nodes) {
       counts[n.risk_label] = (counts[n.risk_label] || 0) + 1;
       totalRisk += n.risk_score || 0;
+      if (n.attributes?.reasons && Array.isArray(n.attributes.reasons)) {
+        n.attributes.reasons.forEach((r) => allReasons.add(r));
+      }
     }
+
     return {
       counts,
       avgRisk: nodes.length > 0 ? totalRisk / nodes.length : 0,
-      dominantLabel: Object.entries(counts).sort(
+      dominantLabel: (Object.entries(counts).sort(
         (a, b) => b[1] - a[1]
-      )[0]?.[0] as RiskClassification,
+      )[0]?.[0] || "BENIGN") as RiskClassification,
+      reasons: Array.from(allReasons),
     };
   }, [nodes]);
 
@@ -93,31 +100,28 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
               style={{ color: dominantColor }}
             >
               {RISK_ICONS[stats.dominantLabel]}
-              <span>{(stats.avgRisk * 100).toFixed(0)}% RISK</span>
+              <span>{(stats.avgRisk * 100).toFixed(0)} RISK SCORE</span>
             </div>
           </div>
 
-          {/* Reason flags (moved to header as they are identical for the cluster) */}
-          {nodes.length > 0 &&
-            (nodes[0].risk_label === "MALICIOUS" ||
-              nodes[0].risk_label === "HIGH_RISK") &&
-            (nodes[0].attributes?.reasons as string[])?.length > 0 && (
-              <div className="mt-1 flex flex-wrap gap-1">
-                {(nodes[0].attributes.reasons as string[]).map((r, i) => (
-                  <span
-                    key={i}
-                    className="border px-1.5 py-0.5 text-[7px] font-bold tracking-tight uppercase"
-                    style={{
-                      borderColor: dominantColor + "33",
-                      color: dominantColor + "cc",
-                      backgroundColor: dominantColor + "0a",
-                    }}
-                  >
-                    {r.split("+")[0].trim()}
-                  </span>
-                ))}
-              </div>
-            )}
+          {/* Reason flags */}
+          {stats.reasons.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {stats.reasons.map((r, i) => (
+                <span
+                  key={i}
+                  className="border px-1.5 py-0.5 text-[7px] font-bold tracking-tight uppercase"
+                  style={{
+                    borderColor: dominantColor + "33",
+                    color: dominantColor + "cc",
+                    backgroundColor: dominantColor + "0a",
+                  }}
+                >
+                  {r.split("+")[0].trim()}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
         <button
           onClick={onClose}
