@@ -585,8 +585,8 @@ export default function UniversalGraph2D({
               ? MIN_LINK_WIDTH
               : Math.max(MIN_LINK_WIDTH, Math.sqrt(l.aggregated_weight || 1));
           const att = l.gat_attention || 0;
-          // Only boost thickness if attention is significant
-          return baseWidth + (att > 0.1 ? att * 6 : 0);
+          // Scale width linearly with a multiplier of 15 when showing attention
+          return baseWidth + (showAttention && att > 0 ? att * 15 : 0);
         }}
         linkCurvature={(link: LinkObject<EnrichedNode, AggregatedLink>) => {
           if (!link.multiLinkCount || link.multiLinkCount <= 1) return 0;
