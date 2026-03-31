@@ -38,10 +38,9 @@ const UniversalGraph2D = dynamic(
   }
 );
 
-const ClusterDetailPanel = dynamic(
-  () => import("@/components/graph/cluster-detail-panel"),
-  { ssr: false }
-);
+import ClusterDetailPanel from "@/components/graph/cluster-detail-panel";
+import EdgeDetailPanel from "@/components/inspector/edge-detail-panel";
+import { AggregatedLink } from "@/hooks/use-graph-processor";
 
 // ─── Filter state types ───
 const ALL_LABELS: RiskClassification[] = [
@@ -76,6 +75,8 @@ export default function DiscoveryPage() {
     clusterId: number;
     nodes: SybilNode[];
   } | null>(null);
+
+  const [selectedLink, setSelectedLink] = useState<AggregatedLink | null>(null);
 
   const toDisplayDate = (dateStr: string) => {
     if (!dateStr) return "";
@@ -574,6 +575,7 @@ export default function DiscoveryPage() {
               mode="CLUSTER"
               graphData={filteredGraphData}
               onClusterNodeClick={handleClusterNodeClick}
+              onLinkClick={setSelectedLink}
               allNodes={statusData?.graph_data?.nodes}
             />
           ) : (
@@ -688,6 +690,19 @@ export default function DiscoveryPage() {
               clusterId={selectedCluster.clusterId}
               nodes={selectedCluster.nodes}
               onClose={() => setSelectedCluster(null)}
+            />
+          </div>
+        )}
+
+        {/* ── Edge detail panel ── */}
+        {selectedLink && (
+          <div
+            className="w-80 flex-shrink-0 border-l border-slate-800/80"
+            style={{ height: "100%" }}
+          >
+            <EdgeDetailPanel
+              link={selectedLink}
+              onClose={() => setSelectedLink(null)}
             />
           </div>
         )}

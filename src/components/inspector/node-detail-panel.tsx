@@ -155,24 +155,50 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({ node, onClose }) => {
               Detection Flags
             </span>
             <div className="flex flex-col gap-1.5">
-              {(node.attributes.reasons as string[]).map((r, i) => (
-                <div
-                  key={i}
-                  className="flex flex-col border border-slate-800 bg-slate-900/40 px-2 py-1.5"
-                >
-                  <span
-                    className="text-[9px] font-bold uppercase"
-                    style={{ color: color + "cc" }}
+              {(node.attributes.reasons as string[]).map((r, i) => {
+                const penaltyMatch = r.match(/\+(\d+)$/);
+                const penalty = penaltyMatch ? penaltyMatch[0] : null;
+                const baseText = penalty
+                  ? r.slice(0, -penalty.length).trim()
+                  : r;
+                const parts = baseText.includes(":")
+                  ? baseText.split(":")
+                  : [baseText];
+                const title = parts[0].trim();
+                const description =
+                  parts.length > 1 ? parts.slice(1).join(":").trim() : null;
+
+                return (
+                  <div
+                    key={i}
+                    className="flex flex-col border border-slate-800 bg-slate-900/40 px-2 py-1.5"
                   >
-                    {r.split(":")[0] || r}
-                  </span>
-                  {r.includes(":") && (
-                    <span className="mt-0.5 text-[8px] leading-tight text-slate-500">
-                      {r.split(":").slice(1).join(":").trim()}
-                    </span>
-                  )}
-                </div>
-              ))}
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className="text-[9px] font-bold uppercase"
+                        style={{ color: color + "cc" }}
+                      >
+                        {title}
+                      </span>
+                      {penalty && (
+                        <span className="animate-pulse text-[10px] font-black text-red-500 tabular-nums">
+                          {penalty}
+                        </span>
+                      )}
+                    </div>
+                    {description && (
+                      <span className="mt-0.5 text-[8px] leading-tight text-slate-500">
+                        {description}
+                      </span>
+                    )}
+                    {!description && !penaltyMatch && (
+                      <span className="mt-0.5 text-[8px] leading-tight text-slate-500">
+                        {r}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

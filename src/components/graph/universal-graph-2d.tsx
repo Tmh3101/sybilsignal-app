@@ -63,6 +63,7 @@ export interface UniversalGraph2DProps {
   depthFilter?: 1 | 2;
   onClusterNodeClick?: (clusterId: number, nodes: SybilNode[]) => void;
   onNodeClick?: (node: SybilNode) => void;
+  onLinkClick?: (link: AggregatedLink) => void;
   allNodes?: SybilNode[];
 }
 
@@ -73,6 +74,7 @@ export default function UniversalGraph2D({
   depthFilter = 2,
   onClusterNodeClick,
   onNodeClick,
+  onLinkClick,
   allNodes,
 }: UniversalGraph2DProps) {
   const fgRef = useRef<
@@ -90,7 +92,14 @@ export default function UniversalGraph2D({
 
   // ─── Depth and Edge Filtering (frontend, EGO only) ───
   const filteredData = useMemo(() => {
-    if (mode !== "EGO" || !targetId) return graphData;
+    // 0. Preliminary filter: Always exclude reverse edges (_REV) to avoid visual clutter
+    const baseLinks = graphData.links.filter(
+      (l) => !(l.edge_type as string).endsWith("_REV")
+    );
+
+    if (mode !== "EGO" || !targetId) {
+      return { nodes: graphData.nodes, links: baseLinks };
+    }
 
     const tid = String(targetId).toLowerCase();
 
@@ -99,7 +108,7 @@ export default function UniversalGraph2D({
     distances.set(tid, 0);
 
     const adjacency = new Map<string, Set<string>>();
-    graphData.links.forEach((l) => {
+    baseLinks.forEach((l) => {
       const s = String(
         typeof l.source === "object"
           ? (l.source as { id: string }).id
@@ -147,7 +156,7 @@ export default function UniversalGraph2D({
     const nodeIds = new Set(nodes.map((n) => String(n.id).toLowerCase()));
 
     // 3. Filter links based on depth and radial logic
-    let links = graphData.links.filter((l) => {
+    let links = baseLinks.filter((l) => {
       const s = String(
         typeof l.source === "object"
           ? (l.source as { id: string }).id
@@ -473,17 +482,36 @@ export default function UniversalGraph2D({
       const l = link as AggregatedLink;
       const type = (l.edge_type as string) || "UNKNOWN";
       const weight = l.aggregated_weight || 1;
+      const violations = l.violations || [];
       const attention = l.gat_attention
         ? `<br/><span style="color: #ef4444; font-weight: bold;">AI Attention: ${l.gat_attention.toFixed(
             4
           )}</span>`
         : "";
 
-      return `<div style="background: rgba(2, 6, 23, 0.95); border: 1px solid #1e293b; padding: 6px 10px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+      const violationsHtml =
+        violations.length > 0
+          ? `<div style="margin-top: 4px; border-top: 1px solid #1e293b; padding-top: 4px;">
+             <span style="color: #ef4444; font-size: 8px; font-weight: bold; text-transform: uppercase;">Violations:</span>
+             <div style="display: flex; flex-wrap: wrap; gap: 2px; margin-top: 2px;">
+               ${violations
+                 .map(
+                   (v) =>
+                     `<span style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); padding: 1px 4px; color: #ef4444; font-size: 7px;">${v}</span>`
+                 )
+                 .join("")}
+             </div>
+           </div>`
+          : "";
+
+      return `<div style="background: rgba(2, 6, 23, 0.95); border: 1px solid #1e293b; padding: 6px 10px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.5); min-width: 140px;">
       <span style="color: #64748b; text-transform: uppercase; font-size: 8px;">Relationship</span>
       <div style="color: #f1f5f9; margin-top: 2px;">Type: <span style="color: #00f2ff;">${type}</span></div>
-      <div style="color: #f1f5f9;">Weight: <span style="color: #00f2ff;">${weight}</span></div>
+      <div style="color: #f1f5f9;">Weight: <span style="color: #00f2ff;">${weight.toFixed(
+        2
+      )}</span></div>
       ${attention}
+      ${violationsHtml}
     </div>`;
     },
     []
@@ -550,6 +578,7 @@ export default function UniversalGraph2D({
         nodeLabel={nodeLabel}
         linkLabel={linkLabel}
         onNodeClick={handleNodeClick}
+        onLinkClick={(link) => onLinkClick?.(link as AggregatedLink)}
         // ─── Directed arrows for Follow/Interact layers ───
         linkDirectionalArrowLength={(
           link: LinkObject<EnrichedNode, AggregatedLink>
@@ -583,7 +612,7 @@ export default function UniversalGraph2D({
           const baseWidth =
             mode === "CLUSTER"
               ? MIN_LINK_WIDTH
-              : Math.max(MIN_LINK_WIDTH, Math.sqrt(l.aggregated_weight || 1));
+              : Math.max(1, (l.aggregated_weight || 1) * 1.2);
           const att = l.gat_attention || 0;
           // Scale width linearly with a multiplier of 15 when showing attention
           return baseWidth + (showAttention && att > 0 ? att * 15 : 0);

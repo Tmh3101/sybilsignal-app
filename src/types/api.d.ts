@@ -47,12 +47,38 @@ export interface SybilNode {
   };
 }
 
+export type EdgeType =
+  | "FOLLOW"
+  | "UPVOTE"
+  | "REACTION"
+  | "COMMENT"
+  | "QUOTE"
+  | "MIRROR"
+  | "COLLECT"
+  | "TIP"
+  | "FOLLOW_REV"
+  | "UPVOTE_REV"
+  | "REACTION_REV"
+  | "COMMENT_REV"
+  | "QUOTE_REV"
+  | "MIRROR_REV"
+  | "COLLECT_REV"
+  | "TIP_REV"
+  | "CO-OWNER"
+  | "SAME_AVATAR"
+  | "FUZZY_HANDLE"
+  | "SIM_BIO"
+  | "CLOSE_CREATION_TIME"
+  | "SIMILARITY"
+  | string;
+
 export interface SybilEdge {
   source: string;
   target: string;
-  edge_type: "comment" | "follow" | "upvote" | "transfer" | string;
+  edge_type: EdgeType;
   weight: number;
   gat_attention?: number;
+  violations?: string[];
 }
 
 export interface LocalGraph {

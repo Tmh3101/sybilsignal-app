@@ -9,8 +9,10 @@ import { BootSequenceLoader } from "@/components/ui/boot-sequence-loader";
 import { resolvePictureUrl } from "@/lib/utils";
 import { ProbabilityEqualizer } from "@/components/inspector/probability-equalizer";
 import NodeDetailPanel from "@/components/inspector/node-detail-panel";
+import EdgeDetailPanel from "@/components/inspector/edge-detail-panel";
 import { LABEL_COLORS } from "@/lib/graph-constants";
 import { SybilNode } from "@/types/api";
+import { AggregatedLink } from "@/hooks/use-graph-processor";
 import Image from "next/image";
 import {
   User,
@@ -71,6 +73,9 @@ function InspectorContent() {
 
   // ─── Selected Node for Side Panel ───
   const [selectedNode, setSelectedNode] = useState<SybilNode | null>(null);
+
+  // ─── Selected Link for Side Panel ───
+  const [selectedLink, setSelectedLink] = useState<AggregatedLink | null>(null);
 
   // ─── Depth toggle: 1 = direct neighbors only, 2 = full ego-graph ───
   const [graphDepth, setGraphDepth] = useState<1 | 2>(1);
@@ -385,7 +390,14 @@ function InspectorContent() {
             targetId={profile?.id || walletId || ""}
             risk_label={riskLabel as import("@/types/api").RiskClassification}
             depthFilter={graphDepth}
-            onNodeClick={setSelectedNode}
+            onNodeClick={(node) => {
+              setSelectedLink(null);
+              setSelectedNode(node);
+            }}
+            onLinkClick={(link) => {
+              setSelectedNode(null);
+              setSelectedLink(link);
+            }}
           />
 
           {/* ── Node Detail Panel Overlay ── */}
@@ -394,6 +406,16 @@ function InspectorContent() {
               <NodeDetailPanel
                 node={selectedNode}
                 onClose={() => setSelectedNode(null)}
+              />
+            </div>
+          )}
+
+          {/* ── Edge Detail Panel Overlay ── */}
+          {selectedLink && (
+            <div className="animate-in fade-in slide-in-from-right absolute top-0 right-0 bottom-0 z-30 w-[320px] duration-300">
+              <EdgeDetailPanel
+                link={selectedLink}
+                onClose={() => setSelectedLink(null)}
               />
             </div>
           )}
