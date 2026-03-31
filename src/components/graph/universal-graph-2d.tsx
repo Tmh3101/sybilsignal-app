@@ -18,7 +18,7 @@ import { resolvePictureUrl } from "@/lib/utils";
 import {
   LABEL_COLORS,
   RELATION_COLORS,
-  MIN_LINK_WIDTH,
+  DEFAULT_LINK_WIDTH,
   DIRECTED_EDGE_TYPES,
 } from "@/lib/graph-constants";
 import GraphLegend from "./graph-legend";
@@ -607,16 +607,7 @@ export default function UniversalGraph2D({
           const b = parseInt(base.slice(5, 7), 16);
           return `rgba(${r},${g},${b},${op})`;
         }}
-        linkWidth={(link: LinkObject<EnrichedNode, AggregatedLink>) => {
-          const l = link as AggregatedLink;
-          const baseWidth =
-            mode === "CLUSTER"
-              ? MIN_LINK_WIDTH
-              : Math.max(1, (l.aggregated_weight || 1) * 1.2);
-          const att = l.gat_attention || 0;
-          // Scale width linearly with a multiplier of 15 when showing attention
-          return baseWidth + (showAttention && att > 0 ? att * 15 : 0);
-        }}
+        linkWidth={DEFAULT_LINK_WIDTH}
         linkCurvature={(link: LinkObject<EnrichedNode, AggregatedLink>) => {
           if (!link.multiLinkCount || link.multiLinkCount <= 1) return 0;
           return (
@@ -634,29 +625,32 @@ export default function UniversalGraph2D({
       {/* ── Controls (zoom + weight toggle) ── */}
       <div className="absolute right-6 bottom-6 z-20 flex flex-col gap-1.5">
         {mode === "EGO" && (
-          <button
-            onClick={() => setShowAllEdges((v) => !v)}
-            title={showAllEdges ? "Show Target Edges Only" : "Show All Edges"}
-            className={`flex h-8 w-8 items-center justify-center border backdrop-blur-sm transition-all active:scale-95 ${
-              showAllEdges
-                ? "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan"
-                : "hover:border-accent-cyan/30 hover:text-accent-cyan border-slate-700/80 bg-black/80 text-slate-500"
-            }`}
-          >
-            <Share2 size={12} />
-          </button>
+          <>
+            <button
+              onClick={() => setShowAllEdges((v) => !v)}
+              title={showAllEdges ? "Show Target Edges Only" : "Show All Edges"}
+              className={`flex h-8 w-8 items-center justify-center border backdrop-blur-sm transition-all active:scale-95 ${
+                showAllEdges
+                  ? "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan"
+                  : "hover:border-accent-cyan/30 hover:text-accent-cyan border-slate-700/80 bg-black/80 text-slate-500"
+              }`}
+            >
+              <Share2 size={12} />
+            </button>
+
+            <button
+              onClick={() => setShowAttention((v) => !v)}
+              title={showAttention ? "Hide AI Attention" : "Show AI Attention"}
+              className={`flex h-8 w-8 items-center justify-center border backdrop-blur-sm transition-all active:scale-95 ${
+                showAttention
+                  ? "border-accent-red/50 bg-accent-red/10 text-accent-red"
+                  : "hover:border-accent-red/30 hover:text-accent-red border-slate-700/80 bg-black/80 text-slate-500"
+              }`}
+            >
+              <Brain size={12} />
+            </button>
+          </>
         )}
-        <button
-          onClick={() => setShowAttention((v) => !v)}
-          title={showAttention ? "Hide AI Attention" : "Show AI Attention"}
-          className={`flex h-8 w-8 items-center justify-center border backdrop-blur-sm transition-all active:scale-95 ${
-            showAttention
-              ? "border-accent-red/50 bg-accent-red/10 text-accent-red"
-              : "hover:border-accent-red/30 hover:text-accent-red border-slate-700/80 bg-black/80 text-slate-500"
-          }`}
-        >
-          <Brain size={12} />
-        </button>
         <button
           onClick={zoomToFit}
           title="Zoom to fit"
