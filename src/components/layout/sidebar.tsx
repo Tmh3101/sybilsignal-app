@@ -9,6 +9,7 @@ import {
   Terminal,
   Moon,
   Sun,
+  BarChart3,
 } from "lucide-react";
 import { useThemeStore } from "@/store/theme-store";
 import { useEffect, useState } from "react";
@@ -28,6 +29,11 @@ const navItems = [
     name: "INSPECTOR",
     href: "/inspector",
     icon: Search,
+  },
+  {
+    name: "STATISTICS",
+    href: "/stats",
+    icon: BarChart3,
   },
 ];
 

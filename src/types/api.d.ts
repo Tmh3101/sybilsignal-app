@@ -129,3 +129,47 @@ export interface DiscoveryStatusResponse {
   } | null;
   message: string | null;
 }
+
+// Statistics Types
+export interface EdgeDistributionItem {
+  type: string;
+  count: number;
+  percentage: number;
+}
+
+export interface NetworkOverview {
+  total_nodes: number;
+  total_edges: number;
+  total_clusters: number;
+  avg_cluster_size: number;
+  edge_distribution: EdgeDistributionItem[];
+}
+
+export interface RiskDistributionItem {
+  category: RiskClassification;
+  count: number;
+}
+
+export interface RiskDistribution {
+  distribution: RiskDistributionItem[];
+}
+
+export interface TrustScoreBin {
+  bin: string;
+  count: number;
+}
+
+export interface TrustScoreDistribution {
+  bins: TrustScoreBin[];
+}
+
+export interface ClusterSummary {
+  cluster_id: number;
+  size: number;
+  risk_score: number;
+  is_sybil_cluster: boolean;
+}
+
+export interface ClusterStats {
+  clusters: ClusterSummary[];
+}
