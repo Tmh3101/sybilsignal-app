@@ -7,7 +7,7 @@ import { useInspectProfile } from "@/hooks/use-sybil-inference";
 import { IndustrialCard } from "@/components/ui/industrial-card";
 import { BootSequenceLoader } from "@/components/ui/boot-sequence-loader";
 import { resolvePictureUrl } from "@/lib/utils";
-import { ProbabilityEqualizer } from "@/components/inspector/probability-equalizer";
+// import { ProbabilityEqualizer } from "@/components/inspector/probability-equalizer";
 import NodeDetailPanel from "@/components/inspector/node-detail-panel";
 import EdgeDetailPanel from "@/components/inspector/edge-detail-panel";
 import { LABEL_COLORS } from "@/lib/graph-constants";
@@ -85,11 +85,11 @@ function InspectorContent() {
     router.replace("/inspector");
   };
 
-  // ─── Compute filtered local_graph based on depth (frontend filtering) ───
+  // ─── Compute filtered ego_graph based on depth (frontend filtering) ───
   const displayGraphData = useMemo(() => {
     if (!data?.local_graph || !walletId) return { nodes: [], links: [] };
 
-    const targetId = (data.profile_info?.id || walletId).toLowerCase().trim();
+    const targetId = data.profile_info?.id.toLowerCase().trim();
     const nodesWithTargetPicture = data.local_graph.nodes.map(
       (node): SybilNode => {
         if (String(node.id).toLowerCase() !== targetId) return node;
@@ -112,8 +112,8 @@ function InspectorContent() {
     );
 
     const graphData = {
-      ...data.local_graph,
       nodes: nodesWithTargetPicture,
+      links: data.local_graph.links,
     };
 
     if (graphDepth === 2) return graphData;
@@ -159,6 +159,10 @@ function InspectorContent() {
   const analysis = data?.analysis;
   const profile = data?.profile_info;
   const riskLabel = analysis?.predict_label || "UNKNOWN";
+  const riskScore =
+    analysis?.predict_proba[
+      riskLabel as import("@/types/api").RiskClassification
+    ] || 0;
   const riskColor = LABEL_COLORS[riskLabel] || LABEL_COLORS.UNKNOWN;
 
   if (!walletId) {
@@ -311,35 +315,57 @@ function InspectorContent() {
           </IndustrialCard>
         </div>
 
-        {/* Probability Distribution */}
+        {/* Confidence Score */}
         <div className="col-span-4">
-          <ProbabilityEqualizer
-            probabilities={analysis?.predict_proba || {}}
-            className="h-full"
-          />
+          <IndustrialCard title="CONFIDENCE SCORE" className="h-full">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-end justify-between px-1">
+                <span className="text-subtle text-[9px] font-bold uppercase">
+                  Probability
+                </span>
+                <span
+                  className="font-mono text-xl font-bold"
+                  style={{ color: riskColor }}
+                >
+                  {(riskScore * 100).toFixed(1)}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full bg-slate-800">
+                <div
+                  className="h-full transition-all duration-1000"
+                  style={{
+                    width: `${riskScore * 100}%`,
+                    backgroundColor: riskColor,
+                    boxShadow: `0 0 10px ${riskColor}66`,
+                  }}
+                />
+              </div>
+            </div>
+          </IndustrialCard>
         </div>
 
-        {/* Detection Metrics */}
+        {/* Detection Reasoning */}
         <div className="col-span-4">
-          <IndustrialCard title="DETECTION METRICS" className="h-full">
+          <IndustrialCard title="DETECTION REASONING" className="h-full">
             <div className="flex flex-col gap-2">
               <span className="text-subtle px-1 text-[9px] font-bold uppercase">
                 Reasoning:
               </span>
-              <div className="flex flex-wrap gap-1.5">
-                {(analysis?.reasoning || []).map((r, i) => (
-                  <span
-                    key={i}
-                    className="border px-1.5 py-0.5 font-mono text-[9px] uppercase"
-                    style={{
-                      borderColor: riskColor + "33",
-                      color: riskColor + "aa",
-                      backgroundColor: riskColor + "08",
-                    }}
-                  >
-                    {r}
-                  </span>
-                ))}
+              <div className="scrollbar-thin max-h-[100px] flex flex-col gap-1.5 overflow-y-auto px-1">
+                {(analysis?.reasoning || []).length > 0 ? (
+                  analysis?.reasoning.map((r, i) => (
+                    <p
+                      key={i}
+                      className="border-l border-slate-700 pl-2 font-mono text-[9px] leading-relaxed text-slate-400"
+                    >
+                      {r}
+                    </p>
+                  ))
+                ) : (
+                  <p className="font-mono text-[9px] italic text-slate-500">
+                    No detailed reasoning provided.
+                  </p>
+                )}
               </div>
             </div>
           </IndustrialCard>
@@ -388,7 +414,7 @@ function InspectorContent() {
             mode="EGO"
             graphData={displayGraphData}
             targetId={profile?.id || walletId || ""}
-            risk_label={riskLabel as import("@/types/api").RiskClassification}
+            label={riskLabel as import("@/types/api").RiskClassification}
             depthFilter={graphDepth}
             onNodeClick={(node) => {
               setSelectedLink(null);

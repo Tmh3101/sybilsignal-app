@@ -193,9 +193,13 @@ export default function DiscoveryPage() {
   }, [statusData?.graph_data, activeLabels, filterClusterId]);
 
   // ─── Cluster IDs for filter dropdown ───
-  const clusterIds = useMemo(() => {
+  const allClusterIds = useMemo(() => {
     if (!statusData?.graph_data?.nodes) return [];
-    const ids = new Set(statusData.graph_data.nodes.map((n) => n.cluster_id));
+    const ids = new Set(
+      statusData.graph_data.nodes
+        .map((n) => n.cluster_id)
+        .filter((id): id is number => id !== undefined && id !== null)
+    );
     return Array.from(ids).sort((a, b) => a - b);
   }, [statusData]);
 
@@ -486,11 +490,13 @@ export default function DiscoveryPage() {
                     </div>
                     <div className="flex flex-col gap-1.5">
                       {ALL_LABELS.map((rl) => {
-                        const active = activeLabels.has(rl);
+                        const active = activeLabels.has(
+                          rl as RiskClassification
+                        );
                         const color = LABEL_COLORS[rl];
                         const cnt =
                           statusData?.graph_data?.nodes.filter(
-                            (n) => n.risk_label === rl
+                            (n) => n.risk_label === (rl as RiskClassification)
                           ).length ?? 0;
                         return (
                           <button
@@ -542,7 +548,7 @@ export default function DiscoveryPage() {
                         className="focus:border-accent-cyan/50 flex-1 border border-slate-700 bg-black/80 px-2 py-1 font-mono text-[9px] text-slate-300 outline-none"
                       >
                         <option value="">All clusters</option>
-                        {clusterIds.map((id) => (
+                        {allClusterIds.map((id) => (
                           <option key={id} value={String(id)}>
                             Cluster #{id}
                           </option>

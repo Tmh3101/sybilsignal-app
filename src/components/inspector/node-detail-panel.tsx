@@ -149,13 +149,14 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({ node, onClose }) => {
         </div> */}
 
         {/* Detection Reasons */}
-        {((node.attributes?.reasons as string[]) || []).length > 0 && (
+        {((node.attributes?.reasons as unknown as string[]) || []).length >
+          0 && (
           <div className="flex flex-col gap-2">
             <span className="text-[8px] font-bold tracking-widest text-slate-500 uppercase">
               Detection Flags
             </span>
             <div className="flex flex-col gap-1.5">
-              {(node.attributes.reasons as string[]).map((r, i) => {
+              {(node.attributes.reasons as unknown as string[]).map((r, i) => {
                 const penaltyMatch = r.match(/\+(\d+)$/);
                 const penalty = penaltyMatch ? penaltyMatch[0] : null;
                 const baseText = penalty

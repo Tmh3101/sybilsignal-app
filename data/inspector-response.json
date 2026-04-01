@@ -21,67 +21,19 @@
   "local_graph": {
     "nodes": [
       {
-        "id": "0xfab04904d422cf793847cc5edbc3246275d9760e",
-        "risk_label": "LOW_RISK",
-        "risk_score": 0.3,
+        "id": "0xc46ca569bfea6efd7dae218cfdb9f6c7bb29e4af",
+        "risk_label": "BENIGN",
+        "risk_score": 0.0,
         "cluster_id": 0,
         "attributes": {
-          "handle": "stephenngo09",
-          "trust_score": 0.29,
+          "handle": "louisakai",
+          "trust_score": 0.25,
           "follower_count": 0,
           "following_count": 0,
           "post_count": 0,
           "picture_url": "",
-          "owned_by": "0xc5c1d8cb351bb0d2028668c55f24c5ba434532e2",
-          "reason": "Labeled as LOW_RISK in Backbone."
-        }
-      },
-      {
-        "id": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
-        "risk_label": "LOW_RISK",
-        "risk_score": 0.3,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "slice_admin",
-          "trust_score": 67.12,
-          "follower_count": 4,
-          "following_count": 1,
-          "post_count": 1,
-          "picture_url": "https://ik.imagekit.io/lens/ae302e5d744a4dc858d050c306e91dd68c57d3d52a442cdc057efc61c346fbd8_wfe3xCvV4.webp",
-          "owned_by": "0x3413b49e2a4cd83a20d9941764f3c4b983983b80",
-          "reason": "Labeled as LOW_RISK in Backbone."
-        }
-      },
-      {
-        "id": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "risk_label": "LOW_RISK",
-        "risk_score": 0.3,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "louisacay",
-          "trust_score": 21.92,
-          "follower_count": 3,
-          "following_count": 4,
-          "post_count": 1,
-          "picture_url": "https://ik.imagekit.io/lens/f0862cb2d14b83b3d934509d023c05e67494eed48f595b6c207dd952743904e7_SfRY9kY77q.png",
           "owned_by": "0x3672821dd5f28fb8fc7d752b4371550b2adc5794",
-          "reason": "Labeled as LOW_RISK in Backbone."
-        }
-      },
-      {
-        "id": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "risk_label": "LOW_RISK",
-        "risk_score": 0.3,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "thuannm",
-          "trust_score": 1.02,
-          "follower_count": 3,
-          "following_count": 4,
-          "post_count": 1,
-          "picture_url": "",
-          "owned_by": "0xd84f8bb075132ebefe07507c815c6d2967a099f6",
-          "reason": "Labeled as LOW_RISK in Backbone."
+          "reason": "Labeled as BENIGN in Backbone."
         }
       },
       {
@@ -101,22 +53,6 @@
         }
       },
       {
-        "id": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "risk_label": "LOW_RISK",
-        "risk_score": 0.3,
-        "cluster_id": 0,
-        "attributes": {
-          "handle": "stephenngo",
-          "trust_score": 13.95,
-          "follower_count": 3,
-          "following_count": 4,
-          "post_count": 2,
-          "picture_url": "https://ik.imagekit.io/lens/39edd786e03912856c223b216061b7380cc0f60b914d8823ceb06a4f3676f409_caao2qCXR.png",
-          "owned_by": "0xc5c1d8cb351bb0d2028668c55f24c5ba434532e2",
-          "reason": "Labeled as LOW_RISK in Backbone."
-        }
-      },
-      {
         "id": "0x9fccb42746299bfa370b2b56b3bf6046cb581e59",
         "risk_label": "LOW_RISK",
         "risk_score": 0.3,
@@ -133,18 +69,18 @@
         }
       },
       {
-        "id": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
+        "id": "0xfab04904d422cf793847cc5edbc3246275d9760e",
         "risk_label": "LOW_RISK",
         "risk_score": 0.3,
         "cluster_id": 0,
         "attributes": {
-          "handle": "tester_thuan",
-          "trust_score": 0.26,
+          "handle": "stephenngo09",
+          "trust_score": 0.29,
           "follower_count": 0,
           "following_count": 0,
           "post_count": 0,
           "picture_url": "",
-          "owned_by": "0xd84f8bb075132ebefe07507c815c6d2967a099f6",
+          "owned_by": "0xc5c1d8cb351bb0d2028668c55f24c5ba434532e2",
           "reason": "Labeled as LOW_RISK in Backbone."
         }
       },
@@ -165,435 +101,233 @@
         }
       },
       {
-        "id": "0xc46ca569bfea6efd7dae218cfdb9f6c7bb29e4af",
-        "risk_label": "BENIGN",
-        "risk_score": 0.0,
+        "id": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "risk_label": "LOW_RISK",
+        "risk_score": 0.3,
         "cluster_id": 0,
         "attributes": {
-          "handle": "louisakai",
-          "trust_score": 0.25,
+          "handle": "louisacay",
+          "trust_score": 21.92,
+          "follower_count": 3,
+          "following_count": 4,
+          "post_count": 1,
+          "picture_url": "https://ik.imagekit.io/lens/f0862cb2d14b83b3d934509d023c05e67494eed48f595b6c207dd952743904e7_SfRY9kY77q.png",
+          "owned_by": "0x3672821dd5f28fb8fc7d752b4371550b2adc5794",
+          "reason": "Labeled as LOW_RISK in Backbone."
+        }
+      },
+      {
+        "id": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "risk_label": "LOW_RISK",
+        "risk_score": 0.3,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "stephenngo",
+          "trust_score": 13.95,
+          "follower_count": 3,
+          "following_count": 4,
+          "post_count": 2,
+          "picture_url": "https://ik.imagekit.io/lens/39edd786e03912856c223b216061b7380cc0f60b914d8823ceb06a4f3676f409_caao2qCXR.png",
+          "owned_by": "0xc5c1d8cb351bb0d2028668c55f24c5ba434532e2",
+          "reason": "Labeled as LOW_RISK in Backbone."
+        }
+      },
+      {
+        "id": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
+        "risk_label": "LOW_RISK",
+        "risk_score": 0.3,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "tester_thuan",
+          "trust_score": 0.26,
           "follower_count": 0,
           "following_count": 0,
           "post_count": 0,
           "picture_url": "",
-          "owned_by": "0x3672821dd5f28fb8fc7d752b4371550b2adc5794",
-          "reason": "Labeled as BENIGN in Backbone."
+          "owned_by": "0xd84f8bb075132ebefe07507c815c6d2967a099f6",
+          "reason": "Labeled as LOW_RISK in Backbone."
+        }
+      },
+      {
+        "id": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "risk_label": "LOW_RISK",
+        "risk_score": 0.3,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "slice_admin",
+          "trust_score": 67.12,
+          "follower_count": 4,
+          "following_count": 1,
+          "post_count": 1,
+          "picture_url": "https://ik.imagekit.io/lens/ae302e5d744a4dc858d050c306e91dd68c57d3d52a442cdc057efc61c346fbd8_wfe3xCvV4.webp",
+          "owned_by": "0x3413b49e2a4cd83a20d9941764f3c4b983983b80",
+          "reason": "Labeled as LOW_RISK in Backbone."
+        }
+      },
+      {
+        "id": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "risk_label": "LOW_RISK",
+        "risk_score": 0.3,
+        "cluster_id": 0,
+        "attributes": {
+          "handle": "thuannm",
+          "trust_score": 1.02,
+          "follower_count": 3,
+          "following_count": 4,
+          "post_count": 1,
+          "picture_url": "",
+          "owned_by": "0xd84f8bb075132ebefe07507c815c6d2967a099f6",
+          "reason": "Labeled as LOW_RISK in Backbone."
         }
       }
     ],
     "links": [
       {
-        "source": "0xfab04904d422cf793847cc5edbc3246275d9760e",
-        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "edge_type": "CO-OWNER",
-        "weight": 10.0,
-        "gat_attention": 0.08535510301589966
-      },
-      {
-        "source": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "source": "0xc46ca569bfea6efd7dae218cfdb9f6c7bb29e4af",
         "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.10260061919689178
-      },
-      {
-        "source": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
-        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.104638010263443
-      },
-      {
-        "source": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
-        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.09813086688518524
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.09550993889570236
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.09736336767673492
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.2706688940525055
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.0557873472571373
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "COMMENT",
-        "weight": 2.0,
-        "gat_attention": 0.055980484932661057
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "UPVOTE",
-        "weight": 1.0,
-        "gat_attention": 0.0557873472571373
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.05685318261384964
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "UPVOTE_REV",
-        "weight": 0.5,
-        "gat_attention": 0.05685318261384964
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.0890548899769783
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.09171445667743683
-      },
-      {
-        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "target": "0xc46ca569bfea6efd7dae218cfdb9f6c7bb29e4af",
         "edge_type": "CO-OWNER",
         "weight": 10.0,
-        "gat_attention": 0.5526412129402161
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.09984104335308075
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.09902003407478333
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.04843347147107124
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "COMMENT",
-        "weight": 2.0,
-        "gat_attention": 0.04484226927161217
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "UPVOTE",
-        "weight": 1.0,
-        "gat_attention": 0.04843347147107124
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.0479033887386322
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "UPVOTE_REV",
-        "weight": 0.5,
-        "gat_attention": 0.0479033887386322
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.25124391913414
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.09559673815965652
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.09535539895296097
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0x9fccb42746299bfa370b2b56b3bf6046cb581e59",
-        "edge_type": "CO-OWNER",
-        "weight": 10.0,
-        "gat_attention": 0.7689883708953857
-      },
-      {
-        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "target": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
-        "edge_type": "CO-OWNER",
-        "weight": 10.0,
-        "gat_attention": 0.7689883708953857
+        "gat_attention": 0.060407668352127075
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "edge_type": "FOLLOW",
         "weight": 1.0,
-        "gat_attention": 0.2057335078716278
+        "gat_attention": 0.2058008313179016
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "edge_type": "COMMENT",
         "weight": 2.0,
-        "gat_attention": 0.1932849884033203
+        "gat_attention": 0.1932414323091507
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "edge_type": "UPVOTE",
         "weight": 1.0,
-        "gat_attention": 0.2057335078716278
+        "gat_attention": 0.2058008313179016
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "edge_type": "FOLLOW_REV",
         "weight": 0.5,
-        "gat_attention": 0.2154717594385147
+        "gat_attention": 0.2156626284122467
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
         "edge_type": "FOLLOW",
         "weight": 1.0,
-        "gat_attention": 0.07441452145576477
+        "gat_attention": 0.07437387853860855
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
         "edge_type": "UPVOTE",
         "weight": 1.0,
-        "gat_attention": 0.07441452145576477
+        "gat_attention": 0.07437387853860855
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
         "edge_type": "FOLLOW_REV",
         "weight": 0.5,
-        "gat_attention": 0.07976830005645752
+        "gat_attention": 0.0796271562576294
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
         "edge_type": "COMMENT_REV",
         "weight": 1.0,
-        "gat_attention": 0.07441452145576477
+        "gat_attention": 0.07437387853860855
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
         "edge_type": "UPVOTE_REV",
         "weight": 0.5,
-        "gat_attention": 0.07976830005645752
+        "gat_attention": 0.0796271562576294
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
         "edge_type": "FOLLOW",
         "weight": 1.0,
-        "gat_attention": 0.07080380618572235
+        "gat_attention": 0.07069142162799835
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
         "edge_type": "COMMENT",
         "weight": 2.954242467880249,
-        "gat_attention": 0.06273776292800903
+        "gat_attention": 0.06243506073951721
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
         "edge_type": "UPVOTE",
         "weight": 1.3010300397872925,
-        "gat_attention": 0.06837063282728195
+        "gat_attention": 0.0682278573513031
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
         "edge_type": "FOLLOW_REV",
         "weight": 0.5,
-        "gat_attention": 0.07592783868312836
+        "gat_attention": 0.07587751001119614
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
         "edge_type": "COMMENT_REV",
         "weight": 1.0,
-        "gat_attention": 0.07080380618572235
+        "gat_attention": 0.07069142162799835
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
         "edge_type": "UPVOTE_REV",
         "weight": 0.5,
-        "gat_attention": 0.07592783868312836
+        "gat_attention": 0.07587751001119614
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
         "edge_type": "FOLLOW",
         "weight": 1.0,
-        "gat_attention": 0.07809142768383026
+        "gat_attention": 0.07797734439373016
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
         "edge_type": "UPVOTE",
         "weight": 1.0,
-        "gat_attention": 0.07809142768383026
+        "gat_attention": 0.07797734439373016
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
         "edge_type": "FOLLOW_REV",
         "weight": 0.5,
-        "gat_attention": 0.0851922407746315
+        "gat_attention": 0.08515791594982147
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
         "edge_type": "COMMENT_REV",
         "weight": 1.0,
-        "gat_attention": 0.07809142768383026
+        "gat_attention": 0.07797734439373016
       },
       {
         "source": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
         "edge_type": "UPVOTE_REV",
         "weight": 0.5,
-        "gat_attention": 0.0851922407746315
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.10491536557674408
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.1047370657324791
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.10183893144130707
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.10113591700792313
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.25651615858078003
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "FOLLOW",
-        "weight": 1.0,
-        "gat_attention": 0.04968307912349701
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "COMMENT",
-        "weight": 2.0,
-        "gat_attention": 0.047899145632982254
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "UPVOTE",
-        "weight": 1.0,
-        "gat_attention": 0.04968307912349701
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "FOLLOW_REV",
-        "weight": 0.5,
-        "gat_attention": 0.0517888143658638
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "COMMENT_REV",
-        "weight": 1.4771212339401245,
-        "gat_attention": 0.04806789010763168
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
-        "edge_type": "UPVOTE_REV",
-        "weight": 0.6505150198936462,
-        "gat_attention": 0.051012855023145676
-      },
-      {
-        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
-        "target": "0xfab04904d422cf793847cc5edbc3246275d9760e",
-        "edge_type": "CO-OWNER",
-        "weight": 10.0,
-        "gat_attention": 0.6452764868736267
+        "gat_attention": 0.08515791594982147
       },
       {
         "source": "0x9fccb42746299bfa370b2b56b3bf6046cb581e59",
@@ -607,56 +341,322 @@
         "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
         "edge_type": "CO-OWNER",
         "weight": 10.0,
-        "gat_attention": 0.059828855097293854
+        "gat_attention": 0.06002047657966614
       },
       {
-        "source": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
-        "target": "0x9fccb42746299bfa370b2b56b3bf6046cb581e59",
+        "source": "0xfab04904d422cf793847cc5edbc3246275d9760e",
+        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
         "edge_type": "CO-OWNER",
         "weight": 10.0,
-        "gat_attention": 0.3237166106700897
-      },
-      {
-        "source": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
-        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
-        "edge_type": "CO-OWNER",
-        "weight": 10.0,
-        "gat_attention": 0.05862225964665413
+        "gat_attention": 0.0858159065246582
       },
       {
         "source": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "edge_type": "FOLLOW",
         "weight": 1.0,
-        "gat_attention": 0.05461220070719719
+        "gat_attention": 0.05469486117362976
       },
       {
         "source": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "edge_type": "FOLLOW_REV",
         "weight": 0.5,
-        "gat_attention": 0.052261870354413986
+        "gat_attention": 0.052267372608184814
       },
       {
         "source": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "edge_type": "COMMENT_REV",
         "weight": 1.0,
-        "gat_attention": 0.05461220070719719
+        "gat_attention": 0.05469486117362976
       },
       {
         "source": "0xd3dac9601b3498cbb523338dcf084e6c4ace92b1",
         "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
         "edge_type": "UPVOTE_REV",
         "weight": 0.5,
-        "gat_attention": 0.052261870354413986
+        "gat_attention": 0.052267372608184814
       },
       {
-        "source": "0xc46ca569bfea6efd7dae218cfdb9f6c7bb29e4af",
-        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.09540202468633652
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.09729854762554169
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.27118703722953796
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.055859170854091644
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "COMMENT",
+        "weight": 2.0,
+        "gat_attention": 0.05603385716676712
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "UPVOTE",
+        "weight": 1.0,
+        "gat_attention": 0.055859170854091644
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.05690084397792816
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "UPVOTE_REV",
+        "weight": 0.5,
+        "gat_attention": 0.05690084397792816
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.0889425128698349
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.09187166392803192
+      },
+      {
+        "source": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "target": "0xc46ca569bfea6efd7dae218cfdb9f6c7bb29e4af",
         "edge_type": "CO-OWNER",
         "weight": 10.0,
-        "gat_attention": 0.06022373586893082
+        "gat_attention": 0.5520060658454895
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.10484865307807922
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.10461373627185822
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.10178294032812119
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.10102786868810654
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.25640082359313965
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.04966437816619873
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "COMMENT",
+        "weight": 2.0,
+        "gat_attention": 0.04792376235127449
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "UPVOTE",
+        "weight": 1.0,
+        "gat_attention": 0.04966437816619873
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.05179302394390106
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "COMMENT_REV",
+        "weight": 1.4771212339401245,
+        "gat_attention": 0.048071108758449554
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "UPVOTE_REV",
+        "weight": 0.6505150198936462,
+        "gat_attention": 0.051043860614299774
+      },
+      {
+        "source": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "target": "0xfab04904d422cf793847cc5edbc3246275d9760e",
+        "edge_type": "CO-OWNER",
+        "weight": 10.0,
+        "gat_attention": 0.6446684002876282
+      },
+      {
+        "source": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
+        "target": "0x9fccb42746299bfa370b2b56b3bf6046cb581e59",
+        "edge_type": "CO-OWNER",
+        "weight": 10.0,
+        "gat_attention": 0.32371658086776733
+      },
+      {
+        "source": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
+        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "edge_type": "CO-OWNER",
+        "weight": 10.0,
+        "gat_attention": 0.058814823627471924
+      },
+      {
+        "source": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.10253686457872391
+      },
+      {
+        "source": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "target": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.10455762594938278
+      },
+      {
+        "source": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.09804192930459976
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.09971153736114502
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0xd145e2a6678e55071508e9b46a8b2c1378fd5aa5",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.09889479726552963
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.04840509593486786
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "COMMENT",
+        "weight": 2.0,
+        "gat_attention": 0.04483099654316902
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "UPVOTE",
+        "weight": 1.0,
+        "gat_attention": 0.04840509593486786
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.047875307500362396
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x50930e85c4b1e7991fc8b7c0c8961e38e0472e3d",
+        "edge_type": "UPVOTE_REV",
+        "weight": 0.5,
+        "gat_attention": 0.047875307500362396
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x073a7dbabf7d6b23efc49c6e2c6535b135487b45",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.2510981559753418
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "edge_type": "FOLLOW",
+        "weight": 1.0,
+        "gat_attention": 0.09550102800130844
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x9ce14935440d87d3996c5216c3cbf42f446713bf",
+        "edge_type": "FOLLOW_REV",
+        "weight": 0.5,
+        "gat_attention": 0.09525618702173233
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0x9fccb42746299bfa370b2b56b3bf6046cb581e59",
+        "edge_type": "CO-OWNER",
+        "weight": 10.0,
+        "gat_attention": 0.7684376239776611
+      },
+      {
+        "source": "0x5ef88b40d995fabcde829d7c19a5ce446a35c782",
+        "target": "0xc26c846591ad1d133f47b970ac5d25aca480fcbe",
+        "edge_type": "CO-OWNER",
+        "weight": 10.0,
+        "gat_attention": 0.7684376239776611
       }
     ]
   }

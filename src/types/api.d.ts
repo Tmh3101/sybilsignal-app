@@ -4,17 +4,70 @@ export type RiskClassification =
   | "HIGH_RISK"
   | "MALICIOUS";
 
-export interface ProfileInfo {
+export interface SybilNode {
   id: string;
-  handle: string;
-  picture_url: string;
-  owned_by: string;
+  risk_label: RiskClassification;
+  risk_score: number;
+  trust_score: number;
+  cluster_id?: number;
+  x?: number;
+  y?: number;
+  z?: number;
+  attributes: {
+    handle?: string;
+    bio?: string;
+    created_on?: string;
+    days_active?: number;
+    total_tips?: number;
+    total_posts?: number;
+    total_quotes?: number;
+    total_reacted?: number;
+    total_reactions?: number;
+    total_reposts?: number;
+    total_collects?: number;
+    total_comments?: number;
+    total_followers?: number;
+    total_following?: number;
+    follower_count?: number;
+    following_count?: number;
+    post_count?: number;
+    picture_url?: string;
+    owned_by?: string;
+    reasons?: string[];
+    reason?: string;
+    [key: string]: string | number | boolean | string[] | undefined;
+  };
 }
 
-export interface InferenceReasoning {
-  type: string; // e.g., "SIM_BIO", "PATTERN_XYZ"
-  description: string;
-  severity: "low" | "medium" | "high" | "critical";
+export interface SybilEdge {
+  id?: string;
+  source: string;
+  target: string;
+  edge_type:
+    | "FOLLOW"
+    | "UPVOTE"
+    | "REACTION"
+    | "COMMENT"
+    | "QUOTE"
+    | "MIRROR"
+    | "COLLECT"
+    | "CO-OWNER"
+    | "SAME_AVATAR"
+    | "FUZZY_HANDLE"
+    | "SIM_BIO"
+    | "CLOSE_CREATION_TIME"
+    | "SIMILARITY"
+    | "FOLLOW_REV"
+    | "UPVOTE_REV"
+    | "REACTION_REV"
+    | "COMMENT_REV"
+    | "QUOTE_REV"
+    | "MIRROR_REV"
+    | "COLLECT_REV"
+    | "UNKNOWN";
+  weight: number;
+  gat_attention?: number;
+  violations?: string[];
 }
 
 export interface Analysis {
@@ -23,81 +76,26 @@ export interface Analysis {
   reasoning: string[];
 }
 
-export interface SybilNode {
-  id: string;
-  risk_label: RiskClassification;
-  trust_score: number;
-  is_sybil: boolean;
-  cluster_id: number;
-  risk_score: number;
-  x?: number;
-  y?: number;
-  z?: number;
-  attributes: {
-    follower_count: number;
-    post_count: number;
-    trust_score: number;
-    reasons: string[];
-    handle?: string;
-    following_count?: number;
-    account_age?: string;
+export interface InspectorResponse {
+  profile_info: {
+    id: string;
+    handle: string;
     picture_url?: string;
-    total_reposts?: number;
-    [key: string]: string | number | boolean | undefined;
+    owned_by: string;
+  };
+  analysis: Analysis;
+  local_graph: {
+    nodes: SybilNode[];
+    links: SybilEdge[];
   };
 }
 
-export type EdgeType =
-  | "FOLLOW"
-  | "UPVOTE"
-  | "REACTION"
-  | "COMMENT"
-  | "QUOTE"
-  | "MIRROR"
-  | "COLLECT"
-  | "TIP"
-  | "FOLLOW_REV"
-  | "UPVOTE_REV"
-  | "REACTION_REV"
-  | "COMMENT_REV"
-  | "QUOTE_REV"
-  | "MIRROR_REV"
-  | "COLLECT_REV"
-  | "TIP_REV"
-  | "CO-OWNER"
-  | "SAME_AVATAR"
-  | "FUZZY_HANDLE"
-  | "SIM_BIO"
-  | "CLOSE_CREATION_TIME"
-  | "SIMILARITY"
-  | string;
-
-export interface SybilEdge {
-  source: string;
-  target: string;
-  edge_type: EdgeType;
-  weight: number;
-  gat_attention?: number;
-  violations?: string[];
-}
-
-export interface LocalGraph {
-  nodes: SybilNode[];
-  links: SybilEdge[];
-}
-
-export interface InspectorResponse {
-  profile_info: ProfileInfo;
-  analysis: Analysis;
-  local_graph: LocalGraph;
-}
-
 export interface TimeRange {
-  start_date: string; // YYYY-MM-DD
-  end_date: string; // YYYY-MM-DD
+  start_date: string;
+  end_date: string;
 }
 
-export interface DiscoveryHyperparameter {
+export interface Hyperparameters {
   max_epochs?: number;
   patience?: number;
   learning_rate?: number;
@@ -105,8 +103,8 @@ export interface DiscoveryHyperparameter {
 
 export interface DiscoveryStartRequest {
   time_range: TimeRange;
-  max_nodes: number;
-  hyperparameters?: DiscoveryHyperparameter;
+  max_nodes?: number;
+  hyperparameters?: Hyperparameters;
 }
 
 export interface DiscoveryStartResponse {
@@ -119,13 +117,11 @@ export interface DiscoveryStatusResponse {
   progress: number;
   current_step: string;
   graph_data: {
+    cluster_count: number;
+    num_nodes?: number;
+    num_edges?: number;
     nodes: SybilNode[];
     links: SybilEdge[];
-    cluster_count: number;
-    num_nodes: number;
-    num_edges: number;
-    start_date: string;
-    end_date: string;
   } | null;
   message: string | null;
 }

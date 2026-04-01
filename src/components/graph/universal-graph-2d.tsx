@@ -58,7 +58,7 @@ export interface UniversalGraph2DProps {
   graphData: { nodes: SybilNode[]; links: SybilEdge[] };
   mode: "EGO" | "CLUSTER";
   targetId?: string;
-  risk_label?: RiskClassification;
+  label?: RiskClassification;
   depthFilter?: 1 | 2;
   onClusterNodeClick?: (clusterId: number, nodes: SybilNode[]) => void;
   onNodeClick?: (node: SybilNode) => void;
@@ -84,6 +84,11 @@ export default function UniversalGraph2D({
   const [showAttention, setShowAttention] = useState(false);
   const [showAllEdges, setShowAllEdges] = useState(false);
   const [, setImageVersion] = useState(0);
+
+  // ─── Hover States (Phase 2) ───
+  const [hoverNode, setHoverNode] = useState<string | null>(null);
+  const [highlightLinks, setHighlightLinks] = useState<Set<string>>(new Set());
+  const [highlightNodes, setHighlightNodes] = useState<Set<string>>(new Set());
 
   const imgCache = useRef<
     Record<string, HTMLImageElement | "error" | "pending">
@@ -200,6 +205,40 @@ export default function UniversalGraph2D({
     aggregateEdges: true,
   });
 
+  // ─── Hover Handler (Phase 2) ───
+  const handleNodeHover = useCallback(
+    (node: NodeObject<EnrichedNode> | null) => {
+      if (node) {
+        const nodeId = String(node.id);
+        setHoverNode(nodeId);
+
+        const newHighlightLinks = new Set<string>();
+        const newHighlightNodes = new Set<string>();
+
+        processedData.links.forEach((link: AggregatedLink) => {
+          const s =
+            typeof link.source === "object" ? link.source.id : link.source;
+          const t =
+            typeof link.target === "object" ? link.target.id : link.target;
+
+          if (String(s) === nodeId || String(t) === nodeId) {
+            if (link.id) newHighlightLinks.add(link.id);
+            newHighlightNodes.add(String(s));
+            newHighlightNodes.add(String(t));
+          }
+        });
+
+        setHighlightLinks(newHighlightLinks);
+        setHighlightNodes(newHighlightNodes);
+      } else {
+        setHoverNode(null);
+        setHighlightLinks(new Set());
+        setHighlightNodes(new Set());
+      }
+    },
+    [processedData.links]
+  );
+
   // ─── Resize ───
   useEffect(() => {
     if (!containerRef.current) return;
@@ -271,6 +310,7 @@ export default function UniversalGraph2D({
       globalScale: number
     ) => {
       const n = node as EnrichedNode;
+      const nodeId = String(n.id);
 
       const isTarget = !!n.__isTarget;
       const baseColor = n.__color || LABEL_COLORS.UNKNOWN;
@@ -284,6 +324,13 @@ export default function UniversalGraph2D({
 
       const x = n.x ?? 0;
       const y = n.y ?? 0;
+
+      // ── Visual Focus (Phase 2) ──
+      ctx.save();
+      const isHovering = hoverNode !== null;
+      if (isHovering && hoverNode !== nodeId && !highlightNodes.has(nodeId)) {
+        ctx.globalAlpha = 0.1;
+      }
 
       // ── Glow aura ──
       if (isTarget) {
@@ -369,8 +416,15 @@ export default function UniversalGraph2D({
         ctx.fillStyle = color;
         ctx.fillText(handle.slice(0, 14), x, y + size + 2);
       }
+      ctx.restore();
     },
-    [mode, processedData.nodes.length, getOrLoadImage]
+    [
+      mode,
+      processedData.nodes.length,
+      getOrLoadImage,
+      hoverNode,
+      highlightNodes,
+    ]
   );
 
   // ── GAT Attention label on edges (shown at high zoom) ──
@@ -380,8 +434,7 @@ export default function UniversalGraph2D({
       ctx: CanvasRenderingContext2D,
       globalScale: number
     ) => {
-      if (!showAttention || globalScale < 2.5) return;
-
+      if (!showAttention) return;
       if (!link.gat_attention || link.gat_attention < 0.01) return;
 
       const src = link.source as { x?: number; y?: number };
@@ -436,6 +489,112 @@ export default function UniversalGraph2D({
     [showAttention]
   );
 
+  // ── LINK RENDERER (Phase 3 LOD) ──
+  const drawLink = useCallback(
+    (
+      link: LinkObject<EnrichedNode, AggregatedLink>,
+      ctx: CanvasRenderingContext2D,
+      globalScale: number
+    ) => {
+      const l = link as AggregatedLink;
+      const src = l.source as { x?: number; y?: number };
+      const tgt = l.target as { x?: number; y?: number };
+
+      if (
+        !src ||
+        !tgt ||
+        src.x === undefined ||
+        src.y === undefined ||
+        tgt.x === undefined ||
+        tgt.y === undefined
+      )
+        return;
+
+      const type = (l.edge_type as string) || "";
+      const baseColor = RELATION_COLORS[type] || RELATION_COLORS.UNKNOWN;
+      const weight = l.aggregated_weight || 1;
+
+      // ── Opacity Logic (Phase 2) ──
+      let alpha = 0.25;
+      if (
+        type === "CO-OWNER" ||
+        type.includes("SIMILARITY") ||
+        type === "SAME_AVATAR"
+      ) {
+        alpha = 0.5;
+      } else if (mode === "EGO") {
+        alpha = Math.min(0.25 + Math.log10(weight) * 0.1, 0.55);
+      } else {
+        alpha = 0.18;
+      }
+
+      const isHovering = hoverNode !== null;
+      if (isHovering) {
+        if (highlightLinks.has(l.id || "")) {
+          alpha = 0.8;
+        } else {
+          alpha = 0.05;
+        }
+      }
+
+      const r = parseInt(baseColor.slice(1, 3), 16);
+      const g = parseInt(baseColor.slice(3, 5), 16);
+      const b = parseInt(baseColor.slice(5, 7), 16);
+      const color = `rgba(${r},${g},${b},${alpha})`;
+
+      const width =
+        mode === "EGO"
+          ? Math.max(1.5, Math.min(weight * 1.2, 8.0))
+          : Math.max(0.8, Math.min(weight * 0.8, 5.0));
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.globalAlpha = 1.0; // We use rgba in strokeStyle instead of globalAlpha to keep it precise
+
+      // ── LOD Rendering (Phase 3) ──
+      if (globalScale < 2.0) {
+        // Low Detail: Simple straight line
+        ctx.moveTo(src.x, src.y);
+        ctx.lineTo(tgt.x, tgt.y);
+        ctx.stroke();
+      } else {
+        // High Detail: Curved line
+        const curvature =
+          l.multiLinkCount && l.multiLinkCount > 1
+            ? ((l.multiLinkIndex ?? 0) - (l.multiLinkCount - 1) / 2) * 0.18
+            : 0;
+
+        if (curvature === 0) {
+          ctx.moveTo(src.x, src.y);
+          ctx.lineTo(tgt.x, tgt.y);
+        } else {
+          const dx = tgt.x - src.x;
+          const dy = tgt.y - src.y;
+          const cp = {
+            x: (src.x + tgt.x) / 2 + curvature * -dy,
+            y: (src.y + tgt.y) / 2 + curvature * dx,
+          };
+          ctx.moveTo(src.x, src.y);
+          ctx.quadraticCurveTo(cp.x, cp.y, tgt.x, tgt.y);
+        }
+        ctx.stroke();
+
+        // ── Ultra-High Detail: Text Labels (Phase 3) ──
+        const isDeepZoom = globalScale > 3.0;
+        const shouldDrawTextHover =
+          !hoverNode || highlightLinks.has(l.id || "");
+
+        if (isDeepZoom && shouldDrawTextHover) {
+          drawEdgeAttention(l, ctx, globalScale);
+        }
+      }
+      ctx.restore();
+    },
+    [mode, hoverNode, highlightLinks, drawEdgeAttention]
+  );
+
   // ─── Tooltip ───
   const nodeLabel = useCallback(
     (node: NodeObject<EnrichedNode>) => {
@@ -457,7 +616,7 @@ export default function UniversalGraph2D({
       }
 
       const isHigh = rl === "MALICIOUS" || rl === "HIGH_RISK";
-      const reasons = (n.attributes?.reasons as string[]) || [];
+      const reasons = (n.attributes?.reasons as unknown as string[]) || [];
       const clusterId =
         n.cluster_id !== undefined && n.cluster_id !== null
           ? n.cluster_id
@@ -604,6 +763,7 @@ export default function UniversalGraph2D({
         nodeCanvasObjectMode={() => "replace"}
         nodeLabel={nodeLabel}
         linkLabel={linkLabel}
+        onNodeHover={handleNodeHover}
         onNodeClick={handleNodeClick}
         onLinkClick={(link) => onLinkClick?.(link as AggregatedLink)}
         // ─── Directed arrows for Follow/Interact layers ───
@@ -623,52 +783,12 @@ export default function UniversalGraph2D({
           RELATION_COLORS[(link.edge_type as string) || ""] ||
           RELATION_COLORS.UNKNOWN
         }
-        linkColor={(link: LinkObject<EnrichedNode, AggregatedLink>) => {
-          const t = (link.edge_type as string) || "";
-          const base = RELATION_COLORS[t] || RELATION_COLORS.UNKNOWN;
-          const w = (link as AggregatedLink).aggregated_weight || 1;
-
-          // Bumped opacity for better visibility
-          let alpha = 0.25;
-          if (
-            t === "CO-OWNER" ||
-            t.includes("SIMILARITY") ||
-            t === "SAME_AVATAR"
-          ) {
-            alpha = 0.5;
-          } else if (mode === "EGO") {
-            alpha = Math.min(0.25 + Math.log10(w) * 0.1, 0.55);
-          } else {
-            alpha = 0.18; // Cluster mode base alpha
-          }
-
-          const r = parseInt(base.slice(1, 3), 16);
-          const g = parseInt(base.slice(3, 5), 16);
-          const b = parseInt(base.slice(5, 7), 16);
-          return `rgba(${r},${g},${b},${alpha})`;
-        }}
         linkLineDash={(link: LinkObject<EnrichedNode, AggregatedLink>) =>
           ((link.edge_type as string) || "").endsWith("_REV") ? [4, 3] : null
         }
-        linkWidth={(link: LinkObject<EnrichedNode, AggregatedLink>) => {
-          // Lấy đúng trường weight (fall back về aggregated_weight nếu cần)
-          const l = link;
-          const w = l.weight || l.aggregated_weight || 1;
-
-          // Tăng hệ số nhân và nới lỏng mức Max
-          return mode === "EGO"
-            ? Math.max(1.5, Math.min(w * 1.2, 8.0)) // Tăng từ 3.0 -> 8.0
-            : Math.max(0.8, Math.min(w * 0.8, 5.0)); // Tăng từ 1.8 -> 5.0
-        }}
-        linkCurvature={(link: LinkObject<EnrichedNode, AggregatedLink>) => {
-          if (!link.multiLinkCount || link.multiLinkCount <= 1) return 0;
-          return (
-            ((link.multiLinkIndex ?? 0) - (link.multiLinkCount - 1) / 2) * 0.18
-          );
-        }}
-        // ─── GAT attention labels (drawn AFTER default link) ───
-        linkCanvasObject={showAttention ? drawEdgeAttention : undefined}
-        linkCanvasObjectMode={showAttention ? () => "after" : undefined}
+        // ─── Phase 3: LOD Link Renderer ───
+        linkCanvasObject={drawLink}
+        linkCanvasObjectMode={() => "replace"}
         cooldownTicks={120}
         d3AlphaDecay={0.018}
         d3VelocityDecay={0.35}

@@ -39,6 +39,7 @@ const ClusterDetailPanel: React.FC<ClusterDetailPanelProps> = ({
     for (const n of nodes) {
       counts[n.risk_label] = (counts[n.risk_label] || 0) + 1;
       totalRisk += n.risk_score || 0;
+
       if (n.attributes?.reasons && Array.isArray(n.attributes.reasons)) {
         n.attributes.reasons.forEach((r) => allReasons.add(r));
       }
