@@ -592,6 +592,61 @@ export default function UniversalGraph2D({
     [mode, hoverNode, highlightLinks, drawEdgeAttention]
   );
 
+  const paintLinkPointerArea = useCallback(
+    (
+      link: LinkObject<EnrichedNode, AggregatedLink>,
+      color: string,
+      ctx: CanvasRenderingContext2D,
+      globalScale: number
+    ) => {
+      const l = link as AggregatedLink;
+      const src = l.source as { x?: number; y?: number };
+      const tgt = l.target as { x?: number; y?: number };
+
+      if (
+        !src ||
+        !tgt ||
+        src.x === undefined ||
+        src.y === undefined ||
+        tgt.x === undefined ||
+        tgt.y === undefined
+      )
+        return;
+
+      // Làm cho vùng nhận diện chuột dày hơn một chút để người dùng dễ hover
+      ctx.lineWidth = Math.max(4, 10 / globalScale);
+      ctx.strokeStyle = color; // Bắt buộc phải dùng tham số color này của thư viện truyền vào
+      ctx.beginPath();
+
+      // Bắt chước Y HỆT logic vẽ đường cong ở Phase 3 LOD
+      if (globalScale < 2.0) {
+        ctx.moveTo(src.x, src.y);
+        ctx.lineTo(tgt.x, tgt.y);
+      } else {
+        const curvature =
+          l.multiLinkCount && l.multiLinkCount > 1
+            ? ((l.multiLinkIndex ?? 0) - (l.multiLinkCount - 1) / 2) * 0.18
+            : 0;
+
+        if (curvature === 0) {
+          ctx.moveTo(src.x, src.y);
+          ctx.lineTo(tgt.x, tgt.y);
+        } else {
+          const dx = tgt.x - src.x;
+          const dy = tgt.y - src.y;
+          const cp = {
+            x: (src.x + tgt.x) / 2 + curvature * -dy,
+            y: (src.y + tgt.y) / 2 + curvature * dx,
+          };
+          ctx.moveTo(src.x, src.y);
+          ctx.quadraticCurveTo(cp.x, cp.y, tgt.x, tgt.y);
+        }
+      }
+      ctx.stroke();
+    },
+    []
+  );
+
   // ─── Tooltip ───
   const nodeLabel = useCallback(
     (node: NodeObject<EnrichedNode>) => {
@@ -783,6 +838,7 @@ export default function UniversalGraph2D({
         linkLineDash={(link: LinkObject<EnrichedNode, AggregatedLink>) =>
           ((link.edge_type as string) || "").endsWith("_REV") ? [4, 3] : null
         }
+        linkPointerAreaPaint={paintLinkPointerArea}
         // ─── Phase 3: LOD Link Renderer ───
         linkCanvasObject={drawLink}
         linkCanvasObjectMode={() => "replace"}
