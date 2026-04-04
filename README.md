@@ -1,4 +1,4 @@
-# SYBIL ENGINE | INDUSTRIAL DASHBOARD
+# SYBILSIGNAL DASHBOARD
 
 <div align="center">
   <img src="src/app/icon.jpg" alt="Sybil Engine Logo" width="120" height="120" style="border-radius: 8px;" />
@@ -89,7 +89,7 @@ The dashboard will be available at `http://localhost:3000`.
 
 ## 📊 ARCHITECTURE OVERVIEW
 
-Sybil Engine follows a distributed architecture with a Next.js frontend and a Modal-hosted FastAPI backend.
+SybilSignal follows a distributed architecture with a Next.js frontend and a Modal-hosted FastAPI backend.
 
 - **API Layer (`src/lib/api.ts`):** Centralized Axios client with response interceptors for global error handling.
 - **Graph Processing (`src/hooks/use-graph-processor.ts`):** Client-side logic for edge aggregation, multi-link curvature calculation, and visual encoding.

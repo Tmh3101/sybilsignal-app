@@ -59,8 +59,8 @@ export const Sidebar = () => {
                 size={18}
               />
             </div>
-            <h1 className="text-foreground text-sm leading-none font-black tracking-[0.2em] uppercase italic">
-              SYBIL <span className="text-accent-cyan">ENGINE</span>
+            <h1 className="text-foreground text-xl leading-none font-black tracking-[0.2em] uppercase italic">
+              <span className="text-accent-cyan">SYBIL</span>SIGNAL
             </h1>
           </div>
 

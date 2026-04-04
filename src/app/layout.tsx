@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/store/theme-store";
 import QueryProvider from "@/providers/query-provider";
 
 export const metadata: Metadata = {
-  title: "SYBIL ENGINE | INDUSTRIAL DASHBOARD",
+  title: "SYBILSIGNAL DASHBOARD",
   description: "Autonomous Sybil Detection & Discovery Platform",
 };
 
