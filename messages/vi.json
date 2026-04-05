@@ -49,7 +49,7 @@
     "page_subtitle": "Mô-đun Nhận dạng Mục tiêu & Đánh giá Rủi ro",
     "btn_reset": "ĐẶT LẠI",
     "card_analysis": "TỔNG QUAN PHÂN TÍCH",
-    "handle": "Tên",
+    "handle": "Tên định danh",
     "unknown": "KHÔNG RÕ",
     "profile_id": "ID HỒ SƠ:",
     "card_confidence": "ĐỘ TIN CẬY",
@@ -128,6 +128,7 @@
       "avg_cluster_size": "KÍCH THƯỚC CỤM TB"
     },
     "network_structure_title": "CẤU TRÚC MẠNG (CẠNH)",
+    "risk_distribution_title": "PHÂN PHỐI RỦI RO (NÚT)",
     "unknown": "KHÔNG RÕ"
   },
   "EdgeLayers": {

@@ -65,9 +65,23 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
                     (props?.payload as EdgeDistributionItem | undefined)
                       ?.percentage ?? 0;
                   const numValue = typeof value === "number" ? value : 0;
+
+                  // Handle potential raw translation keys or underscores from backend
+                  const rawKey =
+                    String(name ?? "UNKNOWN")
+                      .split(".")
+                      .pop() || "UNKNOWN";
+                  const normalizedKey = rawKey.toUpperCase().replace("_", "-");
+
+                  const label = tLayers.has(normalizedKey)
+                    ? tLayers(normalizedKey)
+                    : tLayers.has(rawKey)
+                      ? tLayers(rawKey)
+                      : rawKey;
+
                   return [
                     `${numValue.toLocaleString()} (${percentage}%)`,
-                    tLayers(String(name ?? "UNKNOWN")).toUpperCase(),
+                    label.toUpperCase(),
                   ];
                 }}
                 contentStyle={{
@@ -84,9 +98,19 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
                 verticalAlign="bottom"
                 height={36}
                 formatter={(value) => {
+                  // Handle potential raw translation keys or underscores from backend
+                  const rawKey = String(value).split(".").pop() || "UNKNOWN";
+                  const normalizedKey = rawKey.toUpperCase().replace("_", "-");
+
+                  const label = tLayers.has(normalizedKey)
+                    ? tLayers(normalizedKey)
+                    : tLayers.has(rawKey)
+                      ? tLayers(rawKey)
+                      : rawKey;
+
                   return (
                     <span className="font-mono text-[9px] font-bold tracking-[0.1em] text-slate-400 uppercase">
-                      {tLayers(value)}
+                      {label}
                     </span>
                   );
                 }}

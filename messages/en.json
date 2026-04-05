@@ -128,6 +128,7 @@
       "avg_cluster_size": "AVG CLUSTER SIZE"
     },
     "network_structure_title": "NETWORK STRUCTURE (EDGES)",
+    "risk_distribution_title": "RISK DISTRIBUTION (NODES)",
     "unknown": "UNKNOWN"
   },
   "EdgeLayers": {
