@@ -24,6 +24,7 @@ import {
 import GraphLegend from "./graph-legend";
 import { useGraphProcessor, AggregatedLink } from "@/hooks/use-graph-processor";
 import { Maximize2, ZoomIn, ZoomOut, Brain, Share2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type EnrichedNode = SybilNode & {
   __color?: string;
@@ -77,6 +78,7 @@ export default function UniversalGraph2D({
   onLinkClick,
   allNodes,
 }: UniversalGraph2DProps) {
+  const tLegend = useTranslations("GraphLegend");
   const fgRef = useRef<
     ForceGraphMethods<EnrichedNode, AggregatedLink> | undefined
   >(undefined);
@@ -966,7 +968,7 @@ export default function UniversalGraph2D({
                 className="font-mono text-[9px] font-bold uppercase italic"
                 style={{ color: targetColor }}
               >
-                Target Node
+                {tLegend("target_node")}
               </span>
             </div>
           ) : undefined

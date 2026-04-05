@@ -171,5 +171,15 @@
     "LOW_RISK": "RỦI RO THẤP",
     "HIGH_RISK": "RỦI RO CAO",
     "MALICIOUS": "ĐỘC HẠI"
+  },
+  "GraphLegend": {
+    "node_map": "Bản đồ nút",
+    "relation_layers": "Lớp quan hệ",
+    "nodes_count": "{count} nút",
+    "edges_count": "{count} cạnh",
+    "directed": "có hướng",
+    "undirected": "vô hướng",
+    "ai_focus": "AI Focus (GAT)",
+    "target_node": "Nút mục tiêu"
   }
 }

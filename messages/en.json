@@ -171,5 +171,15 @@
     "LOW_RISK": "LOW RISK",
     "HIGH_RISK": "HIGH RISK",
     "MALICIOUS": "MALICIOUS"
+  },
+  "GraphLegend": {
+    "node_map": "Node Map",
+    "relation_layers": "Relation Layers",
+    "nodes_count": "{count} nodes",
+    "edges_count": "{count} edges",
+    "directed": "directed",
+    "undirected": "undirected",
+    "ai_focus": "AI Focus (GAT)",
+    "target_node": "Target Node"
   }
 }

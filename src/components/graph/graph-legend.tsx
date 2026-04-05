@@ -25,8 +25,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
   visibleLayers = [],
   onToggleLayer,
 }) => {
-  const tLayers = useTranslations("EdgeLayers");
-  const tRisk = useTranslations("RiskLabels");
+  const t = useTranslations("GraphLegend");
 
   // Edge counts per layer
   const edgeCounts = useMemo(() => {
@@ -55,18 +54,18 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
         <div className="flex flex-col gap-1.5">
           <div className="mb-1 flex items-center justify-between">
             <span className="font-mono text-[8px] font-bold tracking-[0.18em] text-slate-500 uppercase">
-              Node Map
+              {t("node_map")}
             </span>
             {totalNodes > 0 && (
               <span className="font-mono text-[8px] text-slate-600">
-                {totalNodes} nodes
+                {t("nodes_count", { count: totalNodes })}
               </span>
             )}
           </div>
 
           {extraItems}
 
-          {LABEL_GROUPS.map(({ key }) => {
+          {LABEL_GROUPS.map(({ label, key }) => {
             const count = nodeCounts[key] ?? 0;
             return (
               <div
@@ -85,7 +84,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                     }}
                   />
                   <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                    {tRisk(key)}
+                    {label}
                   </span>
                 </div>
                 {count > 0 && (
@@ -111,11 +110,11 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
         >
           <div className="mb-1 flex items-center justify-between">
             <span className="font-mono text-[8px] font-bold tracking-[0.18em] text-slate-500 uppercase">
-              Relation Layers
+              {t("relation_layers")}
             </span>
             {totalEdges > 0 && (
               <span className="font-mono text-[8px] text-slate-600">
-                {totalEdges} edges
+                {t("edges_count", { count: totalEdges })}
               </span>
             )}
           </div>
@@ -168,7 +167,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                     )}
                   </div>
                   <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                    {tLayers(layer.key)}
+                    {layer.label}
                   </span>
                 </div>
 
@@ -206,7 +205,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                 <polygon points="8,1.5 13,4 8,6.5" fill="#334155" />
               </svg>
               <span className="font-mono text-[7px] text-slate-600">
-                directed
+                {t("directed")}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -227,7 +226,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                 />
               </svg>
               <span className="font-mono text-[7px] text-slate-600">
-                undirected
+                {t("undirected")}
               </span>
             </div>
 
@@ -238,7 +237,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                 <div className="absolute h-[4px] w-[4px] animate-ping rounded-full bg-[#ef4444] shadow-[0_0_8px_#ef4444]"></div>
               </div>
               <span className="font-mono text-[7px] font-bold text-[#ef4444]">
-                AI Focus (GAT)
+                {t("ai_focus")}
               </span>
             </div>
           </div>
