@@ -30,7 +30,6 @@ export const RiskDistributionChart: React.FC<RiskDistributionChartProps> = ({
   data,
 }) => {
   const t = useTranslations("StatsPage");
-  const tRisk = useTranslations("RiskLabels");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -61,9 +60,7 @@ export const RiskDistributionChart: React.FC<RiskDistributionChartProps> = ({
                 stroke="#64748b"
                 fontSize={10}
                 fontFamily="monospace"
-                tickFormatter={(value) =>
-                  tRisk.has(value) ? tRisk(value) : value
-                }
+                tickFormatter={(value) => String(value || "").replace("_", " ")}
                 angle={-25}
                 textAnchor="end"
                 interval={0}
@@ -91,10 +88,10 @@ export const RiskDistributionChart: React.FC<RiskDistributionChartProps> = ({
                     props?.payload as RiskDistributionItem | undefined
                   )?.label;
                   const numericValue = typeof value === "number" ? value : 0;
-                  const translatedLabel =
-                    label && tRisk.has(label)
-                      ? tRisk(label)
-                      : label || "UNKNOWN";
+                  const displayLabel = String(label || "UNKNOWN").replace(
+                    "_",
+                    " "
+                  );
 
                   return [
                     <span
@@ -103,7 +100,7 @@ export const RiskDistributionChart: React.FC<RiskDistributionChartProps> = ({
                     >
                       {numericValue.toLocaleString()}
                     </span>,
-                    translatedLabel.toUpperCase(),
+                    displayLabel.toUpperCase(),
                   ];
                 }}
               />

@@ -23,7 +23,6 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
   data,
 }) => {
   const t = useTranslations("StatsPage");
-  const tLayers = useTranslations("EdgeLayers");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -66,22 +65,15 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
                       ?.percentage ?? 0;
                   const numValue = typeof value === "number" ? value : 0;
 
-                  // Handle potential raw translation keys or underscores from backend
-                  const rawKey =
+                  // Clean up potential raw translation keys or namespaces from backend
+                  const label =
                     String(name ?? "UNKNOWN")
                       .split(".")
                       .pop() || "UNKNOWN";
-                  const normalizedKey = rawKey.toUpperCase().replace("_", "-");
-
-                  const label = tLayers.has(normalizedKey)
-                    ? tLayers(normalizedKey)
-                    : tLayers.has(rawKey)
-                      ? tLayers(rawKey)
-                      : rawKey;
 
                   return [
                     `${numValue.toLocaleString()} (${percentage}%)`,
-                    label.toUpperCase(),
+                    label.replace("_", " ").toUpperCase(),
                   ];
                 }}
                 contentStyle={{
@@ -98,19 +90,12 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
                 verticalAlign="bottom"
                 height={36}
                 formatter={(value) => {
-                  // Handle potential raw translation keys or underscores from backend
-                  const rawKey = String(value).split(".").pop() || "UNKNOWN";
-                  const normalizedKey = rawKey.toUpperCase().replace("_", "-");
-
-                  const label = tLayers.has(normalizedKey)
-                    ? tLayers(normalizedKey)
-                    : tLayers.has(rawKey)
-                      ? tLayers(rawKey)
-                      : rawKey;
+                  // Clean up potential raw translation keys or namespaces from backend
+                  const label = String(value).split(".").pop() || "UNKNOWN";
 
                   return (
                     <span className="font-mono text-[9px] font-bold tracking-[0.1em] text-slate-400 uppercase">
-                      {label}
+                      {label.replace("_", " ")}
                     </span>
                   );
                 }}
