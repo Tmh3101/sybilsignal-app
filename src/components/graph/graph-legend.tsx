@@ -6,12 +6,15 @@ import {
   EDGE_LAYERS,
   computeEdgeCounts,
 } from "@/lib/graph-constants";
+import { useTranslations } from "next-intl";
 
 interface GraphLegendProps {
   showNodes?: boolean;
   showRelations?: boolean;
   extraItems?: React.ReactNode;
   graphData?: { nodes: SybilNode[]; links: SybilEdge[] };
+  visibleLayers?: string[];
+  onToggleLayer?: (layer: string) => void;
 }
 
 const GraphLegend: React.FC<GraphLegendProps> = ({
@@ -19,7 +22,12 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
   showRelations = true,
   extraItems,
   graphData,
+  visibleLayers = [],
+  onToggleLayer,
 }) => {
+  const tLayers = useTranslations("EdgeLayers");
+  const tRisk = useTranslations("RiskLabels");
+
   // Edge counts per layer
   const edgeCounts = useMemo(() => {
     if (!graphData?.links) return {};
@@ -58,7 +66,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
 
           {extraItems}
 
-          {LABEL_GROUPS.map(({ label, key }) => {
+          {LABEL_GROUPS.map(({ key }) => {
             const count = nodeCounts[key] ?? 0;
             return (
               <div
@@ -77,7 +85,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                     }}
                   />
                   <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                    {label}
+                    {tRisk(key)}
                   </span>
                 </div>
                 {count > 0 && (
@@ -114,12 +122,18 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
 
           {EDGE_LAYERS.map((layer) => {
             const count = edgeCounts[layer.key] ?? 0;
+            const isVisible =
+              visibleLayers.length === 0 || visibleLayers.includes(layer.key);
+
             return (
-              <div
+              <button
                 key={layer.key}
-                className="flex items-center justify-between gap-2"
+                onClick={() => onToggleLayer?.(layer.key)}
+                className={`flex items-center justify-between gap-2 transition-all hover:translate-x-0.5 ${
+                  !isVisible ? "opacity-30 grayscale-[0.5]" : "opacity-100"
+                }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-left">
                   {/* Line + direction indicator */}
                   <div className="flex flex-shrink-0 items-center gap-0.5">
                     <div
@@ -154,7 +168,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                     )}
                   </div>
                   <span className="font-mono text-[9px] font-bold text-slate-300 uppercase">
-                    {layer.label}
+                    {tLayers(layer.key)}
                   </span>
                 </div>
 
@@ -173,7 +187,7 @@ const GraphLegend: React.FC<GraphLegendProps> = ({
                 ) : (
                   <span className="font-mono text-[8px] text-slate-700">—</span>
                 )}
-              </div>
+              </button>
             );
           })}
 

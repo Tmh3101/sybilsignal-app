@@ -6,6 +6,12 @@
     "stats": "THỐNG KÊ",
     "language": "NGÔN NGỮ"
   },
+  "Sidebar": {
+    "system_interface": "Giao diện hệ thống",
+    "light_mode": "CHẾ ĐỘ SÁNG",
+    "dark_mode": "CHẾ ĐỘ TỐI",
+    "switch_theme": "Chuyển sang chế độ {theme}"
+  },
   "Metadata": {
     "title": "BẢNG ĐIỀU KHIỂN SYBILSIGNAL",
     "description": "Nền tảng Tự động Phát hiện & Khám phá Sybil"
@@ -120,7 +126,16 @@
       "total_edges": "TỔNG SỐ CẠNH",
       "total_clusters": "TỔNG SỐ CỤM",
       "avg_cluster_size": "KÍCH THƯỚC CỤM TB"
-    }
+    },
+    "network_structure_title": "CẤU TRÚC MẠNG (CẠNH)",
+    "unknown": "KHÔNG RÕ"
+  },
+  "EdgeLayers": {
+    "CO-OWNER": "ĐỒNG SỞ HỮU",
+    "FOLLOW": "THEO DÕI",
+    "INTERACT": "TƯƠNG TÁC",
+    "SIMILARITY": "TƯƠNG ĐỒNG",
+    "UNKNOWN": "KHÔNG RÕ"
   },
   "DetailPanels": {
     "node": {
@@ -143,6 +158,18 @@
       "direct_relationship_info": "Đây là mối quan hệ <highlight>{type}</highlight> trực tiếp giữa các tài khoản.",
       "logic_info": "Logic: Ràng buộc tương đồng 2/3",
       "link_prefix": "{type}-LNK"
+    },
+    "cluster": {
+      "title": "CỤM #{id}",
+      "accounts": "tài khoản",
+      "risk_score": "{score} ĐIỂM RỦI RO",
+      "footer_hint": "Nhấp vào nút trên đồ thị để kiểm tra"
     }
+  },
+  "RiskLabels": {
+    "BENIGN": "LÀNH TÍNH",
+    "LOW_RISK": "RỦI RO THẤP",
+    "HIGH_RISK": "RỦI RO CAO",
+    "MALICIOUS": "ĐỘC HẠI"
   }
 }

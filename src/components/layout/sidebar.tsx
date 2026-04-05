@@ -43,6 +43,7 @@ export const Sidebar = () => {
   const { theme, toggleTheme } = useThemeStore();
   const [mounted, setMounted] = useState(false);
   const t = useTranslations("Navigation");
+  const tSidebar = useTranslations("Sidebar");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -99,13 +100,13 @@ export const Sidebar = () => {
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-1">
             <span className="font-mono text-[7px] font-bold tracking-widest text-slate-500 uppercase">
-              System Interface
+              {tSidebar("system_interface")}
             </span>
             <span className="text-accent-cyan font-mono text-[8px] font-bold uppercase italic">
               {mounted
                 ? theme === "light"
-                  ? "LIGHT MODE"
-                  : "DARK MODE"
+                  ? tSidebar("light_mode")
+                  : tSidebar("dark_mode")
                 : "..."}
             </span>
           </div>
@@ -116,7 +117,12 @@ export const Sidebar = () => {
               <button
                 onClick={toggleTheme}
                 className="border-border bg-background hover:bg-surface-secondary text-foreground rounded-sm border p-2 shadow-sm transition-all"
-                title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+                title={tSidebar("switch_theme", {
+                  theme:
+                    theme === "light"
+                      ? tSidebar("dark_mode").toLowerCase()
+                      : tSidebar("light_mode").toLowerCase(),
+                })}
               >
                 {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
               </button>

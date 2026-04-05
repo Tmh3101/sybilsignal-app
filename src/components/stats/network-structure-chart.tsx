@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { IndustrialCard } from "@/components/ui/industrial-card";
 import { EdgeDistributionItem } from "@/types/api";
+import { useTranslations } from "next-intl";
 
 interface NetworkStructureChartProps {
   data: EdgeDistributionItem[];
@@ -21,6 +22,8 @@ const COLORS = ["#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899", "#f97316"];
 export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
   data,
 }) => {
+  const t = useTranslations("StatsPage");
+  const tLayers = useTranslations("EdgeLayers");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
   }, []);
 
   return (
-    <IndustrialCard title="NETWORK STRUCTURE (EDGES)" className="h-[400px]">
+    <IndustrialCard title={t("network_structure_title")} className="h-[400px]">
       <div className="h-full w-full flex-1">
         {mounted && (
           <ResponsiveContainer width="100%" height="100%" minHeight={300}>
@@ -64,7 +67,7 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
                   const numValue = typeof value === "number" ? value : 0;
                   return [
                     `${numValue.toLocaleString()} (${percentage}%)`,
-                    String(name ?? "unknown").toUpperCase(),
+                    tLayers(String(name ?? "UNKNOWN")).toUpperCase(),
                   ];
                 }}
                 contentStyle={{
@@ -83,7 +86,7 @@ export const NetworkStructureChart: React.FC<NetworkStructureChartProps> = ({
                 formatter={(value) => {
                   return (
                     <span className="font-mono text-[9px] font-bold tracking-[0.1em] text-slate-400 uppercase">
-                      {value}
+                      {tLayers(value)}
                     </span>
                   );
                 }}

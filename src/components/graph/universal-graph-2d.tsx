@@ -19,6 +19,7 @@ import {
   LABEL_COLORS,
   RELATION_COLORS,
   DIRECTED_EDGE_TYPES,
+  EDGE_LAYERS,
 } from "@/lib/graph-constants";
 import GraphLegend from "./graph-legend";
 import { useGraphProcessor, AggregatedLink } from "@/hooks/use-graph-processor";
@@ -85,6 +86,19 @@ export default function UniversalGraph2D({
   const [showAllEdges, setShowAllEdges] = useState(false);
   const [, setImageVersion] = useState(0);
 
+  // ─── Layer Toggling (Phase 1) ───
+  const [visibleLayers, setVisibleLayers] = useState<string[]>(
+    EDGE_LAYERS.map((l) => l.key)
+  );
+
+  const handleToggleLayer = useCallback((layerKey: string) => {
+    setVisibleLayers((prev) =>
+      prev.includes(layerKey)
+        ? prev.filter((k) => k !== layerKey)
+        : [...prev, layerKey]
+    );
+  }, []);
+
   // ─── Hover States (Phase 2) ───
   const [hoverNode, setHoverNode] = useState<string | null>(null);
   const [highlightLinks, setHighlightLinks] = useState<Set<string>>(new Set());
@@ -97,83 +111,17 @@ export default function UniversalGraph2D({
   // ─── Depth and Edge Filtering (frontend, EGO only) ───
   const filteredData = useMemo(() => {
     // Keep all edges, including *_REV, so bidirectional relations are visible.
-    const baseLinks = graphData.links;
+    let links = graphData.links;
 
-    if (mode !== "EGO" || !targetId) {
-      return { nodes: graphData.nodes, links: baseLinks };
-    }
+    if (mode === "EGO" && targetId) {
+      const tid = String(targetId).toLowerCase();
 
-    const tid = String(targetId).toLowerCase();
+      // 1. Calculate BFS distance (Tier) for each node
+      const distances = new Map<string, number>();
+      distances.set(tid, 0);
 
-    // 1. Calculate BFS distance (Tier) for each node
-    const distances = new Map<string, number>();
-    distances.set(tid, 0);
-
-    const adjacency = new Map<string, Set<string>>();
-    baseLinks.forEach((l) => {
-      const s = String(
-        typeof l.source === "object"
-          ? (l.source as { id: string }).id
-          : l.source
-      ).toLowerCase();
-      const t = String(
-        typeof l.target === "object"
-          ? (l.target as { id: string }).id
-          : l.target
-      ).toLowerCase();
-
-      if (!adjacency.has(s)) adjacency.set(s, new Set());
-      if (!adjacency.has(t)) adjacency.set(t, new Set());
-      adjacency.get(s)!.add(t);
-      adjacency.get(t)!.add(s);
-    });
-
-    const queue: [string, number][] = [[tid, 0]];
-    const visited = new Set<string>([tid]);
-
-    while (queue.length > 0) {
-      const [currId, dist] = queue.shift()!;
-      if (dist >= 2) continue; // Only care about up to Depth 2
-
-      const neighbors = adjacency.get(currId);
-      if (neighbors) {
-        for (const neighbor of neighbors) {
-          if (!visited.has(neighbor)) {
-            visited.add(neighbor);
-            const nextDist = dist + 1;
-            distances.set(neighbor, nextDist);
-            queue.push([neighbor, nextDist]);
-          }
-        }
-      }
-    }
-
-    // 2. Filter nodes based on Depth Filter
-    const nodes = graphData.nodes.filter((n) => {
-      const d = distances.get(String(n.id).toLowerCase());
-      if (d === undefined) return false;
-      return d <= depthFilter;
-    });
-
-    const nodeIds = new Set(nodes.map((n) => String(n.id).toLowerCase()));
-
-    // 3. Filter links based on depth and radial logic
-    let links = baseLinks.filter((l) => {
-      const s = String(
-        typeof l.source === "object"
-          ? (l.source as { id: string }).id
-          : l.source
-      ).toLowerCase();
-      const t = String(
-        typeof l.target === "object"
-          ? (l.target as { id: string }).id
-          : l.target
-      ).toLowerCase();
-      return nodeIds.has(s) && nodeIds.has(t);
-    });
-
-    if (!showAllEdges) {
-      links = links.filter((l) => {
+      const adjacency = new Map<string, Set<string>>();
+      links.forEach((l) => {
         const s = String(
           typeof l.source === "object"
             ? (l.source as { id: string }).id
@@ -185,20 +133,119 @@ export default function UniversalGraph2D({
             : l.target
         ).toLowerCase();
 
-        const distS = distances.get(s);
-        const distT = distances.get(t);
-
-        if (distS === undefined || distT === undefined) return false;
-
-        // Radial logic: show only edges between different tiers
-        // T0-T1, T1-T2, etc. (diff === 1)
-        const diff = Math.abs(distS - distT);
-        return diff === 1;
+        if (!adjacency.has(s)) adjacency.set(s, new Set());
+        if (!adjacency.has(t)) adjacency.set(t, new Set());
+        adjacency.get(s)!.add(t);
+        adjacency.get(t)!.add(s);
       });
-    }
 
-    return { nodes, links };
-  }, [graphData, mode, depthFilter, targetId, showAllEdges]);
+      const queue: [string, number][] = [[tid, 0]];
+      const visited = new Set<string>([tid]);
+
+      while (queue.length > 0) {
+        const [currId, dist] = queue.shift()!;
+        if (dist >= 2) continue; // Only care about up to Depth 2
+
+        const neighbors = adjacency.get(currId);
+        if (neighbors) {
+          for (const neighbor of neighbors) {
+            if (!visited.has(neighbor)) {
+              visited.add(neighbor);
+              const nextDist = dist + 1;
+              distances.set(neighbor, nextDist);
+              queue.push([neighbor, nextDist]);
+            }
+          }
+        }
+      }
+
+      // 2. Filter nodes based on Depth Filter
+      const nodes = graphData.nodes.filter((n) => {
+        const d = distances.get(String(n.id).toLowerCase());
+        if (d === undefined) return false;
+        return d <= depthFilter;
+      });
+
+      const nodeIds = new Set(nodes.map((n) => String(n.id).toLowerCase()));
+
+      // 3. Filter links based on depth and radial logic
+      links = links.filter((l) => {
+        const s = String(
+          typeof l.source === "object"
+            ? (l.source as { id: string }).id
+            : l.source
+        ).toLowerCase();
+        const t = String(
+          typeof l.target === "object"
+            ? (l.target as { id: string }).id
+            : l.target
+        ).toLowerCase();
+        return nodeIds.has(s) && nodeIds.has(t);
+      });
+
+      if (!showAllEdges) {
+        links = links.filter((l) => {
+          const s = String(
+            typeof l.source === "object"
+              ? (l.source as { id: string }).id
+              : l.source
+          ).toLowerCase();
+          const t = String(
+            typeof l.target === "object"
+              ? (l.target as { id: string }).id
+              : l.target
+          ).toLowerCase();
+
+          const distS = distances.get(s);
+          const distT = distances.get(t);
+
+          if (distS === undefined || distT === undefined) return false;
+
+          // Radial logic: show only edges between different tiers
+          // T0-T1, T1-T2, etc. (diff === 1)
+          const diff = Math.abs(distS - distT);
+          return diff === 1;
+        });
+      }
+
+      // 4. Layer Filtering (Phase 1)
+      links = links.filter((l) => {
+        const et = l.edge_type || "UNKNOWN";
+        let layerKey = "UNKNOWN";
+        for (const layer of EDGE_LAYERS) {
+          if (layer.types.includes(et)) {
+            layerKey = layer.key;
+            break;
+          }
+        }
+        return visibleLayers.includes(layerKey);
+      });
+
+      return { nodes, links };
+    } else {
+      // CLUSTER mode or no target
+      // Apply Layer Filtering only
+      links = links.filter((l) => {
+        const et = l.edge_type || "UNKNOWN";
+        let layerKey = "UNKNOWN";
+        for (const layer of EDGE_LAYERS) {
+          if (layer.types.includes(et)) {
+            layerKey = layer.key;
+            break;
+          }
+        }
+        return visibleLayers.includes(layerKey);
+      });
+      return { nodes: graphData.nodes, links };
+    }
+  }, [
+    graphData,
+    mode,
+    depthFilter,
+    targetId,
+    showAllEdges,
+    visibleLayers,
+  ]);
 
   const processedData = useGraphProcessor(filteredData, {
     targetId: mode === "EGO" ? targetId : undefined,
@@ -910,6 +957,8 @@ export default function UniversalGraph2D({
 
       <GraphLegend
         graphData={filteredData}
+        visibleLayers={visibleLayers}
+        onToggleLayer={handleToggleLayer}
         extraItems={
           mode === "EGO" ? (
             <div className="mb-2 flex items-center gap-3">

@@ -6,6 +6,12 @@
     "stats": "STATISTICS",
     "language": "LANGUAGE"
   },
+  "Sidebar": {
+    "system_interface": "System Interface",
+    "light_mode": "LIGHT MODE",
+    "dark_mode": "DARK MODE",
+    "switch_theme": "Switch to {theme} mode"
+  },
   "Metadata": {
     "title": "SYBILSIGNAL DASHBOARD",
     "description": "Autonomous Sybil Detection & Discovery Platform"
@@ -120,7 +126,16 @@
       "total_edges": "TOTAL EDGES",
       "total_clusters": "TOTAL CLUSTERS",
       "avg_cluster_size": "AVG CLUSTER SIZE"
-    }
+    },
+    "network_structure_title": "NETWORK STRUCTURE (EDGES)",
+    "unknown": "UNKNOWN"
+  },
+  "EdgeLayers": {
+    "CO-OWNER": "CO-OWNER",
+    "FOLLOW": "FOLLOW",
+    "INTERACT": "INTERACT",
+    "SIMILARITY": "SIMILARITY",
+    "UNKNOWN": "UNKNOWN"
   },
   "DetailPanels": {
     "node": {
@@ -143,6 +158,18 @@
       "direct_relationship_info": "This is a direct <highlight>{type}</highlight> relationship between accounts.",
       "logic_info": "Logic: 2/3 Similarity Constraint",
       "link_prefix": "{type}-LNK"
+    },
+    "cluster": {
+      "title": "CLUSTER #{id}",
+      "accounts": "accounts",
+      "risk_score": "{score} RISK SCORE",
+      "footer_hint": "Click node on graph to inspect"
     }
+  },
+  "RiskLabels": {
+    "BENIGN": "BENIGN",
+    "LOW_RISK": "LOW RISK",
+    "HIGH_RISK": "HIGH RISK",
+    "MALICIOUS": "MALICIOUS"
   }
 }
