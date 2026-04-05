@@ -2,16 +2,30 @@
 
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/routing";
+import { useSearchParams } from "next/navigation";
 import { Globe } from "lucide-react";
 
 export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const toggleLocale = () => {
     const nextLocale = locale === "en" ? "vi" : "en";
-    router.replace(pathname, { locale: nextLocale });
+
+    const paramsString = searchParams.toString();
+    const hash = window.location.hash;
+
+    let target = pathname;
+    if (paramsString) {
+      target += `?${paramsString}`;
+    }
+    if (hash) {
+      target += hash;
+    }
+
+    router.replace(target, { locale: nextLocale });
   };
 
   return (
