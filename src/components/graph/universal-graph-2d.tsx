@@ -238,14 +238,7 @@ export default function UniversalGraph2D({
       });
       return { nodes: graphData.nodes, links };
     }
-  }, [
-    graphData,
-    mode,
-    depthFilter,
-    targetId,
-    showAllEdges,
-    visibleLayers,
-  ]);
+  }, [graphData, mode, depthFilter, targetId, showAllEdges, visibleLayers]);
 
   const processedData = useGraphProcessor(filteredData, {
     targetId: mode === "EGO" ? targetId : undefined,
