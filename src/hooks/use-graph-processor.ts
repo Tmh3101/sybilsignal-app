@@ -10,6 +10,7 @@ export interface AggregatedLink extends Omit<SybilEdge, "source" | "target"> {
   gat_attention?: number;
   multiLinkIndex?: number;
   multiLinkCount?: number;
+  is_merged_multiple?: boolean;
 }
 
 interface ProcessedGraphData {
@@ -19,6 +20,7 @@ interface ProcessedGraphData {
 
 interface GraphProcessorOptions {
   aggregateEdges?: boolean;
+  mergeEdges?: boolean;
   targetId?: string;
 }
 
@@ -26,7 +28,7 @@ export function useGraphProcessor(
   graphData: { nodes: SybilNode[]; links: SybilEdge[] },
   options: GraphProcessorOptions = {}
 ): ProcessedGraphData {
-  const { aggregateEdges = true, targetId } = options;
+  const { aggregateEdges = true, mergeEdges = false, targetId } = options;
 
   return useMemo(() => {
     // 1. Process nodes — inject __color and __isTarget for reliable canvas access
@@ -101,16 +103,23 @@ export function useGraphProcessor(
         tId = temp;
       }
 
-      const key = `${sId}-${tId}-${type}`;
+      const key = mergeEdges ? `${sId}-${tId}` : `${sId}-${tId}-${type}`;
 
       if (linkMap.has(key)) {
         const existing = linkMap.get(key)!;
         existing.aggregated_weight =
           (existing.aggregated_weight || 0) + (link.weight || 1);
-        existing.gat_attention = Math.max(
-          existing.gat_attention || 0,
-          link.gat_attention || 0
-        );
+
+        if (mergeEdges) {
+          existing.gat_attention =
+            (existing.gat_attention || 0) + (link.gat_attention || 0);
+          existing.is_merged_multiple = true;
+        } else {
+          existing.gat_attention = Math.max(
+            existing.gat_attention || 0,
+            link.gat_attention || 0
+          );
+        }
       } else {
         linkMap.set(key, {
           ...link,
@@ -151,5 +160,5 @@ export function useGraphProcessor(
     });
 
     return { nodes, links: aggregatedLinks };
-  }, [graphData, aggregateEdges, targetId]);
+  }, [graphData, aggregateEdges, mergeEdges, targetId]);
 }

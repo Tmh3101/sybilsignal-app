@@ -23,7 +23,14 @@ import {
 } from "@/lib/graph-constants";
 import GraphLegend from "./graph-legend";
 import { useGraphProcessor, AggregatedLink } from "@/hooks/use-graph-processor";
-import { Maximize2, ZoomIn, ZoomOut, Brain, Share2 } from "lucide-react";
+import {
+  Maximize2,
+  ZoomIn,
+  ZoomOut,
+  Brain,
+  Share2,
+  Combine,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 
 type EnrichedNode = SybilNode & {
@@ -86,6 +93,7 @@ export default function UniversalGraph2D({
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [showAttention, setShowAttention] = useState(false);
   const [showAllEdges, setShowAllEdges] = useState(false);
+  const [isMerged, setIsMerged] = useState(false);
   const [, setImageVersion] = useState(0);
 
   // ─── Layer Toggling (Phase 1) ───
@@ -245,6 +253,7 @@ export default function UniversalGraph2D({
   const processedData = useGraphProcessor(filteredData, {
     targetId: mode === "EGO" ? targetId : undefined,
     aggregateEdges: true,
+    mergeEdges: isMerged,
   });
 
   // ─── Hover Handler (Phase 2) ───
@@ -477,7 +486,7 @@ export default function UniversalGraph2D({
       globalScale: number
     ) => {
       if (!showAttention) return;
-      if (!link.gat_attention || link.gat_attention < 0.01) return;
+      if (!link.gat_attention) return;
 
       const src = link.source as { x?: number; y?: number };
       const tgt = link.target as { x?: number; y?: number };
@@ -761,6 +770,8 @@ export default function UniversalGraph2D({
     (link: LinkObject<EnrichedNode, AggregatedLink>) => {
       const l = link as AggregatedLink;
       const type = (l.edge_type as string) || "UNKNOWN";
+      const isMergedMultiple = l.is_merged_multiple;
+      const displayType = isMergedMultiple ? `${type} (MERGED)` : type;
       const weight = l.aggregated_weight || 1;
       const violations = l.violations || [];
       const attention = l.gat_attention
@@ -786,7 +797,7 @@ export default function UniversalGraph2D({
 
       return `<div style="background: rgba(2, 6, 23, 0.95); border: 1px solid #1e293b; padding: 6px 10px; border-radius: 4px; font-size: 10px; font-family: 'JetBrains Mono', monospace; box-shadow: 0 4px 12px rgba(0,0,0,0.5); min-width: 140px;">
       <span style="color: #64748b; text-transform: uppercase; font-size: 8px;">Relationship</span>
-      <div style="color: #f1f5f9; margin-top: 2px;">Type: <span style="color: #00f2ff;">${type}</span></div>
+      <div style="color: #f1f5f9; margin-top: 2px;">Type: <span style="color: #00f2ff;">${displayType}</span></div>
       <div style="color: #f1f5f9;">Weight: <span style="color: #00f2ff;">${weight.toFixed(
         2
       )}</span></div>
@@ -918,6 +929,17 @@ export default function UniversalGraph2D({
             </button>
           </>
         )}
+        <button
+          onClick={() => setIsMerged((v) => !v)}
+          title={isMerged ? "Separate Edges" : "Merge Edges"}
+          className={`flex h-8 w-8 items-center justify-center border backdrop-blur-sm transition-all active:scale-95 ${
+            isMerged
+              ? "border-accent-cyan/50 bg-accent-cyan/10 text-accent-cyan"
+              : "hover:border-accent-cyan/30 hover:text-accent-cyan border-slate-700/80 bg-black/80 text-slate-500"
+          }`}
+        >
+          <Combine size={12} />
+        </button>
         <button
           onClick={zoomToFit}
           title="Zoom to fit"
