@@ -36,7 +36,7 @@ const SearchForm = ({ defaultValue = "" }: { defaultValue?: string }) => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="group relative w-full max-w-md">
+    <form onSubmit={handleSearch} className="group relative w-full max-w-xl">
       <Search
         className="group-focus-within:text-accent-cyan absolute top-1/2 left-3 -translate-y-1/2 text-slate-500 transition-colors"
         size={16}
@@ -46,7 +46,7 @@ const SearchForm = ({ defaultValue = "" }: { defaultValue?: string }) => {
         placeholder={t("search_placeholder")}
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
-        className="bg-background border-border focus:border-accent-cyan focus:ring-accent-cyan/20 w-full rounded-sm border px-10 py-2 font-mono text-xs tracking-widest uppercase transition-all placeholder:text-slate-600 focus:ring-1 focus:outline-none"
+        className="bg-background border-border focus:border-accent-cyan focus:ring-accent-cyan/20 w-full rounded-sm border px-10 py-2 font-mono text-xs tracking-normal uppercase transition-all placeholder:text-slate-600 focus:ring-1 focus:outline-none"
       />
     </form>
   );
