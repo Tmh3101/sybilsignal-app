@@ -371,7 +371,7 @@ export default function UniversalGraph2D({
       const isMalicious = riskLabel === "MALICIOUS";
       const isHighRisk = riskLabel === "HIGH_RISK";
 
-      const size = mode === "EGO" ? (isTarget ? 12 : 6) : 6;
+      const size = mode === "EGO" ? (isTarget ? 10 : 6) : 6;
 
       const x = n.x ?? 0;
       const y = n.y ?? 0;
@@ -385,10 +385,10 @@ export default function UniversalGraph2D({
 
       // ── Glow aura ──
       if (isTarget) {
-        ([size + 12, size + 7, size + 3] as number[]).forEach((r, i) => {
+        ([size + 8, size + 4] as number[]).forEach((r, i) => {
           ctx.beginPath();
           ctx.arc(x, y, r, 0, Math.PI * 2);
-          ctx.fillStyle = color + (["0d", "20", "38"] as string[])[i];
+          ctx.fillStyle = color + (["0a", "18"] as string[])[i];
           ctx.fill();
         });
       } else if (mode === "CLUSTER" && isMalicious) {
@@ -438,20 +438,8 @@ export default function UniversalGraph2D({
       ctx.beginPath();
       ctx.arc(x, y, size, 0, Math.PI * 2);
       ctx.strokeStyle = color;
-      ctx.lineWidth = isTarget ? 2.5 : isMalicious || isHighRisk ? 1.8 : 1;
+      ctx.lineWidth = isTarget ? 2 : isMalicious || isHighRisk ? 1.8 : 1;
       ctx.stroke();
-
-      // ── Target: dashed orbit ──
-      if (isTarget) {
-        ctx.save();
-        ctx.strokeStyle = color + "70";
-        ctx.lineWidth = 1;
-        ctx.setLineDash([4, 4]);
-        ctx.beginPath();
-        ctx.arc(x, y, size + 9, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
-      }
 
       // ── Labels ──
       const showLabel =
@@ -460,7 +448,7 @@ export default function UniversalGraph2D({
 
       if (showLabel) {
         const fs =
-          mode === "EGO" && isTarget ? 12 / globalScale : 9 / globalScale;
+          mode === "EGO" && isTarget ? 11 / globalScale : 9 / globalScale;
         ctx.font = `${isTarget ? "bold " : ""}${Math.max(fs, 4)}px "JetBrains Mono",monospace`;
         ctx.textAlign = "center";
         ctx.textBaseline = "top";
