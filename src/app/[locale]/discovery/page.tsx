@@ -47,6 +47,9 @@ const UniversalGraph2D = dynamic(
 import ClusterDetailPanel from "@/components/graph/cluster-detail-panel";
 import EdgeDetailPanel from "@/components/inspector/edge-detail-panel";
 import { AggregatedLink } from "@/hooks/use-graph-processor";
+import { RiskDistributionChart } from "@/components/stats/risk-distribution-chart";
+import { NetworkStructureChart } from "@/components/stats/network-structure-chart";
+import { RiskDistributionItem, EdgeDistributionItem } from "@/types/api";
 
 // ─── Filter state types ───
 const ALL_LABELS: RiskClassification[] = [
@@ -199,6 +202,52 @@ export default function DiscoveryPage() {
 
     return { nodes: filteredNodes, links: filteredLinks };
   }, [statusData?.graph_data, activeLabels, filterClusterId]);
+
+  // ─── Chart Data ───
+  const riskDistributionData = useMemo<RiskDistributionItem[]>(() => {
+    if (!filteredGraphData?.nodes) return [];
+
+    const counts: Record<RiskClassification, number> = {
+      BENIGN: 0,
+      LOW_RISK: 0,
+      HIGH_RISK: 0,
+      MALICIOUS: 0,
+    };
+
+    filteredGraphData.nodes.forEach((n) => {
+      const label = n.risk_label as RiskClassification;
+      if (counts[label] !== undefined) {
+        counts[label]++;
+      }
+    });
+
+    return Object.entries(counts).map(([label, count]) => ({
+      label: label as RiskClassification,
+      count,
+    }));
+  }, [filteredGraphData?.nodes]);
+
+  const edgeDistributionData = useMemo<EdgeDistributionItem[]>(() => {
+    if (!filteredGraphData?.links) return [];
+
+    const counts: Record<string, number> = {};
+    let totalEdges = 0;
+
+    filteredGraphData.links.forEach((l) => {
+      const type = l.edge_type || "UNKNOWN";
+      counts[type] = (counts[type] || 0) + 1;
+      totalEdges++;
+    });
+
+    return Object.entries(counts)
+      .map(([layer, count]) => ({
+        layer,
+        count,
+        percentage:
+          totalEdges > 0 ? Number(((count / totalEdges) * 100).toFixed(1)) : 0,
+      }))
+      .sort((a, b) => b.count - a.count);
+  }, [filteredGraphData?.links]);
 
   // ─── Cluster IDs for filter dropdown ───
   const allClusterIds = useMemo(() => {
@@ -727,6 +776,14 @@ export default function DiscoveryPage() {
           </div>
         )}
       </div>
+
+      {/* ── Charts Area ── */}
+      {isCompleted && filteredGraphData && (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <RiskDistributionChart data={riskDistributionData} />
+          <NetworkStructureChart data={edgeDistributionData} />
+        </div>
+      )}
 
       {/* ── Terminal Log ── */}
       <TerminalLog className="border-border h-40 shadow-2xl" logs={logs} />

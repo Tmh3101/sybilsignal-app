@@ -88,8 +88,7 @@ export function DiscoveryHistoryTable() {
                 <td className="px-4 py-3 text-slate-300">
                   {row.start_date && row.end_date ? (
                     <>
-                      {formatDate(row.start_date)} →{" "}
-                      {formatDate(row.end_date)}
+                      {formatDate(row.start_date)} → {formatDate(row.end_date)}
                     </>
                   ) : (
                     "---"
