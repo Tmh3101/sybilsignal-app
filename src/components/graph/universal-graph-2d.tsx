@@ -313,13 +313,13 @@ export default function UniversalGraph2D({
       )?.strength(-350);
       fgRef.current.d3Force("link")?.distance(80);
     } else {
-      fgRef.current.d3Force("x", d3.forceX(0).strength(0.04));
-      fgRef.current.d3Force("y", d3.forceY(0).strength(0.04));
+      fgRef.current.d3Force("x", d3.forceX(0).strength(0.1));
+      fgRef.current.d3Force("y", d3.forceY(0).strength(0.1));
       fgRef.current.d3Force("center", d3.forceCenter(0, 0));
       // Push nodes further apart (anti-hairball)
-      fgRef.current.d3Force("charge", d3.forceManyBody().strength(-200));
+      fgRef.current.d3Force("charge", d3.forceManyBody().strength(-150));
       // Stretch the edges to prevent tight clustering
-      fgRef.current.d3Force("link")?.distance(60);
+      fgRef.current.d3Force("link")?.distance(50);
     }
     fgRef.current.d3ReheatSimulation();
   }, [processedData, mode, dimensions.width, dimensions.height]);
