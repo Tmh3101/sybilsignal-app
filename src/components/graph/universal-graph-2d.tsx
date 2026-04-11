@@ -952,9 +952,11 @@ export default function UniversalGraph2D({
       {/* Weight info hint */}
       {showAttention && (
         <div className="border-accent-red/20 absolute bottom-6 left-4 z-10 border bg-black/80 px-3 py-1.5 font-mono text-[8px] text-slate-500 backdrop-blur-sm">
-          Showing GAT Attention Weights (Explainable AI)
+          {tLegend("attention_weights_title")}
           <br />
-          <span className="text-slate-700">Weights are visible on relationship edges</span>
+          <span className="text-slate-700">
+            {tLegend("attention_weights_desc")}
+          </span>
         </div>
       )}
 

@@ -202,6 +202,8 @@
     "directed": "directed",
     "undirected": "undirected",
     "ai_focus": "AI Focus (GAT)",
-    "target_node": "Target Node"
+    "target_node": "Target Node",
+    "attention_weights_title": "Showing GAT Attention Weights (Explainable AI)",
+    "attention_weights_desc": "Weights are visible on relationship edges"
   }
 }

@@ -202,6 +202,8 @@
     "directed": "có hướng",
     "undirected": "vô hướng",
     "ai_focus": "AI Focus (GAT)",
-    "target_node": "Nút mục tiêu"
+    "target_node": "Nút mục tiêu",
+    "attention_weights_title": "Hiển thị Trọng số GAT (AI Giải thích được)",
+    "attention_weights_desc": "Trọng số hiển thị trên các cạnh liên kết"
   }
 }
