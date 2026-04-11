@@ -616,16 +616,14 @@ export default function UniversalGraph2D({
           ctx.quadraticCurveTo(cp.x, cp.y, tgt.x, tgt.y);
         }
         ctx.stroke();
-
-        // ── Ultra-High Detail: Text Labels (Phase 3) ──
-        const isDeepZoom = globalScale > 3.0;
-        const shouldDrawTextHover =
-          !hoverNode || highlightLinks.has(l.id || "");
-
-        if (isDeepZoom && shouldDrawTextHover) {
-          drawEdgeAttention(l, ctx, globalScale);
-        }
       }
+
+      // ── Text Labels: Always show when feature is enabled ──
+      const shouldDrawTextHover = !hoverNode || highlightLinks.has(l.id || "");
+      if (shouldDrawTextHover) {
+        drawEdgeAttention(l, ctx, globalScale);
+      }
+
       ctx.restore();
     },
     [mode, hoverNode, highlightLinks, drawEdgeAttention]
@@ -956,7 +954,7 @@ export default function UniversalGraph2D({
         <div className="border-accent-red/20 absolute bottom-6 left-4 z-10 border bg-black/80 px-3 py-1.5 font-mono text-[8px] text-slate-500 backdrop-blur-sm">
           Showing GAT Attention Weights (Explainable AI)
           <br />
-          <span className="text-slate-700">Zoom in to see labels on edges</span>
+          <span className="text-slate-700">Weights are visible on relationship edges</span>
         </div>
       )}
 
