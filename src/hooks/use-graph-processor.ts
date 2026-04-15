@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { SybilNode, SybilEdge } from "@/types/api";
 import { NodeObject } from "react-force-graph-2d";
-import { LABEL_COLORS } from "@/lib/graph-constants";
+import { LABEL_COLORS, LIGHT_LABEL_COLORS } from "@/lib/graph-constants";
+import { useThemeStore } from "@/store/theme-store";
 
 export interface AggregatedLink extends Omit<SybilEdge, "source" | "target"> {
   source: string | NodeObject<SybilNode>;
@@ -29,6 +30,8 @@ export function useGraphProcessor(
   options: GraphProcessorOptions = {}
 ): ProcessedGraphData {
   const { aggregateEdges = true, mergeEdges = false, targetId } = options;
+  const { theme } = useThemeStore();
+  const isDark = theme === "dark";
 
   return useMemo(() => {
     // 1. Process nodes — inject __color and __isTarget for reliable canvas access
@@ -37,7 +40,9 @@ export function useGraphProcessor(
       const riskLabel = String(n.risk_label || "UNKNOWN")
         .trim()
         .toUpperCase();
-      const nodeColor = LABEL_COLORS[riskLabel] || LABEL_COLORS.UNKNOWN;
+
+      const palette = isDark ? LABEL_COLORS : LIGHT_LABEL_COLORS;
+      const nodeColor = palette[riskLabel] || palette.UNKNOWN;
 
       const enriched = {
         ...n,
@@ -224,5 +229,5 @@ export function useGraphProcessor(
     });
 
     return { nodes, links: aggregatedLinks };
-  }, [graphData, aggregateEdges, mergeEdges, targetId]);
+  }, [graphData, aggregateEdges, mergeEdges, targetId, isDark]);
 }
