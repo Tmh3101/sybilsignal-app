@@ -678,7 +678,7 @@ export default function DiscoveryPage() {
                   <h2 className="text-subtle mb-2 !text-xl font-black">
                     {t("no_scan_data")}
                   </h2>
-                  <p className="text-subtle max-w-xs !font-normal leading-relaxed">
+                  <p className="text-subtle max-w-xs leading-relaxed !font-normal">
                     {t("no_scan_desc")}
                   </p>
                 </div>
