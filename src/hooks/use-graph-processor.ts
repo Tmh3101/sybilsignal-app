@@ -145,8 +145,6 @@ export function useGraphProcessor(
           (existing.aggregated_weight || 0) + (link.weight || 1);
 
         if (mergeEdges) {
-          // If we are merging and the visual target is the central node,
-          // use the pre-calculated incoming attention sum.
           if (
             targetId &&
             String(tId).toLowerCase() === String(targetId).toLowerCase()
@@ -159,30 +157,18 @@ export function useGraphProcessor(
           }
           existing.is_merged_multiple = true;
         } else {
-          // Multi-relational view (not merged):
-          // If visual target is central node, we need to decide whether to sum here or keep separate.
-          // Rule: "If there are multiple parallel edges from Node A to Central Node, SUM their gat_attention values."
-          // But in multi-relational view, we might want to show them separately?
-          // No, the instruction says: "If there are multiple parallel edges... SUM their gat_attention values."
-          // This implies the total attention from A to Central should be shown.
-          // However, if we don't mergeEdges, we have parallel visual edges.
-          // Let's stick to the rule: if it points to targetId, show the sum for that node pair.
-          if (
-            targetId &&
-            String(tId).toLowerCase() === String(targetId).toLowerCase()
-          ) {
-            existing.gat_attention =
-              incomingAttentionMap.get(String(sId).toLowerCase()) || 0;
-          } else {
-            existing.gat_attention = Math.max(
-              existing.gat_attention || 0,
-              link.gat_attention || 0
-            );
-          }
+          // FIX: Do NOT use incomingAttentionMap here. Keep individual max/sum for parallel edges of the SAME exact type.
+          existing.gat_attention = Math.max(
+            existing.gat_attention || 0,
+            link.gat_attention || 0
+          );
         }
       } else {
         let initialAttention = link.gat_attention || 0;
+
+        // FIX: Only use the total summed attention if we are actually merging edges.
         if (
+          mergeEdges &&
           targetId &&
           String(tId).toLowerCase() === String(targetId).toLowerCase()
         ) {
