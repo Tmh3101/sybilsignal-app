@@ -253,7 +253,7 @@ function InspectorContent() {
       {/* ── Info Cards Row ── */}
       <div className="grid grid-cols-12 gap-5">
         {/* Analysis Overview */}
-        <div className="col-span-4">
+        <div className="col-span-6">
           <IndustrialCard title={t("card_analysis")} className="h-full">
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
@@ -327,7 +327,7 @@ function InspectorContent() {
         </div>
 
         {/* Confidence Score */}
-        <div className="col-span-4">
+        <div className="col-span-6">
           <IndustrialCard title={t("card_confidence")} className="h-full">
             <div className="flex flex-col gap-3">
               {Object.entries(analysis?.predict_proba || {}).map(
@@ -380,7 +380,7 @@ function InspectorContent() {
         </div>
 
         {/* Detection Reasoning */}
-        <div className="col-span-4">
+        {/* <div className="col-span-4">
           <IndustrialCard title={t("card_reasoning")} className="h-full">
             <div className="flex flex-col gap-2">
               <span className="text-subtle px-1 text-[9px] font-bold uppercase">
@@ -404,7 +404,7 @@ function InspectorContent() {
               </div>
             </div>
           </IndustrialCard>
-        </div>
+        </div> */}
       </div>
 
       {/* ── Graph Area ── */}
